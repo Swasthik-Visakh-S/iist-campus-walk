@@ -1,4 +1,4 @@
-# IIST Campus Walk — Version 2
+# IIST Campus Walk — Version 3
 
 A browser walkthrough generated from the supplied OpenStreetMap campus export.
 
@@ -23,9 +23,13 @@ WebGL 2 is needed for 3D. If unsupported, a 2D campus map appears automatically.
 
 ## Model accuracy
 
-24 mapped building footprints. Shapes and positions come from map.osm. Version 2 adds red-brown walls and pale framing, differentiated heights, a taller glazed Library centre, rooftop panels, an open Student Activity Centre amphitheatre, terraced slopes, two ponds and dense broadleaf vegetation with garden palms.
+24 mapped building footprints, with reference-plan refinements. Version 3 traces the Library, Admin Block and several academic wings from the illustrated campus plan, registered to OSM landmark positions. The OAT has a larger stepped bowl, and the adjoining mapped building is identified and remodeled as the Multipurpose Hall. The main approach now passes on the right of the OAT when coming from the roundabout.
 
-The northern hostel zone is about 38 metres higher than the southern campus in this approximate model. This is an artistic estimate, NOT a measured elevation difference. Heights and relative slopes are configurable in dist/model-config.json. A pond uses the OSM outline; the second is estimated from the reference screenshots. Tree locations and architectural details are illustrative. Footprints have not been retraced from oblique screenshots because those images do not provide reliable ground coordinates. Buildings and pond shores have collisions. No building interiors are included.
+The Library facade faces its landscaped approach, with red-brown side panels, white framing, a central glazed spine, a canopy and raised roof wings. The larger fountain has a 5.5 metre basin radius, a stone surround, arcing jets and a surrounding lawn with paths, shrubs and palms. Name tags are roughly half the former width and are hidden by intervening geometry.
+
+The illustrated plan is schematic, not a survey. Corrections are estimates anchored to existing OSM positions; outlines are reduced where needed to leave the mapped roads clear. The Science Block keeps its OSM outline because the plan trace conflicts with its perimeter road. Heights, elevations and detailed architecture are still estimates. No interiors are included.
+
+`dist/model-config.json` contains the plan traces, building names, road correction and garden dimensions with source notes. `dist/layout.js` applies the same layout to the 3D model and 2D fallback; the original `campus.json` is preserved. `dist/library.js` contains the Library facade and garden model. No reference photos or Google map tiles are redistributed.
 
 Edit dist/heights.json to set building heights in metres by OSM way ID, e.g. {"618490369": 14} for the mapped Library. The default is an empty object. IDs and tags are in dist/campus.json. Refresh after editing.
 
@@ -36,7 +40,7 @@ Edit dist/heights.json to set building heights in metres by OSM way ID, e.g. {"6
 - scripts/convert_osm.py: rebuild campus.json from map.osm.
 - scripts/check-world.mjs: Node geometry and collision checks.
 
-The scene-construction, finite-geometry, building-foundation, terrain, water-collision and safe-destination checks passed. The development browser did not support WebGL, so 3D rendering and first-person interaction could not be visually verified there. The 2D fallback was visually checked. The 3D appearance still needs checking in a WebGL-enabled browser. This is an initial prototype; exact local device performance remains to be tested.
+The scene-construction, finite-geometry, foundation, road clearance, terrain, water-collision and safe-destination checks passed. The development browser did not support WebGL, so 3D rendering and first-person interaction could not be visually verified there. The 2D fallback and destination selection were visually checked. The 3D appearance still needs checking in a WebGL-enabled browser. This is an initial prototype; exact local device performance remains to be tested.
 
 ## Attribution
 
