@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "note": "Photo-informed approximation. Heights and relative terrain elevations are not surveyed. OSM footprints retained; facade forms simplified.",
+  "terrain": {"northRise": 42,"southLevel": 4,"hillHeight": 11},
+  "heights": {"618490369": 23,"618490370": 14,"618490371": 14,"618501273": 13,"618501279": 13,"618501282": 16,"618490372": 7,"1301681322": 7},
+  "extraPonds": [{"id":"reference-pond-west","name":"West pond","source":"Estimated from supplied satellite screenshots","points":[[-104,86],[-92,79],[-80,86],[-73,103],[-66,122],[-64,143],[-73,161],[-87,170],[-100,164],[-101,149],[-97,132],[-101,112],[-108,96],[-104,86]]}]
+}
