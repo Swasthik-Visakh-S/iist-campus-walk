@@ -1,7 +1,676 @@
 {
-  "version": 2,
-  "note": "Photo-informed approximation. Heights and relative terrain elevations are not surveyed. OSM footprints retained; facade forms simplified.",
-  "terrain": {"northRise": 42,"southLevel": 4,"hillHeight": 11},
-  "heights": {"618490369": 23,"618490370": 14,"618490371": 14,"618501273": 13,"618501279": 13,"618501282": 16,"618490372": 7,"1301681322": 7},
-  "extraPonds": [{"id":"reference-pond-west","name":"West pond","source":"Estimated from supplied satellite screenshots","points":[[-104,86],[-92,79],[-80,86],[-73,103],[-66,122],[-64,143],[-73,161],[-87,170],[-100,164],[-101,149],[-97,132],[-101,112],[-108,96],[-104,86]]}]
+  "version": 3,
+  "note": "Reference-plan refinements, with OSM-anchored positions. Plan outlines, facade details, heights and relative elevations remain approximate.",
+  "terrain": {
+    "northRise": 42,
+    "southLevel": 4,
+    "hillHeight": 11
+  },
+  "heights": {
+    "618490369": 23,
+    "618490370": 14,
+    "618490371": 14,
+    "618501273": 13,
+    "618501279": 13,
+    "618501282": 16,
+    "618490372": 7,
+    "1301681322": 9
+  },
+  "extraPonds": [
+    {
+      "id": "reference-pond-west",
+      "name": "West pond",
+      "source": "Estimated from supplied satellite screenshots",
+      "points": [
+        [
+          -104,
+          86
+        ],
+        [
+          -92,
+          79
+        ],
+        [
+          -80,
+          86
+        ],
+        [
+          -73,
+          103
+        ],
+        [
+          -66,
+          122
+        ],
+        [
+          -64,
+          143
+        ],
+        [
+          -73,
+          161
+        ],
+        [
+          -87,
+          170
+        ],
+        [
+          -100,
+          164
+        ],
+        [
+          -101,
+          149
+        ],
+        [
+          -97,
+          132
+        ],
+        [
+          -101,
+          112
+        ],
+        [
+          -108,
+          96
+        ],
+        [
+          -104,
+          86
+        ]
+      ]
+    }
+  ],
+  "layout": {
+    "buildings": {
+      "618490369": {
+        "name": "Library",
+        "source": "Traced from the supplied illustrated campus plan; orientation registered to OSM landmarks, area normalized to the mapped footprint.",
+        "planPoints": [
+          [
+            384,
+            139
+          ],
+          [
+            391,
+            140
+          ],
+          [
+            395,
+            148
+          ],
+          [
+            401,
+            151
+          ],
+          [
+            398,
+            156
+          ],
+          [
+            407,
+            160
+          ],
+          [
+            400,
+            166
+          ],
+          [
+            399,
+            173
+          ],
+          [
+            390,
+            172
+          ],
+          [
+            386,
+            181
+          ],
+          [
+            379,
+            178
+          ],
+          [
+            374,
+            189
+          ],
+          [
+            365,
+            184
+          ],
+          [
+            369,
+            176
+          ],
+          [
+            359,
+            178
+          ],
+          [
+            356,
+            171
+          ],
+          [
+            365,
+            163
+          ],
+          [
+            362,
+            155
+          ],
+          [
+            372,
+            152
+          ],
+          [
+            372,
+            145
+          ],
+          [
+            380,
+            147
+          ],
+          [
+            384,
+            139
+          ]
+        ]
+      },
+      "618501282": {
+        "name": "Admin Block",
+        "center": [
+          -22,
+          48
+        ],
+        "source": "Traced from the supplied illustrated campus plan; orientation registered to OSM landmarks, area normalized to the mapped footprint.",
+        "planPoints": [
+          [
+            377,
+            202
+          ],
+          [
+            401,
+            209
+          ],
+          [
+            410,
+            214
+          ],
+          [
+            405,
+            239
+          ],
+          [
+            390,
+            235
+          ],
+          [
+            385,
+            229
+          ],
+          [
+            377,
+            236
+          ],
+          [
+            385,
+            241
+          ],
+          [
+            396,
+            249
+          ],
+          [
+            389,
+            257
+          ],
+          [
+            380,
+            252
+          ],
+          [
+            375,
+            262
+          ],
+          [
+            361,
+            252
+          ],
+          [
+            366,
+            242
+          ],
+          [
+            356,
+            243
+          ],
+          [
+            346,
+            253
+          ],
+          [
+            334,
+            259
+          ],
+          [
+            328,
+            247
+          ],
+          [
+            343,
+            241
+          ],
+          [
+            355,
+            228
+          ],
+          [
+            365,
+            213
+          ],
+          [
+            377,
+            202
+          ]
+        ]
+      },
+      "618490370": {
+        "name": "Aerospace Block",
+        "source": "Traced from the supplied illustrated campus plan; orientation registered to OSM landmarks, area normalized to the mapped footprint.",
+        "planPoints": [
+          [
+            432,
+            127
+          ],
+          [
+            457,
+            121
+          ],
+          [
+            466,
+            143
+          ],
+          [
+            471,
+            165
+          ],
+          [
+            462,
+            171
+          ],
+          [
+            464,
+            180
+          ],
+          [
+            456,
+            186
+          ],
+          [
+            461,
+            190
+          ],
+          [
+            465,
+            192
+          ],
+          [
+            459,
+            199
+          ],
+          [
+            459,
+            208
+          ],
+          [
+            466,
+            212
+          ],
+          [
+            460,
+            223
+          ],
+          [
+            472,
+            231
+          ],
+          [
+            462,
+            253
+          ],
+          [
+            437,
+            242
+          ],
+          [
+            443,
+            228
+          ],
+          [
+            440,
+            222
+          ],
+          [
+            450,
+            204
+          ],
+          [
+            443,
+            200
+          ],
+          [
+            438,
+            194
+          ],
+          [
+            444,
+            188
+          ],
+          [
+            440,
+            183
+          ],
+          [
+            444,
+            178
+          ],
+          [
+            440,
+            173
+          ],
+          [
+            432,
+            170
+          ],
+          [
+            432,
+            156
+          ],
+          [
+            436,
+            153
+          ],
+          [
+            432,
+            127
+          ]
+        ],
+        "scale": 0.7
+      },
+      "618490371": {
+        "name": "Interdisciplinary Block",
+        "source": "Traced from the supplied illustrated campus plan; orientation registered to OSM landmarks, area normalized to the mapped footprint.",
+        "planPoints": [
+          [
+            382,
+            324
+          ],
+          [
+            407,
+            322
+          ],
+          [
+            409,
+            326
+          ],
+          [
+            425,
+            324
+          ],
+          [
+            424,
+            316
+          ],
+          [
+            451,
+            304
+          ],
+          [
+            463,
+            320
+          ],
+          [
+            475,
+            318
+          ],
+          [
+            478,
+            326
+          ],
+          [
+            461,
+            334
+          ],
+          [
+            446,
+            344
+          ],
+          [
+            438,
+            338
+          ],
+          [
+            433,
+            343
+          ],
+          [
+            438,
+            349
+          ],
+          [
+            433,
+            355
+          ],
+          [
+            425,
+            351
+          ],
+          [
+            424,
+            344
+          ],
+          [
+            417,
+            343
+          ],
+          [
+            410,
+            350
+          ],
+          [
+            382,
+            348
+          ],
+          [
+            382,
+            324
+          ]
+        ],
+        "scale": 0.9
+      },
+      "618501273": {
+        "name": "Science Block",
+        "source": "OSM footprint retained where the schematic trace conflicts with the mapped perimeter road; roof and facade structure refined."
+      },
+      "618501279": {
+        "name": "Avionics Block",
+        "source": "Traced from the supplied illustrated campus plan; orientation registered to OSM landmarks, area normalized to the mapped footprint.",
+        "planPoints": [
+          [
+            536,
+            297
+          ],
+          [
+            551,
+            300
+          ],
+          [
+            552,
+            318
+          ],
+          [
+            547,
+            319
+          ],
+          [
+            549,
+            332
+          ],
+          [
+            542,
+            340
+          ],
+          [
+            540,
+            349
+          ],
+          [
+            531,
+            350
+          ],
+          [
+            526,
+            357
+          ],
+          [
+            514,
+            350
+          ],
+          [
+            509,
+            355
+          ],
+          [
+            482,
+            349
+          ],
+          [
+            480,
+            341
+          ],
+          [
+            493,
+            340
+          ],
+          [
+            504,
+            343
+          ],
+          [
+            513,
+            344
+          ],
+          [
+            516,
+            338
+          ],
+          [
+            530,
+            340
+          ],
+          [
+            532,
+            324
+          ],
+          [
+            532,
+            310
+          ],
+          [
+            536,
+            310
+          ],
+          [
+            536,
+            297
+          ]
+        ],
+        "scale": 0.88
+      },
+      "618490372": {
+        "name": "Student Activity Centre / OAT",
+        "source": "OAT interpreted from the supplied campus plan and satellite view."
+      },
+      "1301681322": {
+        "name": "Multipurpose Hall",
+        "source": "Hall adjoining the OAT identified from the user reference; simplified footprint and roof.",
+        "points": [
+          [
+            -79,
+            -110
+          ],
+          [
+            -62,
+            -123
+          ],
+          [
+            -47,
+            -106
+          ],
+          [
+            -64,
+            -92
+          ],
+          [
+            -79,
+            -110
+          ]
+        ]
+      }
+    },
+    "roads": {
+      "365911687": {
+        "source": "User correction: route around the right side of the OAT on approach from the roundabout.",
+        "approach": [
+          [
+            -80.72,
+            -70.35
+          ],
+          [
+            -57,
+            -82
+          ],
+          [
+            -17,
+            -70
+          ],
+          [
+            12,
+            -87
+          ],
+          [
+            22,
+            -112
+          ],
+          [
+            14,
+            -139
+          ]
+        ],
+        "keepFromIndex": 5
+      }
+    },
+    "libraryGarden": {
+      "source": "Estimated from the supplied Library garden photograph and illustrated campus plan.",
+      "center": [
+        32,
+        18
+      ],
+      "fountain": [
+        21,
+        10
+      ],
+      "halfLength": 22,
+      "halfWidth": 12,
+      "basinRadius": 5.5,
+      "outerRadius": 8.5
+    },
+    "oat": {
+      "radius": 22,
+      "innerRadius": 8,
+      "steps": 14,
+      "rise": 0.32
+    }
+  }
 }
