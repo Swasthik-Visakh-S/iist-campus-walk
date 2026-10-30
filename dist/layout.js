@@ -20,13 +20,15 @@ export function applyReferenceLayout(data, config) {
         const target = edit.center || polygonCenter(feature.points);
         result.points = traced.map(p => [target[0]+(p[0]-c[0])*scale, target[1]+(p[1]-c[1])*scale]);
       } else if (edit.points) result.points = edit.points.map(p => [...p]);
-      result.tags.name = edit.name;
+      if (edit.name) result.tags.name = edit.name;
+      result.surveyNumber = edit.surveyNumber;
       result.reference = edit.source;
     }
     const road = edits.roads?.[feature.id];
     if (road) result.points = [...road.approach, ...feature.points.slice(road.keepFromIndex)].map(p => [...p]);
     return result;
   });
+  features.push(...(edits.extraBuildings || []), ...(edits.extraPaths || []));
   const garden = libraryGarden(features, config);
   if (garden) {
     const ring = Array.from({length:49}, (_, i) => {

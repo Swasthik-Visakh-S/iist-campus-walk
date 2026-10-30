@@ -1,10 +1,355 @@
 {
-  "version": 3,
-  "note": "Reference-plan refinements, with OSM-anchored positions. Plan outlines, facade details, heights and relative elevations remain approximate.",
+  "version": 4,
+  "note": "Relative levels and names supplied by the campus user on 30 October 2026. Numeric heights, path widths, boundary wall height and image-traced MPH outline are estimates, not measurements. Hostel 14 name unresolved: Ardra / Arundathi.",
   "terrain": {
-    "northRise": 42,
-    "southLevel": 4,
-    "hillHeight": 11
+    "note": "Relative order is user supplied; metre values are illustrative and editable. Heights are relative to an arbitrary local zero.",
+    "levels": {
+      "618490369": 20,
+      "618501282": 20,
+      "618490370": 15,
+      "618490371": 7,
+      "618501273": 7,
+      "618501279": 7,
+      "618490372": 22,
+      "1301681322": 22,
+      "1301683953": 36,
+      "368030038": 36,
+      "368030039": 36,
+      "368030040": 51,
+      "368030041": 39,
+      "368030044": 36,
+      "368030035": 30,
+      "368030045": 12,
+      "368030034": 30,
+      "368030042": 39,
+      "368030043": 36,
+      "368030046": 12,
+      "368030033": 30,
+      "368030047": 12,
+      "368030048": 12,
+      "618499162": 20,
+      "user-mph": 22
+    },
+    "pondLevel": -4,
+    "defaultLevel": 15,
+    "anchors": [
+      {
+        "point": [
+          -92.28,
+          -58.64
+        ],
+        "height": 20
+      },
+      {
+        "point": [
+          32,
+          18
+        ],
+        "height": 20
+      },
+      {
+        "point": [
+          70,
+          -35
+        ],
+        "height": 20
+      }
+    ],
+    "roadProfiles": {
+      "365911690": [
+        36,
+        30,
+        30,
+        30,
+        30,
+        30,
+        28,
+        20,
+        12,
+        12
+      ],
+      "365910893": [
+        12,
+        12,
+        4,
+        5,
+        6,
+        9,
+        11,
+        12,
+        15
+      ],
+      "618490368": [
+        5,
+        5,
+        6,
+        7,
+        8,
+        9,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12
+      ],
+      "365911682": [
+        20,
+        19,
+        18,
+        16,
+        14,
+        13,
+        11,
+        11,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "365911683": [
+        7,
+        7,
+        7,
+        9,
+        12
+      ],
+      "618501266": [
+        15,
+        15,
+        15,
+        14,
+        12
+      ],
+      "618501269": [
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15
+      ],
+      "365911681": [
+        15,
+        20,
+        20
+      ],
+      "365911686": [
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "619162423": 20,
+      "837232083": 20,
+      "837232084": 20,
+      "365911687": [
+        20,
+        22,
+        22,
+        22,
+        22,
+        22,
+        22,
+        22,
+        36,
+        38,
+        39,
+        39,
+        36,
+        36,
+        36,
+        36,
+        36,
+        36,
+        36,
+        36,
+        36,
+        36,
+        36,
+        36,
+        36,
+        36,
+        36
+      ],
+      "365911691": [
+        22,
+        26,
+        24,
+        12,
+        12
+      ]
+    },
+    "terraces": [
+      {
+        "id": "library-roundabout",
+        "level": 20,
+        "blend": 12,
+        "points": [
+          [
+            -113,
+            -78
+          ],
+          [
+            -70,
+            -93
+          ],
+          [
+            -40,
+            -65
+          ],
+          [
+            30,
+            -65
+          ],
+          [
+            97,
+            -8
+          ],
+          [
+            116,
+            59
+          ],
+          [
+            72,
+            89
+          ],
+          [
+            32,
+            72
+          ],
+          [
+            -47,
+            79
+          ],
+          [
+            -71,
+            12
+          ],
+          [
+            -113,
+            -28
+          ],
+          [
+            -113,
+            -78
+          ]
+        ]
+      },
+      {
+        "id": "sac-oat-mph",
+        "level": 22,
+        "blend": 8,
+        "points": [
+          [
+            -86,
+            -134
+          ],
+          [
+            -45,
+            -146
+          ],
+          [
+            5,
+            -143
+          ],
+          [
+            30,
+            -145
+          ],
+          [
+            45,
+            -129
+          ],
+          [
+            45,
+            -85
+          ],
+          [
+            10,
+            -66
+          ],
+          [
+            -45,
+            -78
+          ],
+          [
+            -82,
+            -88
+          ],
+          [
+            -86,
+            -134
+          ]
+        ]
+      },
+      {
+        "id": "central-hostels",
+        "level": 36,
+        "blend": 12,
+        "points": [
+          [
+            -41,
+            -314
+          ],
+          [
+            85,
+            -306
+          ],
+          [
+            90,
+            -261
+          ],
+          [
+            72,
+            -217
+          ],
+          [
+            45,
+            -176
+          ],
+          [
+            -42,
+            -178
+          ],
+          [
+            -41,
+            -314
+          ]
+        ]
+      }
+    ]
   },
   "heights": {
     "618490369": 23,
@@ -14,7 +359,8 @@
     "618501279": 13,
     "618501282": 16,
     "618490372": 7,
-    "1301681322": 9
+    "1301681322": 9,
+    "user-mph": 9
   },
   "extraPonds": [
     {
@@ -175,7 +521,8 @@
             384,
             139
           ]
-        ]
+        ],
+        "surveyNumber": 1
       },
       "618501282": {
         "name": "Admin Block",
@@ -273,7 +620,8 @@
             377,
             202
           ]
-        ]
+        ],
+        "surveyNumber": 2
       },
       "618490370": {
         "name": "Aerospace Block",
@@ -396,7 +744,8 @@
             127
           ]
         ],
-        "scale": 0.7
+        "scale": 0.7,
+        "surveyNumber": 3
       },
       "618490371": {
         "name": "Interdisciplinary Block",
@@ -487,11 +836,13 @@
             324
           ]
         ],
-        "scale": 0.9
+        "scale": 0.9,
+        "surveyNumber": 4
       },
       "618501273": {
         "name": "Science Block",
-        "source": "OSM footprint retained where the schematic trace conflicts with the mapped perimeter road; roof and facade structure refined."
+        "source": "OSM footprint retained where the schematic trace conflicts with the mapped perimeter road; roof and facade structure refined.",
+        "surveyNumber": 5
       },
       "618501279": {
         "name": "Avionics Block",
@@ -586,37 +937,145 @@
             297
           ]
         ],
-        "scale": 0.88
+        "scale": 0.88,
+        "surveyNumber": 6
       },
       "618490372": {
-        "name": "Student Activity Centre / OAT",
-        "source": "OAT interpreted from the supplied campus plan and satellite view."
+        "name": "Open Air Theatre",
+        "source": "OAT, separate from SAC building 8 and the newly added MPH; user marked reference.",
+        "surveyNumber": 7
       },
       "1301681322": {
-        "name": "Multipurpose Hall",
-        "source": "Hall adjoining the OAT identified from the user reference; simplified footprint and roof.",
+        "name": "Student Activity Centre",
+        "source": "User marked image identifies this western building as SAC, replacing the previous MPH misidentification; outline approximated from magenta markup.",
         "points": [
           [
-            -79,
-            -110
+            -81,
+            -119
           ],
           [
-            -62,
-            -123
+            -67,
+            -130
           ],
           [
-            -47,
-            -106
+            -54,
+            -125
           ],
           [
-            -64,
-            -92
+            -48,
+            -113
           ],
           [
-            -79,
-            -110
+            -44,
+            -99
+          ],
+          [
+            -54,
+            -89
+          ],
+          [
+            -61,
+            -91
+          ],
+          [
+            -65,
+            -87
+          ],
+          [
+            -73,
+            -93
+          ],
+          [
+            -78,
+            -105
+          ],
+          [
+            -81,
+            -119
           ]
-        ]
+        ],
+        "surveyNumber": 8
+      },
+      "1301683953": {
+        "surveyNumber": 9,
+        "source": "User correction, 30 October 2026; survey map number 9"
+      },
+      "368030038": {
+        "surveyNumber": 10,
+        "source": "User correction, 30 October 2026; survey map number 10"
+      },
+      "368030039": {
+        "surveyNumber": 11,
+        "name": "Phalguni",
+        "source": "User correction, 30 October 2026; survey map number 11"
+      },
+      "368030040": {
+        "surveyNumber": 12,
+        "name": "Hilltop water tank",
+        "source": "User correction, 30 October 2026; survey map number 12"
+      },
+      "368030041": {
+        "surveyNumber": 13,
+        "name": "Anuradha",
+        "source": "User correction, 30 October 2026; survey map number 13"
+      },
+      "368030044": {
+        "surveyNumber": 14,
+        "name": "Hostel 14",
+        "nameCandidates": [
+          "Ardra",
+          "Arundathi"
+        ],
+        "source": "User correction, 30 October 2026; survey map number 14"
+      },
+      "368030035": {
+        "surveyNumber": 15,
+        "name": "Chitra",
+        "source": "User correction, 30 October 2026; survey map number 15"
+      },
+      "368030045": {
+        "surveyNumber": 16,
+        "name": "Rohini",
+        "source": "User correction, 30 October 2026; survey map number 16"
+      },
+      "368030034": {
+        "surveyNumber": 17,
+        "name": "Dhanishta",
+        "source": "User correction, 30 October 2026; survey map number 17"
+      },
+      "368030042": {
+        "surveyNumber": 18,
+        "name": "Hostel 18",
+        "source": "User correction, 30 October 2026; survey map number 18"
+      },
+      "368030043": {
+        "surveyNumber": 19,
+        "name": "Ashwini",
+        "source": "User correction, 30 October 2026; survey map number 19"
+      },
+      "368030046": {
+        "surveyNumber": 20,
+        "name": "Revati",
+        "source": "User correction, 30 October 2026; survey map number 20"
+      },
+      "368030033": {
+        "surveyNumber": 21,
+        "name": "Dhruva",
+        "source": "User correction, 30 October 2026; survey map number 21"
+      },
+      "368030047": {
+        "surveyNumber": 22,
+        "name": "Vishaka",
+        "source": "User correction, 30 October 2026; survey map number 22"
+      },
+      "368030048": {
+        "surveyNumber": 23,
+        "name": "Tripthi canteen",
+        "source": "User correction, 30 October 2026; survey map number 23"
+      },
+      "618499162": {
+        "surveyNumber": 24,
+        "source": "User correction, 30 October 2026; survey map number 24"
       }
     },
     "roads": {
@@ -632,23 +1091,41 @@
             -82
           ],
           [
-            -17,
+            -39,
+            -75
+          ],
+          [
+            -8,
+            -68
+          ],
+          [
+            27,
             -70
           ],
           [
-            12,
-            -87
+            47,
+            -93
           ],
           [
-            22,
-            -112
+            48,
+            -126
           ],
           [
-            14,
-            -139
+            24,
+            -145
           ]
         ],
         "keepFromIndex": 5
+      },
+      "365911691": {
+        "approach": [
+          [
+            24,
+            -145
+          ]
+        ],
+        "keepFromIndex": 2,
+        "source": "Join the corrected OAT approach at its shared junction, outside the covered walk."
       }
     },
     "libraryGarden": {
@@ -670,7 +1147,336 @@
       "radius": 22,
       "innerRadius": 8,
       "steps": 14,
-      "rise": 0.32
-    }
+      "rise": 0.22,
+      "center": [
+        -21,
+        -121
+      ]
+    },
+    "extraBuildings": [
+      {
+        "id": "user-mph",
+        "tags": {
+          "building": "yes",
+          "name": "Multipurpose Hall"
+        },
+        "points": [
+          [
+            3,
+            -115
+          ],
+          [
+            23,
+            -126
+          ],
+          [
+            32,
+            -122
+          ],
+          [
+            36,
+            -107
+          ],
+          [
+            32,
+            -95
+          ],
+          [
+            22,
+            -84
+          ],
+          [
+            9,
+            -77
+          ],
+          [
+            4,
+            -79
+          ],
+          [
+            2,
+            -96
+          ],
+          [
+            3,
+            -115
+          ]
+        ],
+        "source": "Blue outline in user marked image, registered approximately beside OAT; not a surveyed footprint."
+      }
+    ],
+    "extraPaths": [
+      {
+        "id": "sac-oat-link",
+        "tags": {
+          "highway": "footway",
+          "name": "SAC\u2013OAT covered walk",
+          "covered": "yes"
+        },
+        "width": 3.2,
+        "points": [
+          [
+            -49,
+            -94
+          ],
+          [
+            -41,
+            -97
+          ],
+          [
+            -25,
+            -96
+          ],
+          [
+            -12,
+            -100
+          ]
+        ],
+        "levels": [
+          22,
+          22,
+          22,
+          22
+        ]
+      },
+      {
+        "id": "oat-mph-link",
+        "tags": {
+          "highway": "footway",
+          "name": "OAT\u2013MPH covered walk",
+          "covered": "yes"
+        },
+        "width": 3.2,
+        "points": [
+          [
+            -12,
+            -100
+          ],
+          [
+            1,
+            -115
+          ],
+          [
+            1,
+            -130
+          ],
+          [
+            15,
+            -136
+          ],
+          [
+            24,
+            -139
+          ],
+          [
+            42,
+            -136
+          ]
+        ],
+        "levels": [
+          22,
+          22,
+          22,
+          22,
+          22,
+          22
+        ]
+      },
+      {
+        "id": "mph-entrance",
+        "tags": {
+          "highway": "footway",
+          "name": "MPH entrance"
+        },
+        "width": 3.2,
+        "points": [
+          [
+            24,
+            -139
+          ],
+          [
+            22,
+            -128
+          ],
+          [
+            22,
+            -124
+          ]
+        ],
+        "levels": [
+          22,
+          22,
+          22
+        ]
+      },
+      {
+        "id": "sac-front-path",
+        "tags": {
+          "highway": "footway",
+          "name": "SAC approach"
+        },
+        "width": 3.2,
+        "points": [
+          [
+            -57,
+            -82
+          ],
+          [
+            -49,
+            -94
+          ]
+        ],
+        "levels": [
+          22,
+          22
+        ]
+      },
+      {
+        "id": "hostel-stairs",
+        "tags": {
+          "highway": "steps",
+          "name": "Steps to upper hostels"
+        },
+        "width": 3.2,
+        "points": [
+          [
+            15,
+            -136
+          ],
+          [
+            13,
+            -144
+          ],
+          [
+            9,
+            -153
+          ],
+          [
+            10.07,
+            -157.55
+          ]
+        ],
+        "levels": [
+          22,
+          26,
+          32,
+          36
+        ]
+      }
+    ]
+  },
+  "landscape": {
+    "note": "Plant species and distribution follow user descriptions; individual locations are illustrative.",
+    "soilGround": {
+      "points": [
+        [
+          12,
+          -56
+        ],
+        [
+          57,
+          -69
+        ],
+        [
+          93,
+          -72
+        ],
+        [
+          93,
+          -7
+        ],
+        [
+          68,
+          2
+        ],
+        [
+          20,
+          -15
+        ],
+        [
+          12,
+          -56
+        ]
+      ],
+      "level": 20
+    },
+    "bamboo": {
+      "points": [
+        [
+          5,
+          -251
+        ],
+        [
+          25,
+          -254
+        ],
+        [
+          28,
+          -238
+        ],
+        [
+          21,
+          -210
+        ],
+        [
+          6,
+          -212
+        ],
+        [
+          5,
+          -251
+        ]
+      ]
+    },
+    "woodedSlope": {
+      "points": [
+        [
+          70,
+          -224
+        ],
+        [
+          93,
+          -232
+        ],
+        [
+          127,
+          -205
+        ],
+        [
+          156,
+          -167
+        ],
+        [
+          156,
+          -142
+        ],
+        [
+          127,
+          -153
+        ],
+        [
+          112,
+          -178
+        ],
+        [
+          81,
+          -203
+        ],
+        [
+          70,
+          -224
+        ]
+      ]
+    },
+    "boundaryWall": {
+      "height": 3.6,
+      "thickness": 0.6,
+      "gateWidth": 11
+    },
+    "roundabout": {
+      "gardenRadius": 12,
+      "mastHeight": 22
+    },
+    "vergeWidth": 2.2
   }
 }
