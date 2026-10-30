@@ -16,6 +16,7 @@ jobs:
         with:
           node-version: '22'
       - run: node scripts/check-world.mjs
+      - run: node scripts/check-corrections.mjs
   deploy:
     if: github.event_name != 'pull_request'
     needs: check

@@ -1,4 +1,4 @@
-# IIST Campus Walk — Version 3
+# IIST Campus Walk — Version 4
 
 A browser walkthrough generated from the supplied OpenStreetMap campus export.
 
@@ -23,13 +23,15 @@ WebGL 2 is needed for 3D. If unsupported, a 2D campus map appears automatically.
 
 ## Model accuracy
 
-24 mapped building footprints, with reference-plan refinements. Version 3 traces the Library, Admin Block and several academic wings from the illustrated campus plan, registered to OSM landmark positions. The OAT has a larger stepped bowl, and the adjoining mapped building is identified and remodeled as the Multipurpose Hall. The main approach now passes on the right of the OAT when coming from the roundabout.
+Version 4 applies campus corrections supplied on 30 October 2026. It retains the 24 mapped structures, corrects building 8 to the Student Activity Centre, treats building 7 as the separate Open Air Theatre, and adds the Multipurpose Hall from the marked reference outline. Covered walks connect the complex; steps lead to the upper hostel area.
 
-The Library facade faces its landscaped approach, with red-brown side panels, white framing, a central glazed spine, a canopy and raised roof wings. The larger fountain has a 5.5 metre basin radius, a stone surround, arcing jets and a surrounding lawn with paths, shrubs and palms. Name tags are roughly half the former width and are hidden by intervening geometry.
+The low Rohini–Revati–Vishaka–Tripthi terrace is below the Dhruva–Dhanishta–Chitra row. Central hostels share a higher terrace, with buildings 13 and 18 slightly raised and water tank 12 on a summit. The Library, fountain, Admin Block and roundabout share a level; Aerospace is lower, and the other academic blocks are lower again. The canteen approach dips into a valley before rising. Ponds sit below all building terraces.
 
-The illustrated plan is schematic, not a survey. Corrections are estimates anchored to existing OSM positions; outlines are reduced where needed to leave the mapped roads clear. The Science Block keeps its OSM outline because the plan trace conflicts with its perimeter road. Heights, elevations and detailed architecture are still estimates. No interiors are included.
+Tar-coloured roads have grass verges and broadleaf shade trees. The central hostel space has tall bamboo and grass. A wooded bank separates the hostel levels, a soil-coloured open ground sits between the Library approach and hostels, and the roundabout has a circular garden and high-mast light. Boundary walls follow the supplied campus perimeter, with gaps at mapped vehicle approaches.
 
-`dist/model-config.json` contains the plan traces, building names, road correction and garden dimensions with source notes. `dist/layout.js` applies the same layout to the 3D model and 2D fallback; the original `campus.json` is preserved. `dist/library.js` contains the Library facade and garden model. No reference photos or Google map tiles are redistributed.
+The relative levels and names come from the user. Numeric elevations, wall height, species placement, path widths and image-registered outlines remain **estimates, not survey measurements**. Building 14 was identified as both Ardra and Arundathi; it remains **Hostel 14** until clarified. Building 18's name remains unconfirmed. No interiors are included.
+
+`dist/model-config.json` holds the numbered building mapping, names, relative elevation groups, road profiles, connections and landscape settings. `dist/layout.js` applies corrections to both the 3D model and 2D fallback. `dist/terrain.js` shares ground elevations with roads, foundations and walking; `dist/campus-details.js` builds walls, roofs, steps, bamboo and the roundabout. Original `campus.json` and `map.osm` are preserved. No reference photos are redistributed. See [the correction record](CAMPUS_CORRECTIONS.md) for the editable assumptions.
 
 Edit dist/heights.json to set building heights in metres by OSM way ID, e.g. {"618490369": 14} for the mapped Library. The default is an empty object. IDs and tags are in dist/campus.json. Refresh after editing.
 
@@ -39,8 +41,11 @@ Edit dist/heights.json to set building heights in metres by OSM way ID, e.g. {"6
 - map.osm: original supplied map.
 - scripts/convert_osm.py: rebuild campus.json from map.osm.
 - scripts/check-world.mjs: Node geometry and collision checks.
+- scripts/check-corrections.mjs: supplied name/level relationships, path access, slopes and new features.
 
-The scene-construction, finite-geometry, foundation, road clearance, terrain, water-collision and safe-destination checks passed. The development browser did not support WebGL, so 3D rendering and first-person interaction could not be visually verified there. The 2D fallback and destination selection were visually checked. The 3D appearance still needs checking in a WebGL-enabled browser. This is an initial prototype; exact local device performance remains to be tested.
+Run both checks with `node scripts/check-world.mjs` and `node scripts/check-corrections.mjs`.
+
+Scene-construction, finite geometry, foundations, road clearance, supplied elevation relationships, pond collisions and safe destinations are checked automatically. The development browser did not support WebGL, so 3D rendering and first-person interaction could not be visually verified there. The 2D fallback and destination selection were visually checked. The 3D appearance still needs checking in a WebGL-enabled browser. This is an initial prototype; exact local device performance remains to be tested.
 
 ## Attribution
 
