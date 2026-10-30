@@ -37,3 +37,5 @@ jobs:
       - name: Publish website
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Verify public project URL and required assets
+        run: node scripts/check-published.mjs "${{ steps.deployment.outputs.page_url }}"

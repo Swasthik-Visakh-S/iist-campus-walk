@@ -2,6 +2,10 @@
 
 A browser walkthrough generated from the supplied OpenStreetMap campus export.
 
+**Public website:** https://swasthik-visakh-s.github.io/iist-campus-walk/
+
+The shorter account address (`https://swasthik-visakh-s.github.io/`) is a separate GitHub Pages site and may show 404. Always share the full link above.
+
 ## Run on Ubuntu
 
 Open a terminal in this extracted folder and run:
