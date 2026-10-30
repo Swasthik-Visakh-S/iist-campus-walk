@@ -1,6 +1,6 @@
 {
-  "version": 4,
-  "note": "Relative levels and names supplied by the campus user on 30 October 2026. Numeric heights, path widths, boundary wall height and image-traced MPH outline are estimates, not measurements. Hostel 14 name unresolved: Ardra / Arundathi.",
+  "version": 5,
+  "note": "User corrections through 30 October 2026. Relative levels and hostel names supplied by the user; numeric dimensions and traced outlines remain approximate.",
   "terrain": {
     "note": "Relative order is user supplied; metre values are illustrative and editable. Heights are relative to an arbitrary local zero.",
     "levels": {
@@ -15,7 +15,7 @@
       "1301683953": 36,
       "368030038": 36,
       "368030039": 36,
-      "368030040": 51,
+      "368030040": 36,
       "368030041": 39,
       "368030044": 36,
       "368030035": 30,
@@ -1011,8 +1011,8 @@
       },
       "368030040": {
         "surveyNumber": 12,
-        "name": "Hilltop water tank",
-        "source": "User correction, 30 October 2026; survey map number 12"
+        "name": "Water tower",
+        "source": "User correction, 30 October 2026."
       },
       "368030041": {
         "surveyNumber": 13,
@@ -1021,12 +1021,8 @@
       },
       "368030044": {
         "surveyNumber": 14,
-        "name": "Hostel 14",
-        "nameCandidates": [
-          "Ardra",
-          "Arundathi"
-        ],
-        "source": "User correction, 30 October 2026; survey map number 14"
+        "name": "Ardra",
+        "source": "User correction, 30 October 2026."
       },
       "368030035": {
         "surveyNumber": 15,
@@ -1045,8 +1041,8 @@
       },
       "368030042": {
         "surveyNumber": 18,
-        "name": "Hostel 18",
-        "source": "User correction, 30 October 2026; survey map number 18"
+        "name": "Arundhathy",
+        "source": "User correction, 30 October 2026."
       },
       "368030043": {
         "surveyNumber": 19,
@@ -1363,7 +1359,14 @@
           36
         ]
       }
-    ]
+    ],
+    "waterTower": {
+      "id": "368030040",
+      "supportHeight": 20,
+      "tankHeight": 4,
+      "pillarWidth": 0.85,
+      "note": "Four concrete pillars on the Phalguni terrace. Tower dimensions are estimates."
+    }
   },
   "landscape": {
     "note": "Plant species and distribution follow user descriptions; individual locations are illustrative.",
