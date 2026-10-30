@@ -1,4 +1,4 @@
-# IIST Campus Walk — Version 4
+# IIST Campus Walk — Version 5
 
 A browser walkthrough generated from the supplied OpenStreetMap campus export.
 
@@ -16,24 +16,26 @@ Then open http://localhost:8000 in Chrome or Firefox. No Blender, npm install, A
 
 ## Controls
 
-- Start at the roundabout: enter first-person mode.
-- WASD / arrow keys: move. Shift: sprint.
-- Click the scene: capture mouse. Escape: release. Drag to look if capture is unavailable.
+- Explore with her: guide a chibi girl from the roundabout with a following camera.
+- WASD / arrow keys: move. Shift: run. Space: jump (press again after landing).
+- Click the scene: capture mouse. Escape: release. Move the mouse or drag to rotate the camera; scroll to change its distance.
 - V: toggle aerial view. In aerial view, drag to orbit and scroll to zoom.
 - Go to a place: jump near a mapped landmark. Reset: return to start.
-- Touch: use arrow buttons to move and drag the scene to look.
+- Touch: use arrow buttons to move, Jump to jump, and drag the scene to rotate the camera.
 
 WebGL 2 is needed for 3D. If unsupported, a 2D campus map appears automatically. Enable graphics acceleration or try another browser for 3D.
 
 ## Model accuracy
 
-Version 4 applies campus corrections supplied on 30 October 2026. It retains the 24 mapped structures, corrects building 8 to the Student Activity Centre, treats building 7 as the separate Open Air Theatre, and adds the Multipurpose Hall from the marked reference outline. Covered walks connect the complex; steps lead to the upper hostel area.
+Version 5 applies campus corrections supplied on 30 October 2026. It retains the 24 mapped structures, corrects building 8 to the Student Activity Centre, treats building 7 as the separate Open Air Theatre, and adds the Multipurpose Hall from the marked reference outline. Covered walks connect the complex; steps lead to the upper hostel area.
 
-The low Rohini–Revati–Vishaka–Tripthi terrace is below the Dhruva–Dhanishta–Chitra row. Central hostels share a higher terrace, with buildings 13 and 18 slightly raised and water tank 12 on a summit. The Library, fountain, Admin Block and roundabout share a level; Aerospace is lower, and the other academic blocks are lower again. The canteen approach dips into a valley before rising. Ponds sit below all building terraces.
+The low Rohini–Revati–Vishaka–Tripthi terrace is below the Dhruva–Dhanishta–Chitra row. Central hostels share a higher terrace, with buildings 13 and 18 slightly raised while tank 12 shares Phalguni’s ground level and sits atop a tall concrete tower with four pillars. The Library, fountain, Admin Block and roundabout share a level; Aerospace is lower, and the other academic blocks are lower again. The canteen approach dips into a valley before rising. Ponds sit below all building terraces.
 
-Tar-coloured roads have grass verges and broadleaf shade trees. The central hostel space has tall bamboo and grass. A wooded bank separates the hostel levels, a soil-coloured open ground sits between the Library approach and hostels, and the roundabout has a circular garden and high-mast light. Boundary walls follow the supplied campus perimeter, with gaps at mapped vehicle approaches.
+Continuous tar-coloured roads have clear edge lines, centre dashes, pale kerbs, grass verges and broadleaf shade trees. Kerbs leave gaps at junctions and pedestrian crossings. The central hostel space has tall bamboo and grass. A wooded bank separates the hostel levels, a soil-coloured open ground sits between the Library approach and hostels, and the roundabout has a circular garden and high-mast light. Boundary walls follow the supplied campus perimeter, with gaps at mapped vehicle approaches.
 
-The relative levels and names come from the user. Numeric elevations, wall height, species placement, path widths and image-registered outlines remain **estimates, not survey measurements**. Building 14 was identified as both Ardra and Arundathi; it remains **Hostel 14** until clarified. Building 18's name remains unconfirmed. No interiors are included.
+The relative levels and names come from the user. Numeric elevations, wall height, species placement, path widths and image-registered outlines remain **estimates, not survey measurements**. The latest clarification identifies **Ardra as 14** and **Arundhathy as 18**. The tank tower uses an illustrative 20 m support height and 4 m tank; these dimensions can be changed in `layout.waterTower`. No interiors are included.
+
+The original chibi model in `dist/character.js` has an animated walk/run, pigtails and a small backpack. `dist/movement.js` handles jumping, landing, collision and the following camera. `dist/roads.js` builds continuous road surfaces and markings. `dist/terrain-mesh.js` refines curved ground beside roads and fits asphalt and paint to the same triangles, preventing terrain from hiding the road.
 
 `dist/model-config.json` holds the numbered building mapping, names, relative elevation groups, road profiles, connections and landscape settings. `dist/layout.js` applies corrections to both the 3D model and 2D fallback. `dist/terrain.js` shares ground elevations with roads, foundations and walking; `dist/campus-details.js` builds walls, roofs, steps, bamboo and the roundabout. Original `campus.json` and `map.osm` are preserved. No reference photos are redistributed. See [the correction record](CAMPUS_CORRECTIONS.md) for the editable assumptions.
 
@@ -45,11 +47,12 @@ Edit dist/heights.json to set building heights in metres by OSM way ID, e.g. {"6
 - map.osm: original supplied map.
 - scripts/convert_osm.py: rebuild campus.json from map.osm.
 - scripts/check-world.mjs: Node geometry and collision checks.
-- scripts/check-corrections.mjs: supplied name/level relationships, path access, slopes and new features.
+- scripts/check-corrections.mjs: supplied name/level relationships, path access, slopes and campus features.
+- scripts/check-character.mjs: jump/landing at several frame rates, collision, camera clearance, slopes and character animation.
 
-Run both checks with `node scripts/check-world.mjs` and `node scripts/check-corrections.mjs`.
+Run `node scripts/check-world.mjs`, `node scripts/check-corrections.mjs`, and `node scripts/check-character.mjs`.
 
-Scene-construction, finite geometry, foundations, road clearance, supplied elevation relationships, pond collisions and safe destinations are checked automatically. The development browser did not support WebGL, so 3D rendering and first-person interaction could not be visually verified there. The 2D fallback and destination selection were visually checked. The 3D appearance still needs checking in a WebGL-enabled browser. This is an initial prototype; exact local device performance remains to be tested.
+Scene-construction, finite geometry, foundations, road clearance, supplied elevation relationships, pond collisions and safe destinations are checked automatically. The development browser did not support WebGL, so 3D rendering and character interaction could not be visually verified there. The 2D fallback and destination selection were visually checked. The 3D appearance still needs checking in a WebGL-enabled browser. This is an initial prototype; exact local device performance remains to be tested.
 
 ## Attribution
 

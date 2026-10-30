@@ -17,3 +17,4 @@ jobs:
           node-version: '22'
       - run: node scripts/check-world.mjs
       - run: node scripts/check-corrections.mjs
+      - run: node scripts/check-character.mjs

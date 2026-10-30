@@ -3,14 +3,14 @@ import assert from 'node:assert/strict';
 import * as T from '../dist/vendor/three.module.js';
 import {buildWorld,inside,distSegment} from '../dist/world.js';
 const read=n=>JSON.parse(fs.readFileSync(new URL('../dist/'+n,import.meta.url)));
-const config=read('model-config.json'),w=buildWorld(new T.Scene(),read('campus.json'),config);
+const config=read('model-config.json'),scene=new T.Scene(),w=buildWorld(scene,read('campus.json'),config);
 const b=n=>w.buildings.find(b=>b.surveyNumber===n);
 const names={21:'Dhruva',15:'Chitra',20:'Revati',16:'Rohini',22:'Vishaka',19:'Ashwini',11:'Phalguni',17:'Dhanishta',13:'Anuradha',23:'Tripthi canteen',7:'Open Air Theatre',8:'Student Activity Centre'};
 for(const [n,name] of Object.entries(names))assert.equal(b(+n).tags.name,name);
-assert.equal(b(14).tags.name,'Hostel 14','Conflicting name stays unresolved');
+assert.equal(b(14).tags.name,'Ardra');assert.equal(b(18).tags.name,'Arundhathy');
 for(const group of [[16,20,22,23],[15,17,21],[14,19,11,9],[18,13],[1,2],[4,5,6],[7,8]])for(const n of group)assert.equal(b(n).level,b(group[0]).level);
 assert(b(15).level>b(16).level&&b(18).level>b(19).level&&b(7).level>b(16).level&&b(7).level<b(19).level);
-assert(b(12).level>Math.max(...w.buildings.filter(x=>x!==b(12)).map(x=>x.level)));
+assert.equal(b(12).level,b(11).level,'Water tower shares Phalguni ground level');assert.equal(w.tower.pillars.length,4);assert(w.tower.supportHeight>=15);for(const p of w.tower.pillars)assert(w.blocked(...p),'Tower pillar collision');assert(!w.blocked(...b(12).center),'Open space below tank');assert(w.roadDetails.edgePieces>100&&w.roadDetails.dashPieces>100,'Roads have defined edges and markings');
 assert(b(3).level<b(1).level&&b(4).level<b(3).level);
 assert(Math.abs(w.groundAt(...w.details.roundabout)-b(1).level)<.01);
 assert(Math.abs(w.groundAt(...w.garden.fountain)-b(1).level)<.01);
@@ -38,3 +38,22 @@ for(const r of w.terrainModel.routes.filter(r=>r.width>4)){
  }
 }
 console.log('Road grades remain continuous, with gradual academic approaches.');
+
+// Rendered terrain and road triangles must share the same surface on steep banks.
+let roadTriangles=0;
+for(const name of ['Continuous asphalt','Pedestrian surfaces','Road edge and centre paint']){
+ const positions=scene.getObjectByName(name).geometry.attributes.position;assert(positions.count>0);
+ const offset=name.includes('paint')?.17:.14;
+ for(let i=0;i<positions.count;i+=3){
+  const x=(positions.getX(i)+positions.getX(i+1)+positions.getX(i+2))/3;
+  const z=(positions.getZ(i)+positions.getZ(i+1)+positions.getZ(i+2))/3;
+  const y=(positions.getY(i)+positions.getY(i+1)+positions.getY(i+2))/3;
+  assert(Math.abs(y-w.terrainSurface.heightAt(x,z)-offset)<.002,'Road or marking intersects terrain');roadTriangles++;
+ }
+}
+for(const r of w.roads.filter(r=>r.width>4)){
+ const x=(r.a[0]+r.b[0])/2,z=(r.a[1]+r.b[1])/2;
+ assert(w.walkHeight(x,z)>=w.terrainSurface.heightAt(x,z)-.001,'Feet stay above rendered road');
+ if(w.terrainModel.stairHeight(x,z)===null)assert(Math.abs(w.walkHeight(x,z)-w.terrainSurface.heightAt(x,z))<.001,'Feet follow rendered road');
+}
+console.log(`Checked ${roadTriangles} road/paint triangles for terrain clearance; ${w.terrainSurface.refinedCells} terrain cells refined near roads.`);
