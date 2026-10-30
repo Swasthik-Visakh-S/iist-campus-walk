@@ -4,7 +4,7 @@ A browser walkthrough generated from the supplied OpenStreetMap campus export.
 
 **Public website:** https://swasthik-visakh-s.github.io/iist-campus-walk/
 
-The shorter account address (`https://swasthik-visakh-s.github.io/`) is a separate GitHub Pages site and may show 404. Always share the full link above.
+The shorter account address (`https://swasthik-visakh-s.github.io/`) is a separate GitHub Pages site and may show 404. Always share the full link above. Pages publishes from `main / (root)` and opens the app in `dist/`. After a new merge, refresh with Ctrl+Shift+R if your browser still shows an older copy.
 
 ## Run on Ubuntu
 
