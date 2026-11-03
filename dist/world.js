@@ -68,7 +68,7 @@ export function buildWorld(scene,data,config){
   polygon(b.points,.65,concrete,y+support-.65);polygon(b.points,towerSpec.tankHeight,concrete,y+support);polygon(b.points,.25,m.white,y+support+towerSpec.tankHeight);
   landmarks.push({name:t.name,p:safePoint([cx+10,cz]),label:b.center,height:y+support+towerSpec.tankHeight});continue;
  }
- if(!isSac){polygon(b.points,h,m.brick,y);polygon(b.points,.32,m.white,y+h);polygon(b.points,.3,m.roof,y+h+.33);}
+ if(!isSac){const bottom=Math.min(y-.25,...b.points.map(p=>terrainSurface.heightAt(...p)-.15));polygon(b.points,y-bottom,m.white,bottom);polygon(b.points,h,m.brick,y);polygon(b.points,.32,m.white,y+h);polygon(b.points,.3,m.roof,y+h+.33);}
  if(isSac){landmarks.push({name:'Open Air Theatre',shortName:'OAT',p:[amph.x,amph.z],label:b.center,height:y+8});continue;}
  // Recessed dark openings, white floor bands and regular white vertical framing.
  for(let i=1;i<b.points.length;i++){const a=b.points[i-1],p=b.points[i],len=Math.hypot(p[0]-a[0],p[1]-a[1]),angle=Math.atan2(p[0]-a[0],p[1]-a[1]);if(len<1)continue;
@@ -100,7 +100,7 @@ export function buildWorld(scene,data,config){
  // Ground covers and sports surfaces retain map locations.
  const sports=data.features.filter(f=>f.tags.sport);for(const f of sports){const c=center(f.points),h=groundAt(...c)+.2;polygon(f.points,0,material(f.tags.sport==='basketball'?'#9d7052':'#718052'),h);landmarks.push({name:f.tags.sport+' ground',p:safePoint(c),label:c,height:h});}
  addEntrances(entrances,box,m);
- const gateDetails=addGates(gates,scene,box,m);
+ const gateDetails=addGates(gates,scene,box,m,(x,z)=>terrainSurface.heightAt(x,z)-.04);
  const details=addCampusDetails({scene,data,config,buildings,ponds,roads,terrainModel,terrainSurface,groundAt,walkHeight,blocked,mesh,polygon,box,m,walls,noPlants});
  const rb=data.features.find(f=>f.tags.junction==='roundabout'),spawn=safePoint(rb.points[0]);landmarks.unshift({name:'Roundabout',p:spawn,label:center(rb.points),height:groundAt(...center(rb.points))});
  // Dense irregular broadleaf crowns; palms around the Library garden.
@@ -112,8 +112,8 @@ export function buildWorld(scene,data,config){
  for(let i=0;i<900;i++){const x=65+random()*100,z=-240+random()*110;if(inside(x,z,config.landscape.woodedSlope.points)&&plantable(x,z)&&trees.every(p=>Math.hypot(x-p[0],z-p[1])>3))trees.push([x,z,13+random()*7]);}
  for(const r of terrainModel.routes.filter(r=>r.width>4)){for(let d=8;d<r.length;d+=17)for(const side of [-1,1]){const x=r.a[0]+r.dx*d/r.length-side*r.dz/r.length*9,z=r.a[1]+r.dz*d/r.length+side*r.dx/r.length*9;if(plantable(x,z)&&trees.every(p=>Math.hypot(x-p[0],z-p[1])>5))trees.push([x,z,9+random()*5]);}}
 
- const foliage=foliageChunks(scene,trees,groundAt,m),dummy=new T.Object3D();
- if(garden){addLibraryGarden(scene,garden,gardenLevel,m,groundAt,noPlants);landmarks.push({name:'Library fountain & garden',shortName:'Library garden',p:safePoint(garden.fountain),label:garden.fountain,height:gardenLevel+4});}
+ const foliage=foliageChunks(scene,trees,(x,z)=>terrainSurface.heightAt(x,z)-.04,m),dummy=new T.Object3D();
+ if(garden){addLibraryGarden(scene,garden,gardenLevel,m,(x,z)=>terrainSurface.heightAt(x,z)-.04,noPlants);landmarks.push({name:'Library fountain & garden',shortName:'Library garden',p:safePoint(garden.fountain),label:garden.fountain,height:gardenLevel+4});}
  for(const [mat,list] of batches){const inst=new T.InstancedMesh(new T.BoxGeometry(1,1,1),mat,list.length);list.forEach((b,i)=>{dummy.position.set(b.x,b.y,b.z);dummy.rotation.set(0,b.angle,0);dummy.scale.set(b.sx,b.sy,b.sz);dummy.updateMatrix();inst.setMatrixAt(i,dummy.matrix)});inst.castShadow=true;inst.receiveShadow=true;scene.add(inst);}
  const mergedDrawCalls=mergeStaticMeshes(scene);
  for(const g of gates)landmarks.push({name:g.name,p:safePoint(g.point(0,6)),label:g.point(0,0),height:g.level+5});

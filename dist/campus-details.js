@@ -18,7 +18,7 @@ export function addCampusDetails(o){
   const {scene,data,config,buildings,ponds,roads,terrainModel,groundAt,walkHeight,blocked,mesh,polygon,box,m,walls,terrainSurface,noPlants}=o;
   const spec=config.landscape,material=color=>new T.MeshStandardMaterial({color,roughness:.9});
   const wallMat=material('#c0b8a3'),bambooMat=material('#66854a'),leafMat=material('#3b693a'),grassMat=material('#628649');
-  for(const w of walls){const x=(w.a[0]+w.b[0])/2,z=(w.a[1]+w.b[1])/2,len=Math.hypot(w.b[0]-w.a[0],w.b[1]-w.a[1]),y=Math.min(groundAt(...w.a),groundAt(...w.b)),h=spec.boundaryWall.height+Math.abs(groundAt(...w.a)-groundAt(...w.b));box(wallMat,x,y+h/2,z,spec.boundaryWall.thickness,h,len+.1,Math.atan2(w.b[0]-w.a[0],w.b[1]-w.a[1]));}
+  for(const w of walls){const x=(w.a[0]+w.b[0])/2,z=(w.a[1]+w.b[1])/2,len=Math.hypot(w.b[0]-w.a[0],w.b[1]-w.a[1]),y=Math.min(terrainSurface.heightAt(...w.a),terrainSurface.heightAt(...w.b))-.1,h=spec.boundaryWall.height+Math.abs(terrainSurface.heightAt(...w.a)-terrainSurface.heightAt(...w.b))+.1;box(wallMat,x,y+h/2,z,spec.boundaryWall.thickness,h,len+.1,Math.atan2(w.b[0]-w.a[0],w.b[1]-w.a[1]));}
   // Grass verges are laid on the same terrain as the asphalt, stopping at buildings and water.
   const verge=[];
   for(const r of roads.filter(r=>r.width>4)){
@@ -51,7 +51,7 @@ export function addCampusDetails(o){
   for(let i=0;i<260;i++){
     const x=Math.min(...xs)+rand()*(Math.max(...xs)-Math.min(...xs)),z=Math.min(...zs)+rand()*(Math.max(...zs)-Math.min(...zs));
     if(!inside(x,z,grove)||noPlants(x,z,4)||blocked(x,z)||terrainModel.routes.some(r=>distSegment(x,z,r.a,r.b)<r.width/2+1))continue;
-    const y=groundAt(x,z),h=10+rand()*7;stems.push({x,y:y+h/2,z,sx:.11,sy:h,sz:.11});
+    const y=terrainSurface.heightAt(x,z)-.04,h=10+rand()*7;stems.push({x,y:y+h/2,z,sx:.11,sy:h,sz:.11});
     for(let j=0;j<6;j++)leaves.push({x:x+(rand()-.5)*3,y:y+h*(.55+rand()*.42),z:z+(rand()-.5)*3,sx:1+rand(),sy:.22,sz:.4+rand()*.6,angle:rand()*6.28});
     for(let j=0;j<3;j++)grasses.push({x:x+(rand()-.5),y:y+.6,z:z+(rand()-.5),sx:.2,sy:1.2,sz:.2});
   }
