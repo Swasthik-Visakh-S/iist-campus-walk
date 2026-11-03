@@ -1,4 +1,4 @@
-import {inside, edgeDistance} from './geometry.js';
+import {inside, edgeDistance} from './geometry.js?v=6';
 const clamp=t=>Math.max(0,Math.min(1,t));
 const smooth=t=>{t=clamp(t);return t*t*(3-2*t);};
 export function makeTerrain(data, config, buildings, ponds) {

@@ -34,7 +34,7 @@ export function addLibraryFacade(scene, library, garden, materials) {
   for(const sign of [-1,1])block(materials.white,sign*width*.32,2,4,.35,4,.35);
   return group;
 }
-export function addLibraryGarden(scene, garden, level, materials, groundAt) {
+export function addLibraryGarden(scene, garden, level, materials, groundAt, noPlants=()=>false) {
   const make=(g,m,x,y,z)=>{const o=new T.Mesh(g,m);o.position.set(x,y,z);o.receiveShadow=true;o.castShadow=true;scene.add(o);return o;};
   const green=new T.MeshStandardMaterial({color:'#608c36',roughness:1});
   const stone=new T.MeshStandardMaterial({color:'#d4d1bd',roughness:1});
@@ -60,7 +60,7 @@ export function addLibraryGarden(scene, garden, level, materials, groundAt) {
   for(let i=0;i<52;i++){
     const theta=i*Math.PI*2/52;if(Math.abs(Math.sin(theta))<.12)continue;
     const p=garden.point(Math.cos(theta)*(garden.halfWidth-.8),Math.sin(theta)*(garden.halfLength-.8));
-    if(Math.hypot(p[0]-fx,p[1]-fz)<garden.outerRadius+1)continue;shrubs.push(p);
+    if(Math.hypot(p[0]-fx,p[1]-fz)<garden.outerRadius+1||noPlants(...p,1))continue;shrubs.push(p);
   }
   const bush=new T.InstancedMesh(new T.SphereGeometry(1,8,5),materials.leaf,shrubs.length),dummy=new T.Object3D();shrubs.forEach((p,i)=>{dummy.position.set(p[0],level+.7,p[1]);dummy.scale.set(.9,.65,.9);dummy.updateMatrix();bush.setMatrixAt(i,dummy.matrix)});bush.castShadow=true;scene.add(bush);
   const jetMat=new T.LineBasicMaterial({color:'#d1f3f3',transparent:true,opacity:.8});
@@ -72,7 +72,7 @@ export function addLibraryGarden(scene, garden, level, materials, groundAt) {
   }
   // Palms along the perimeter road, with curved, narrow fronds.
   for(const sign of [-1,1])for(const v of [-14,-4,7,17]){
-    const p=garden.point(sign*(garden.halfWidth+10),v),y=groundAt(...p),h=7.5;
+    const p=garden.point(sign*(garden.halfWidth+10),v);if(noPlants(...p,4.5))continue;const y=groundAt(...p),h=7.5;
     make(new T.CylinderGeometry(.17,.27,h,8),materials.trunk,p[0],y+h/2,p[1]);
     for(let i=0;i<9;i++){
       const a=i*Math.PI*2/9,vertices=[];

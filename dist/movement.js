@@ -1,19 +1,19 @@
 // Foot position and vertical velocity; shared by the browser and regression checks.
-export function resetMotion(state,x,z,world){state.x=x;state.z=z;state.y=world.walkHeight(x,z)+.14;state.vy=0;state.grounded=true;}
+export function resetMotion(state,x,z,world){state.x=x;state.z=z;state.y=world.walkHeight(x,z)+.015;state.vy=0;state.grounded=true;}
 export function stepMotion(state,dx,dz,dt,jump,world){
   const ox=state.x,oz=state.z;
   if(jump&&state.grounded){state.vy=6.8;state.grounded=false;}
   const n=Math.max(1,Math.ceil(Math.hypot(dx,dz)/.18));
   function tryMove(x,z){
     if(world.blocked(x,z))return;
-    const floor=world.walkHeight(x,z)+.14;
+    const floor=world.walkHeight(x,z)+.015;
     // No climbing vertical banks or jumping through buildings/ponds.
     if(floor>state.y+.55)return;
     state.x=x;state.z=z;
     if(state.grounded&&Math.abs(floor-state.y)<.55)state.y=floor;
   }
   for(let i=0;i<n;i++){tryMove(state.x+dx/n,state.z);tryMove(state.x,state.z+dz/n);}
-  const floor=world.walkHeight(state.x,state.z)+.14;
+  const floor=world.walkHeight(state.x,state.z)+.015;
   if(state.grounded&&state.y-floor>.55)state.grounded=false;
   if(!state.grounded){state.vy-=18*dt;state.y+=state.vy*dt;if(state.y<=floor){state.y=floor;state.vy=0;state.grounded=true;}}
   else state.y=floor;

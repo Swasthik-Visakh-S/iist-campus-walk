@@ -1,4 +1,4 @@
-# Campus corrections — 30 October 2026
+# Campus corrections — updated 3 November 2026
 
 These updates use the owner's written corrections and marked SAC/OAT/MPH image. Numbers refer to the two-page correction map, not the illustrated reference plan's legend.
 
@@ -22,7 +22,7 @@ These updates use the owner's written corrections and marked SAC/OAT/MPH image. 
 ## Applied layout and landscape
 
 - Rename the former MPH-labelled footprint to SAC (8), separate from OAT (7). Add MPH to the other side, approximating the blue outline; refine SAC using the magenta outline.
-- Connect the three buildings with pedestrian paths; roof the marked connecting sections and add stairs to the upper hostel terrace. Keep the vehicle approach outside the complex.
+- Connect the three buildings with pedestrian paths; roof the marked connecting sections and add stairs to the upper hostel terrace. The November update removes the invented road loop behind MPH; a connected pedestrian route passes through open aisles in OAT.
 - Raise the road from Tripthi toward Dhruva, Dhanishta and Chitra, with a densely planted steep bank above the lower hostel row.
 - Add tall bamboo and grass inside the central hostel road enclosure.
 - Lower Aerospace below the Library/Admin terrace and lower blocks 4–6 again; grade the connecting roads.
@@ -31,12 +31,19 @@ These updates use the owner's written corrections and marked SAC/OAT/MPH image. 
 - Add high perimeter walls along the mapped campus boundary, leaving road gates. Wall height (3.6 m) and gate widths are estimates.
 - Use dark tar roads, grass verges, broadleaf/mango-like trees, an open soil-coloured ground, and a roundabout garden with a 22 m high-mast light. Species, exact locations and the mast height are illustrative.
 
+## November entrances and gates
+
+- Add photo-inspired red piers, cream canopies and glazed doorways to 22 occupied buildings. Open-air seating and water tanks are excluded from this entrance style.
+- Connect each entrance to an existing route with a clear path. Exclude trees, bamboo, palms and grass strips from the approaches.
+- Add front and back gate structures at the mapped west/east vehicle approaches, open gate leaves, guard booths and two illustrative CISF officers per gate. Exact architecture and officer appearances are illustrative.
+- Remove the road loop around the back of MPH. SAC–OAT–MPH remain connected with covered paths and openings through the OAT seating.
+
 ## Exploration update
 
 - Continuous asphalt ribbons follow bends and slopes, with edge lines, centre dashes and pale kerbs. Markings and kerbs leave junctions and pedestrian crossings open.
-- A visible chibi girl walks and runs with articulated arms and legs. A following camera rotates with the mouse or touch drag and zooms with the scroll wheel.
+- A visible chibi student in a collared shirt, skirt, backpack and ID lanyard walks and runs with articulated arms and legs. A following camera rotates with the mouse or touch drag and zooms with the scroll wheel.
 - Space and the touch Jump button trigger one jump per press. Gravity and collision stay active while airborne; landing follows the terrain.
 
 ## Validation limits
 
-Automated checks cover geometry, collisions, the requested relative elevation order, destination safety, ascending/dipping roads, connecting paths, walls, bamboo, covered walks, steps and open-ground tree exclusion. The browser available for development lacks WebGL: the 2D fallback can be checked, but the final 3D appearance and character motion must still be checked on a WebGL-capable device.
+Automated checks cover geometry, collisions, elevation order, destinations, road clearance, connecting paths, entrances, gates, planting exclusions, jumping and control state. The Version 6 local preview was blocked in the development browser. Control tests use a DOM/renderer test double, not real WebGL pixels. Final 3D appearance, touch hardware and frame rates still need device verification.

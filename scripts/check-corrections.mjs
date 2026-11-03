@@ -54,6 +54,6 @@ for(const name of ['Continuous asphalt','Pedestrian surfaces','Road edge and cen
 for(const r of w.roads.filter(r=>r.width>4)){
  const x=(r.a[0]+r.b[0])/2,z=(r.a[1]+r.b[1])/2;
  assert(w.walkHeight(x,z)>=w.terrainSurface.heightAt(x,z)-.001,'Feet stay above rendered road');
- if(w.terrainModel.stairHeight(x,z)===null)assert(Math.abs(w.walkHeight(x,z)-w.terrainSurface.heightAt(x,z))<.001,'Feet follow rendered road');
+ if(w.terrainModel.stairHeight(x,z)===null)assert(Math.abs(w.walkHeight(x,z)-w.terrainSurface.heightAt(x,z)-.14)<.001,'Feet follow rendered road');
 }
 console.log(`Checked ${roadTriangles} road/paint triangles for terrain clearance; ${w.terrainSurface.refinedCells} terrain cells refined near roads.`);

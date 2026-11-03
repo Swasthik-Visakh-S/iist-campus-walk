@@ -18,3 +18,5 @@ jobs:
       - run: node scripts/check-world.mjs
       - run: node scripts/check-corrections.mjs
       - run: node scripts/check-character.mjs
+      - run: node scripts/check-v6.mjs
+      - run: node --experimental-vm-modules scripts/check-controls.mjs

@@ -4,21 +4,24 @@ if (!base || !/^https:\/\/[a-z0-9-]+\.github\.io\/iist-campus-walk\/$/.test(base
   throw new Error('Expected the project Pages URL ending in /iist-campus-walk/');
 }
 const paths = [
-  ['', '<title>IIST · Campus Walk</title>'],
-  ['app.js', 'buildWorld'],
-  ['world.js', 'buildWorld'],
-  ['terrain.js', 'makeTerrain'],
-  ['campus-details.js', 'addCampusDetails'],
-  ['campus.json', 'features'],
-  ['model-config.json', 'terrain'],
-  ['style.css', 'body'],
-  ['vendor/three.module.js', 'three.js'],
+  ['', 'url=./dist/?v=6'],
+  ['dist/', 'VERSION 6'],
+  ['dist/app.js', 'chooseQuality'],
+  ['dist/world.js', 'addEntrances'],
+  ['dist/model-config.json', '"version": 6'],
+  ['dist/entrances.js', 'planEntrances'],
+  ['dist/gates.js', 'addGates'],
+  ['dist/quality.js', 'applyQuality'],
+  ['dist/render-utils.js', 'mergeStaticMeshes'],
+  ['dist/character.js', 'Chibi student'],
+  ['dist/style.css', '#joystick'],
+  ['dist/vendor/three.module.js', 'three.js'],
 ];
 async function check(path, marker) {
   let error;
   for (let attempt = 1; attempt <= 10; attempt++) {
     try {
-      const response = await fetch(new URL(path, base), {signal: AbortSignal.timeout(12000), cache: 'no-store'});
+      const response = await fetch(new URL(path+'?v=6', base), {signal: AbortSignal.timeout(12000), cache: 'no-store'});
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const body = await response.text();
       if (!body.includes(marker)) throw new Error(`expected content missing`);
