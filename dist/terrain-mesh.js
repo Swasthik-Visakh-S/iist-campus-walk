@@ -1,17 +1,17 @@
 import * as T from './vendor/three.module.js';
-import {inside,distSegment} from './geometry.js';
+import {inside,distSegment} from './geometry.js?v=6';
 // Refine the terrain only where a road crosses curved ground. Road paint and
 // asphalt are clipped to these same triangles, so hills cannot hide them.
 export function createTerrainSurface(groundAt,routes,soil){
-  const extent=800,step=5,count=320,heights=new Map(),fine=new Set(),candidates=new Set(),tiles=new Map();
+  const extent=800,step=10,count=160,heights=new Map(),fine=new Set(),candidates=new Set(),tiles=new Map();
   const key=(i,j)=>i+count*j;
   function height(x,z){const k=x+','+z;if(!heights.has(k))heights.set(k,groundAt(x,z));return heights.get(k);}
   const vertex=(x,z)=>[x,height(x,z),z];
   for(const r of routes){
-    const margin=r.width/2+5;
+    const margin=r.width/2+step;
     for(let j=Math.max(0,Math.floor((Math.min(r.a[1],r.b[1])-margin+extent)/step));j<=Math.min(count-1,Math.floor((Math.max(r.a[1],r.b[1])+margin+extent)/step));j++)
     for(let i=Math.max(0,Math.floor((Math.min(r.a[0],r.b[0])-margin+extent)/step));i<=Math.min(count-1,Math.floor((Math.max(r.a[0],r.b[0])+margin+extent)/step));i++){
-      if(distSegment(i*step-extent+2.5,j*step-extent+2.5,r.a,r.b)<margin)candidates.add(key(i,j));
+      if(distSegment(i*step-extent+step/2,j*step-extent+step/2,r.a,r.b)<margin)candidates.add(key(i,j));
     }
   }
   for(const k of candidates){
@@ -38,7 +38,7 @@ export function createTerrainSurface(groundAt,routes,soil){
           const a=corners[side],b=corners[(side+1)%4],n=adjacent[side]?8:1;
           for(let s=0;s<n;s++)ring.push(vertex(a[0]+(b[0]-a[0])*s/n,a[1]+(b[1]-a[1])*s/n));
         }
-        const mid=vertex(x+2.5,z+2.5);ring.forEach((p,n)=>tris.push([mid,ring[(n+1)%ring.length],p]));
+        const mid=vertex(x+step/2,z+step/2);ring.forEach((p,n)=>tris.push([mid,ring[(n+1)%ring.length],p]));
       }else{const a=vertex(x,z),b=vertex(x+step,z),c=vertex(x,z+step),d=vertex(x+step,z+step);tris.push([a,c,b],[b,c,d]);}
     }
     if(candidates.has(k))tiles.set(k,tris);return tris;
@@ -51,15 +51,18 @@ export function createTerrainSurface(groundAt,routes,soil){
   function bary(x,z,t){const [a,b,c]=t,den=(b[2]-c[2])*(a[0]-c[0])+(c[0]-b[0])*(a[2]-c[2]),u=((b[2]-c[2])*(x-c[0])+(c[0]-b[0])*(z-c[2]))/den,v=((c[2]-a[2])*(x-c[0])+(a[0]-c[0])*(z-c[2]))/den;return[u,v,1-u-v];}
   function heightAt(x,z){
     const i=Math.max(0,Math.min(count-1,Math.floor((x+extent)/step))),j=Math.max(0,Math.min(count-1,Math.floor((z+extent)/step)));
-    for(const tri of tile(i,j)){const b=bary(x,z,tri);if(b.every(v=>v>=-1e-7))return b.reduce((sum,w,n)=>sum+w*tri[n][1],0);}
+    const triangles=tile(i,j);
+    if(fine.has(key(i,j))){const u=(x-(i*step-extent))/(step/8),v=(z-(j*step-extent))/(step/8),ix=Math.min(7,Math.max(0,Math.floor(u))),iz=Math.min(7,Math.max(0,Math.floor(v))),tri=triangles[(iz*8+ix)*2+(u-ix+v-iz<=1?0:1)],b=bary(x,z,tri);return b.reduce((sum,w,n)=>sum+w*tri[n][1],0);}
+    for(const tri of triangles){const b=bary(x,z,tri);if(b.every(v=>v>=-1e-7))return b.reduce((sum,w,n)=>sum+w*tri[n][1],0);}
     return groundAt(x,z);
   }
   // Clip a convex road polygon to each terrain triangle it overlaps.
   function project(polygon,offset,list){
-    const xs=polygon.map(p=>p[0]),zs=polygon.map(p=>p[1]);
+    const xs=polygon.map(p=>p[0]),zs=polygon.map(p=>p[1]),xmin=Math.min(...xs),xmax=Math.max(...xs),zmin=Math.min(...zs),zmax=Math.max(...zs);
     const imin=Math.max(0,Math.floor((Math.min(...xs)+extent)/step)),imax=Math.min(count-1,Math.floor((Math.max(...xs)+extent)/step));
     const jmin=Math.max(0,Math.floor((Math.min(...zs)+extent)/step)),jmax=Math.min(count-1,Math.floor((Math.max(...zs)+extent)/step));
     for(let j=jmin;j<=jmax;j++)for(let i=imin;i<=imax;i++)for(const tri of tile(i,j)){
+      if(tri.every(p=>p[0]<xmin)||tri.every(p=>p[0]>xmax)||tri.every(p=>p[2]<zmin)||tri.every(p=>p[2]>zmax))continue;
       let clipped=polygon;
       for(let edge=0;edge<3&&clipped.length;edge++){
         const a=tri[edge],b=tri[(edge+1)%3],side=p=>(b[0]-a[0])*(p[1]-a[2])-(b[2]-a[2])*(p[0]-a[0]),next=[];

@@ -1,4 +1,4 @@
-# IIST Campus Walk — Version 5
+# IIST Campus Walk — Version 6
 
 A browser walkthrough generated from the supplied OpenStreetMap campus export.
 
@@ -21,13 +21,21 @@ Then open http://localhost:8000 in Chrome or Firefox. No Blender, npm install, A
 - Click the scene: capture mouse. Escape: release. Move the mouse or drag to rotate the camera; scroll to change its distance.
 - V: toggle aerial view. In aerial view, drag to orbit and scroll to zoom.
 - Go to a place: jump near a mapped landmark. Reset: return to start.
-- Touch: use arrow buttons to move, Jump to jump, and drag the scene to rotate the camera.
+- Touch: drag the thumb pad to move; use Run and Jump, and drag the scene to rotate the camera. Tap Map for destinations.
 
 WebGL 2 is needed for 3D. If unsupported, a 2D campus map appears automatically. Enable graphics acceleration or try another browser for 3D.
 
+## Graphics and performance
+
+Graphics **Auto** selects Light on phones and modest devices, or Balanced on larger desktops; it drops to Light if frames are consistently slow. Light caps pixel density at 1×, disables shadows and reduces decorative trees. Balanced and High retain cached static shadows. You can select a setting manually.
+
+Tree geometry is lighter and split into cullable patches. Static meshes are batched, the minimap background is cached, and terrain queries use a spatial index. Roads, verges and foot heights share the rendered surface to avoid floating feet and overlapping ground. Compared with Version 5, scene geometry and draw calls are substantially reduced; this is a geometry measurement, not a measured FPS guarantee. Rendering pauses when the tab is hidden or the graphics context is lost.
+
 ## Model accuracy
 
-Version 5 applies campus corrections supplied on 30 October 2026. It retains the 24 mapped structures, corrects building 8 to the Student Activity Centre, treats building 7 as the separate Open Air Theatre, and adds the Multipurpose Hall from the marked reference outline. Covered walks connect the complex; steps lead to the upper hostel area.
+Version 6 includes the November 2026 corrections. Photo-inspired red entrance pillars, cream lintels, covered porches and doors are added to 22 occupied buildings, with vegetation-free paths connecting to nearby roads. The front and back gates have open lanes, guard booths and four illustrative CISF officers. Entrances and gate details are approximations, not surveyed replicas. The invented road loop behind MPH is removed; covered paths link SAC and MPH through aisles in OAT.
+
+Earlier corrections supplied on 30 October 2026 are retained. It retains the 24 mapped structures, corrects building 8 to the Student Activity Centre, treats building 7 as the separate Open Air Theatre, and adds the Multipurpose Hall from the marked reference outline. Covered walks connect the complex; steps lead to the upper hostel area.
 
 The low Rohini–Revati–Vishaka–Tripthi terrace is below the Dhruva–Dhanishta–Chitra row. Central hostels share a higher terrace, with buildings 13 and 18 slightly raised while tank 12 shares Phalguni’s ground level and sits atop a tall concrete tower with four pillars. The Library, fountain, Admin Block and roundabout share a level; Aerospace is lower, and the other academic blocks are lower again. The canteen approach dips into a valley before rising. Ponds sit below all building terraces.
 
@@ -35,7 +43,7 @@ Continuous tar-coloured roads have clear edge lines, centre dashes, pale kerbs, 
 
 The relative levels and names come from the user. Numeric elevations, wall height, species placement, path widths and image-registered outlines remain **estimates, not survey measurements**. The latest clarification identifies **Ardra as 14** and **Arundhathy as 18**. The tank tower uses an illustrative 20 m support height and 4 m tank; these dimensions can be changed in `layout.waterTower`. No interiors are included.
 
-The original chibi model in `dist/character.js` has an animated walk/run, pigtails and a small backpack. `dist/movement.js` handles jumping, landing, collision and the following camera. `dist/roads.js` builds continuous road surfaces and markings. `dist/terrain-mesh.js` refines curved ground beside roads and fits asphalt and paint to the same triangles, preventing terrain from hiding the road.
+The student wears a collared blue shirt, navy skirt, socks, shoes, backpack and ID lanyard. The original chibi model in `dist/character.js` has an animated walk/run, pigtails and a small backpack. `dist/movement.js` handles jumping, landing, collision and the following camera. `dist/roads.js` builds continuous road surfaces and markings. `dist/terrain-mesh.js` refines curved ground beside roads and fits asphalt and paint to the same triangles, preventing terrain from hiding the road.
 
 `dist/model-config.json` holds the numbered building mapping, names, relative elevation groups, road profiles, connections and landscape settings. `dist/layout.js` applies corrections to both the 3D model and 2D fallback. `dist/terrain.js` shares ground elevations with roads, foundations and walking; `dist/campus-details.js` builds walls, roofs, steps, bamboo and the roundabout. Original `campus.json` and `map.osm` are preserved. No reference photos are redistributed. See [the correction record](CAMPUS_CORRECTIONS.md) for the editable assumptions.
 
@@ -49,10 +57,13 @@ Edit dist/heights.json to set building heights in metres by OSM way ID, e.g. {"6
 - scripts/check-world.mjs: Node geometry and collision checks.
 - scripts/check-corrections.mjs: supplied name/level relationships, path access, slopes and campus features.
 - scripts/check-character.mjs: jump/landing at several frame rates, collision, camera clearance, slopes and character animation.
+- scripts/check-v6.mjs: entrance access, vegetation clearance, connected paths, gates and geometry budgets.
+- scripts/check-controls.mjs: app bootstrap and control state using DOM/renderer test doubles.
+- scripts/prepare-entrances.mjs: regenerate approximate entrance placements after editing footprints or roads.
 
-Run `node scripts/check-world.mjs`, `node scripts/check-corrections.mjs`, and `node scripts/check-character.mjs`.
+Run `node scripts/check-world.mjs`, `node scripts/check-corrections.mjs`, `node scripts/check-character.mjs`, `node scripts/check-v6.mjs`, and `node --experimental-vm-modules scripts/check-controls.mjs`.
 
-Scene-construction, finite geometry, foundations, road clearance, supplied elevation relationships, pond collisions and safe destinations are checked automatically. The development browser did not support WebGL, so 3D rendering and character interaction could not be visually verified there. The 2D fallback and destination selection were visually checked. The 3D appearance still needs checking in a WebGL-enabled browser. This is an initial prototype; exact local device performance remains to be tested.
+Automated checks cover finite geometry, foundations, road clearance, relative elevations, safe destinations, entrances, planting exclusions, gates, jumping and control state. The local preview was unavailable in the development browser for Version 6. Final 3D appearance, touch gestures on hardware and actual frame rates still need visual/device verification. No claim of complete visual verification is made.
 
 ## Attribution
 

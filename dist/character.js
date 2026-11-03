@@ -1,17 +1,23 @@
 import * as T from './vendor/three.module.js';
 // Original articulated chibi model; faces local +Z, feet at Y=0.
 export function createCharacter() {
-  const root=new T.Group(),rig=new T.Group();root.name='Chibi campus explorer';root.add(rig);
+  const root=new T.Group(),rig=new T.Group();root.name='Chibi student';root.userData.dynamic=true;root.add(rig);
   const mat=c=>new T.MeshStandardMaterial({color:c,roughness:.8});
-  const skin=mat('#d89e79'),hair=mat('#34242b'),cloth=mat('#b4a3dd'),cream=mat('#fff2dc'),shoe=mat('#615974'),eye=mat('#302830'),blush=mat('#db8586');
-  const sphere=new T.SphereGeometry(1,24,16);
+  const skin=mat('#d89e79'),hair=mat('#34242b'),cloth=mat('#314965'),shirt=mat('#c1dfeb'),ribbon=mat('#dd9eac'),cream=mat('#fff2dc'),shoe=mat('#615974'),eye=mat('#302830'),blush=mat('#db8586');
+  const sphere=new T.SphereGeometry(1,18,12);
   function oval(parent,m,p,s){const o=new T.Mesh(sphere,m);o.position.set(...p);o.scale.set(...s);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o;}
   function part(parent,g,m,p){const o=new T.Mesh(g,m);o.position.set(...p);o.castShadow=true;parent.add(o);return o;}
   const body=new T.Group();rig.add(body);
-  oval(body,cloth,[0,.92,0],[.28,.36,.19]);
-  part(body,new T.CylinderGeometry(.22,.39,.38,24),cloth,[0,.69,0]);
+  oval(body,shirt,[0,.92,0],[.28,.36,.19]);
+  part(body,new T.CylinderGeometry(.22,.39,.38,12),cloth,[0,.69,0]);
   part(body,new T.CylinderGeometry(.38,.4,.045,24),cream,[0,.50,0]);
   oval(body,cream,[0,1.13,.13],[.22,.06,.10]);
+  // Student clothes: collared blue shirt, navy pleated skirt and ID lanyard.
+  for(const side of [-1,1]){const collar=oval(body,cream,[side*.09,1.12,.19],[.08,.09,.025]);collar.rotation.z=side*.4;}
+  oval(body,ribbon,[0,1.08,.215],[.045,.065,.025]);
+  for(const side of [-1,1]){const lace=part(body,new T.BoxGeometry(.018,.30,.018),cloth,[side*.06,.98,.198]);lace.rotation.z=side*.23;}
+  part(body,new T.BoxGeometry(.12,.15,.025),cream,[0,.80,.223]);part(body,new T.BoxGeometry(.075,.035,.027),shirt,[0,.835,.228]);
+
   // Small backpack and straps read clearly from the following camera.
   oval(body,shoe,[0,.94,-.23],[.23,.26,.11]);
   for(const side of [-1,1])oval(body,cream,[side*.19,1.01,.17],[.028,.20,.025]);
@@ -35,13 +41,13 @@ export function createCharacter() {
   for(const side of [-1,1]){
     const tail=new T.Group();tail.position.set(side*.40,.12,-.08);head.add(tail);tails.push(tail);
     oval(tail,hair,[side*.06,-.13,-.025],[.18,.30,.17]);
-    oval(tail,cloth,[0,0,0],[.13,.075,.14]);
-    oval(tail,cloth,[side*.07,.03,.05],[.09,.07,.045]);
+    oval(tail,ribbon,[0,0,0],[.13,.075,.14]);
+    oval(tail,ribbon,[side*.07,.03,.05],[.09,.07,.045]);
   }
   const arms=[],legs=[];
   for(const side of [-1,1]){
     const arm=new T.Group();arm.position.set(side*.29,1.10,0);body.add(arm);arms.push(arm);
-    oval(arm,cloth,[side*.025,-.13,0],[.10,.20,.10]);oval(arm,skin,[side*.035,-.32,.015],[.083,.10,.085]);
+    oval(arm,shirt,[side*.025,-.13,0],[.10,.20,.10]);oval(arm,skin,[side*.035,-.32,.015],[.083,.10,.085]);
     const leg=new T.Group();leg.position.set(side*.145,.52,0);rig.add(leg);legs.push(leg);
     oval(leg,skin,[0,-.19,0],[.09,.21,.09]);oval(leg,cream,[0,-.33,0],[.095,.10,.095]);oval(leg,shoe,[0,-.44,.055],[.12,.085,.19]);
   }

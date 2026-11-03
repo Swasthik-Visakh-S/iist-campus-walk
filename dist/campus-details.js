@@ -1,5 +1,5 @@
 import * as T from './vendor/three.module.js';
-import {inside,distSegment,edgeDistance,center} from './geometry.js';
+import {inside,distSegment,edgeDistance,center} from './geometry.js?v=6';
 export function wallSegments(boundary,routes,spec){
   const walls=[];
   for(let i=1;i<boundary.length;i++){
@@ -15,18 +15,18 @@ export function wallSegments(boundary,routes,spec){
   return walls;
 }
 export function addCampusDetails(o){
-  const {scene,data,config,buildings,ponds,roads,terrainModel,groundAt,walkHeight,blocked,mesh,polygon,box,m,walls}=o;
+  const {scene,data,config,buildings,ponds,roads,terrainModel,groundAt,walkHeight,blocked,mesh,polygon,box,m,walls,terrainSurface,noPlants}=o;
   const spec=config.landscape,material=color=>new T.MeshStandardMaterial({color,roughness:.9});
   const wallMat=material('#c0b8a3'),bambooMat=material('#66854a'),leafMat=material('#3b693a'),grassMat=material('#628649');
-  for(const w of walls){const x=(w.a[0]+w.b[0])/2,z=(w.a[1]+w.b[1])/2,len=Math.hypot(w.b[0]-w.a[0],w.b[1]-w.a[1]),y=Math.min(groundAt(...w.a),groundAt(...w.b)),h=spec.boundaryWall.height+Math.abs(groundAt(...w.a)-groundAt(...w.b));box(wallMat,x,y+h/2,z,spec.boundaryWall.thickness,h,len+.1,Math.atan2(w.b[0]-w.a[0],w.b[1]-w.a[1]));}
+  for(const w of walls){const x=(w.a[0]+w.b[0])/2,z=(w.a[1]+w.b[1])/2,len=Math.hypot(w.b[0]-w.a[0],w.b[1]-w.a[1]),y=Math.min(terrainSurface.heightAt(...w.a),terrainSurface.heightAt(...w.b))-.1,h=spec.boundaryWall.height+Math.abs(terrainSurface.heightAt(...w.a)-terrainSurface.heightAt(...w.b))+.1;box(wallMat,x,y+h/2,z,spec.boundaryWall.thickness,h,len+.1,Math.atan2(w.b[0]-w.a[0],w.b[1]-w.a[1]));}
   // Grass verges are laid on the same terrain as the asphalt, stopping at buildings and water.
   const verge=[];
   for(const r of roads.filter(r=>r.width>4)){
     const dx=r.b[0]-r.a[0],dz=r.b[1]-r.a[1],len=Math.hypot(dx,dz),nx=-dz/len,nz=dx/len;
     for(const side of [-1,1]){
       const points=[r.a,r.b].flatMap(p=>[r.width/2+.2,r.width/2+spec.vergeWidth].map(d=>[p[0]+side*nx*d,p[1]+side*nz*d]));
-      if(points.some(p=>!inside(...p,data.features.find(f=>f.tags.amenity==='university').points)||buildings.some(b=>edgeDistance(...p,b.points)<1)||ponds.some(q=>edgeDistance(...p,q.points)<2)))continue;
-      for(const i of [0,2,1,1,2,3])verge.push(points[i][0],groundAt(...points[i])+.13,points[i][1]);
+      if(points.some(p=>!inside(...p,data.features.find(f=>f.tags.amenity==='university').points)||buildings.some(b=>edgeDistance(...p,b.points)<1)||ponds.some(q=>edgeDistance(...p,q.points)<2)||noPlants(...p,.6)||terrainModel.routes.some(other=>other.id!==r.id&&distSegment(...p,other.a,other.b)<other.width/2+.2)))continue;
+      terrainSurface.project([points[0],points[1],points[3],points[2]],.10,verge);
     }
   }
   const vg=new T.BufferGeometry();vg.setAttribute('position',new T.Float32BufferAttribute(verge,3));vg.computeVertexNormals();const lawn=mesh(vg,m.lawn);lawn.material.side=T.DoubleSide;lawn.castShadow=false;
@@ -50,8 +50,8 @@ export function addCampusDetails(o){
   const grove=spec.bamboo.points,xs=grove.map(p=>p[0]),zs=grove.map(p=>p[1]);
   for(let i=0;i<260;i++){
     const x=Math.min(...xs)+rand()*(Math.max(...xs)-Math.min(...xs)),z=Math.min(...zs)+rand()*(Math.max(...zs)-Math.min(...zs));
-    if(!inside(x,z,grove)||blocked(x,z)||roads.some(r=>distSegment(x,z,r.a,r.b)<r.width/2+1))continue;
-    const y=groundAt(x,z),h=10+rand()*7;stems.push({x,y:y+h/2,z,sx:.11,sy:h,sz:.11});
+    if(!inside(x,z,grove)||noPlants(x,z,4)||blocked(x,z)||terrainModel.routes.some(r=>distSegment(x,z,r.a,r.b)<r.width/2+1))continue;
+    const y=terrainSurface.heightAt(x,z)-.04,h=10+rand()*7;stems.push({x,y:y+h/2,z,sx:.11,sy:h,sz:.11});
     for(let j=0;j<6;j++)leaves.push({x:x+(rand()-.5)*3,y:y+h*(.55+rand()*.42),z:z+(rand()-.5)*3,sx:1+rand(),sy:.22,sz:.4+rand()*.6,angle:rand()*6.28});
     for(let j=0;j<3;j++)grasses.push({x:x+(rand()-.5),y:y+.6,z:z+(rand()-.5),sx:.2,sy:1.2,sz:.2});
   }
@@ -65,5 +65,5 @@ export function addCampusDetails(o){
   const h=spec.roundabout.mastHeight;mesh(new T.CylinderGeometry(.18,.45,h,10),m.white,c[0],y+h/2,c[1]);
   mesh(new T.CylinderGeometry(1.9,1.9,.2,16),m.roof,c[0],y+h,c[1]);
   for(let i=0;i<8;i++){const a=i*Math.PI/4;const lamp=mesh(new T.BoxGeometry(.75,.18,.5),m.white,c[0]+Math.cos(a)*1.6,y+h-.3,c[1]+Math.sin(a)*1.6);lamp.rotation.y=-a;}
-  return {roundabout:c,roofSegments,stairCount,bambooStems:stems.length,mastHeight:h,wallCount:walls.length};
+  return {roundabout:c,roofSegments,stairCount,bambooStems:stems.length,bambooPositions:stems.map(p=>[p.x,p.z]),mastHeight:h,wallCount:walls.length};
 }

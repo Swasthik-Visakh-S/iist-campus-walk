@@ -1,5 +1,5 @@
 import * as T from './vendor/three.module.js';
-import {inside,distSegment} from './geometry.js';
+import {inside,distSegment} from './geometry.js?v=6';
 // Continuous mitered ribbons prevent the gaps left by separate road rectangles.
 export function addRoads(scene,data,boundary,groundAt,blocked,materials,terrainSurface){
   const features=data.features.filter(f=>f.tags.highway),roads=[],surface=[[],[]],paint=[],kerbs=[];
