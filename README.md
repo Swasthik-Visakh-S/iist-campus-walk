@@ -1,4 +1,4 @@
-# IIST Campus Walk — Version 6
+# IIST Campus Walk — Version 7
 
 A browser walkthrough generated from the supplied OpenStreetMap campus export.
 
@@ -16,14 +16,24 @@ Then open http://localhost:8000 in Chrome or Firefox. No Blender, npm install, A
 
 ## Controls
 
-- Explore with her: guide a chibi girl from the roundabout with a following camera.
+- Free roam: guide a chibi girl from the roundabout with a following camera.
 - WASD / arrow keys: move. Shift: run. Space: jump (press again after landing).
-- Click the scene: capture mouse. Escape: release. Move the mouse or drag to rotate the camera; scroll to change its distance.
+- Click the scene: capture mouse. Escape: pause and release. Move the mouse or drag to rotate the camera; scroll to change its distance.
 - V: toggle aerial view. In aerial view, drag to orbit and scroll to zoom.
 - Go to a place: jump near a mapped landmark. Reset: return to start.
+- E: discover the current trail stop within 9 metres while standing on its terrace. M: toggle the map.
+- Start discovery trail: an optional five-stop tour; use the pause menu to restart.
 - Touch: drag the thumb pad to move; use Run and Jump, and drag the scene to rotate the camera. Tap Map for destinations.
 
 WebGL 2 is needed for 3D. If unsupported, a 2D campus map appears automatically. Enable graphics acceleration or try another browser for 3D.
+
+## Version 7: a small campus adventure
+
+Inspired by Benglooru's free-roam exploration, simple objectives and local saves, this adds a lightweight optional trail through Roundabout → Library → SAC → OAT → Tripthi canteen. A gold marker and minimap dot show the next existing destination; the compass arrow rotates with the camera. Distances are direct, not road-route distances. Follow the campus paths, then press E or tap Discover to collect a place and read a short campus note. Free roam stays available, and Escape / Pause opens a pause menu.
+
+Discovery progress is stored only in this browser using `iist-discovery-v1`. Reloading preserves collected places; it does not restore player position. Private mode, cleared site data or another browser may reset progress. Storage failures fall back to session-only progress. Restart discovery trail clears only this trail's stamps, retaining graphics preferences.
+
+The map, terrain, road network, building footprints, entrances, vegetation and character are unchanged from Version 6. The new world marker uses two small unlit meshes with no textures or shadows; HUD updates run at 5 Hz. No assets or source code from Benglooru are included. No account, API, build service, server routing or new library is needed; GitHub Pages stays on **main / (root)**. Root and changed entry assets use the `v=7` cache key.
 
 ## Graphics and performance
 
@@ -58,12 +68,13 @@ Edit dist/heights.json to set building heights in metres by OSM way ID, e.g. {"6
 - scripts/check-corrections.mjs: supplied name/level relationships, path access, slopes and campus features.
 - scripts/check-character.mjs: jump/landing at several frame rates, collision, camera clearance, slopes and character animation.
 - scripts/check-v6.mjs: entrance access, vegetation clearance, connected paths, gates and geometry budgets.
+- scripts/check-discovery.mjs: existing trail destinations, proximity/elevation, completion, local save and storage failure checks.
 - scripts/check-controls.mjs: app bootstrap and control state using DOM/renderer test doubles.
 - scripts/prepare-entrances.mjs: regenerate approximate entrance placements after editing footprints or roads.
 
-Run `node scripts/check-world.mjs`, `node scripts/check-corrections.mjs`, `node scripts/check-character.mjs`, `node scripts/check-v6.mjs`, and `node --experimental-vm-modules scripts/check-controls.mjs`.
+Run `node scripts/check-world.mjs`, `node scripts/check-corrections.mjs`, `node scripts/check-character.mjs`, `node scripts/check-v6.mjs`, `node scripts/check-discovery.mjs`, and `node --experimental-vm-modules scripts/check-controls.mjs`.
 
-Automated checks cover finite geometry, foundations, road clearance, relative elevations, safe destinations, entrances, planting exclusions, gates, jumping and control state. The local preview was unavailable in the development browser for Version 6. Final 3D appearance, touch gestures on hardware and actual frame rates still need visual/device verification. No claim of complete visual verification is made.
+Automated checks cover finite geometry, foundations, road clearance, relative elevations, safe destinations, entrances, planting exclusions, gates, jumping and control state. The local preview was unavailable in the development browser; the public reference also reported unavailable 3D graphics in this browser. Version 7 gameplay checks use DOM/renderer test doubles. Final 3D appearance, touch gestures on hardware and actual frame rates still need visual/device verification. No claim of complete visual verification is made.
 
 ## Attribution
 

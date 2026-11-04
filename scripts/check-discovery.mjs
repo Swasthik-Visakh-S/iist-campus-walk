@@ -1,0 +1,30 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import * as T from '../dist/vendor/three.module.js';
+import {buildWorld} from '../dist/world.js';
+import {createTour,SAVE_KEY,STOP_DEFINITIONS} from '../dist/exploration.js';
+const read=n=>JSON.parse(fs.readFileSync(new URL('../dist/'+n,import.meta.url)));
+const world=buildWorld(new T.Scene(),read('campus.json'),read('model-config.json'));
+let stored=null;const storage={getItem:()=>stored,setItem(k,value){assert.equal(k,SAVE_KEY);stored=value;}};
+let tour=createTour(world.places,storage);
+assert.equal(tour.stops.length,5,'Every trail stop matches an existing campus destination');
+assert.equal(tour.current(),null,'Free roam by default');tour.start();
+for(const definition of STOP_DEFINITIONS){
+ const stop=tour.current();assert.equal(stop.id,definition.id);const [x,z]=stop.place.p;
+ assert(!world.blocked(x,z),definition.name+' is reachable');
+ const y=world.walkHeight(x,z),player={x,z,y:y+.015,grounded:true};
+ assert.equal(tour.visit({...player,x:x+10},y),null,'Must approach the stop');
+ assert.equal(tour.visit({...player,grounded:false},y),null,'Jumping over a stop cannot stamp it');
+ assert.equal(tour.visit({...player,y:y+10},y),null,'Different elevation cannot stamp it');
+ assert(Number.isFinite(tour.status(player,Math.PI).bearing));
+ assert.equal(tour.visit(player,y).id,definition.id);
+ const previousCount=tour.count;tour=createTour(world.places,storage);
+ assert.equal(tour.count,previousCount,'Reload resumes saved progress');assert(tour.active);
+}
+assert(tour.complete);assert.equal(tour.current(),null);assert.equal(tour.visit({x:0,z:0},0),null);
+tour.stop();assert.equal(createTour(world.places,storage).active,false);tour.restart();assert.equal(tour.count,0);assert(tour.active);
+stored=JSON.stringify({version:1,active:true,visited:['library','library','unknown']});tour=createTour(world.places,storage);assert.equal(tour.count,1);assert.equal(tour.current().id,'roundabout');
+stored='{bad json';assert.equal(createTour(world.places,storage).count,0);
+const broken=createTour(world.places,{getItem(){throw Error('denied')},setItem(){throw Error('quota')}});broken.start();assert(!broken.persisted);assert(broken.active);assert.equal(broken.count,0);
+const unavailable=createTour(world.places);unavailable.start();assert(!unavailable.persisted);
+console.log('Passed five reachable trail stops, proximity/elevation checks, save/reload, completion, restart, malformed saves and blocked storage.');
