@@ -44,6 +44,10 @@ These updates use the owner's written corrections and marked SAC/OAT/MPH image. 
 - A visible chibi student in a collared shirt, skirt, backpack and ID lanyard walks and runs with articulated arms and legs. A following camera rotates with the mouse or touch drag and zooms with the scroll wheel.
 - Space and the touch Jump button trigger one jump per press. Gravity and collision stay active while airborne; landing follows the terrain.
 
+## Version 7 discovery layer
+
+The map and all Version 6 geometry/configuration remain unchanged. An optional five-stop trail, compass/distance HUD, gold destination marker, campus notes, pause menu and browser-local progress sit on top of the existing walk. Only the interface and exploration logic change. All stops use existing safe destinations.
+
 ## Validation limits
 
 Automated checks cover geometry, collisions, elevation order, destinations, road clearance, connecting paths, entrances, gates, planting exclusions, jumping and control state. The Version 6 local preview was blocked in the development browser. Control tests use a DOM/renderer test double, not real WebGL pixels. Final 3D appearance, touch hardware and frame rates still need device verification.
