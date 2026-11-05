@@ -100,8 +100,8 @@ $('destination').onchange=e=>{
  document.body.classList.remove('map-open');
  $('mapToggle').setAttribute('aria-expanded','false');
  const gate=world.gates.find(g=>g.name===place.name);
- const ball=place.name==='Football turf'?world.pitch.ball.position:null;
- const facing=gate?.center||place.door||place.viewToward||(ball?[ball.x,ball.z]:null)||(place.name==='Library fountain & garden'?world.garden.libraryCenter:null);
+ const goal=place.name==='Football turf'?world.pitch.aim:null;
+ const facing=gate?.center||place.door||place.viewToward||goal||(place.name==='Library fountain & garden'?world.garden.libraryCenter:null);
  if(facing){
   yaw=Math.atan2(player.x-facing[0],player.z-facing[1]);
   avatar.root.rotation.y=yaw+Math.PI;

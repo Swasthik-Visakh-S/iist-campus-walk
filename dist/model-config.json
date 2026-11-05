@@ -5804,9 +5804,12 @@
       "blend": 14
     },
     "hostelAvenue": {
-      "id": "365911690",
       "level": 30,
-      "shrubSpacing": 2.9
+      "shrubSpacing": 2.9,
+      "roadIds": [
+        "365911690",
+        "365910893"
+      ]
     }
   }
 }

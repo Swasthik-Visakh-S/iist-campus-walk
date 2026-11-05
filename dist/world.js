@@ -144,7 +144,7 @@ export function buildWorld(scene,data,config){
  }
  addEntrances(entrances,box,m);
  addBanyan({site:sites.shrine,surface:terrainSurface,mesh});
- const avenueShrubs=addAvenueShrubs({scene,config,routes:terrainModel.routes,buildings,surface:terrainSurface,noPlants});
+ const avenueShrubs=addAvenueShrubs({scene,config,routes:terrainModel.routes,buildings,boundary,surface:terrainSurface,noPlants});
  const gateDetails=addGates(gates,scene,box,m,(x,z)=>terrainSurface.heightAt(x,z)-.04);
  const details=addCampusDetails({scene,data,config,buildings,ponds,roads,terrainModel,terrainSurface,groundAt,walkHeight,blocked,mesh,polygon,box,m,walls,noPlants});
  const rb=data.features.find(f=>f.tags.junction==='roundabout'),spawn=safePoint(rb.points[0]);landmarks.unshift({name:'Roundabout',p:spawn,label:center(rb.points),height:groundAt(...center(rb.points))});

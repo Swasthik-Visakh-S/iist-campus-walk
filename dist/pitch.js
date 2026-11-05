@@ -235,5 +235,5 @@ export function addTurf(scene,points,surface) {
     }
     pos.y=ballFloor();
   }
-  return {spawn:at(.5,.40),gate:at(0,.5),ball,blocked,contains,update};
+  return {spawn:at(.43,.30),aim:at(.5,.94),gate:at(0,.5),ball,blocked,contains,update};
 }

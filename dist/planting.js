@@ -1,18 +1,17 @@
 import * as T from './vendor/three.module.js';
-import {edgeDistance, distSegment} from './geometry.js?v=6';
+import {edgeDistance, distSegment, inside} from './geometry.js?v=6';
 
-export function addAvenueShrubs({scene, config, routes, buildings, surface, noPlants}){
+export function addAvenueShrubs({scene, config, routes, buildings, boundary, surface, noPlants}){
   const avenue=config.landscape.hostelAvenue;
-  const shrubs=[],along=routes.filter(r=>r.id===avenue.id);
+  const shrubs=[],along=routes.filter(r=>avenue.roadIds.includes(r.id)&&r.y0===avenue.level&&r.y1===avenue.level);
   let distance=0,station=0;
   for(const r of along){
     for(;station<distance+r.length;station+=avenue.shrubSpacing){
-      if(r.y0!==avenue.level||r.y1!==avenue.level)continue;
       const t=(station-distance)/r.length;
       for(const side of [-1,1]){
         const offset=(r.width/2+1.15)*side;
         const x=r.a[0]+r.dx*t-r.dz/r.length*offset,z=r.a[1]+r.dz*t+r.dx/r.length*offset;
-        if(noPlants(x,z,1.15)||buildings.some(b=>edgeDistance(x,z,b.points)<1.4))continue;
+        if(!inside(x,z,boundary)||noPlants(x,z,1.15)||buildings.some(b=>edgeDistance(x,z,b.points)<1.4))continue;
         if(routes.some(s=>s.id!==r.id&&distSegment(x,z,s.a,s.b)<s.width/2+1.2))continue;
         shrubs.push({x,z,side});
       }
