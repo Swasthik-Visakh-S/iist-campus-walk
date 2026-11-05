@@ -1,3 +1,4 @@
+import {createSkateboard} from './skateboard.js?v=8';
 import * as T from './vendor/three.module.js';
 // Original articulated chibi model; faces local +Z, feet at Y=0.
 export function createCharacter() {
@@ -51,8 +52,21 @@ export function createCharacter() {
     const leg=new T.Group();leg.position.set(side*.145,.52,0);rig.add(leg);legs.push(leg);
     oval(leg,skin,[0,-.19,0],[.09,.21,.09]);oval(leg,cream,[0,-.33,0],[.095,.10,.095]);oval(leg,shoe,[0,-.44,.055],[.12,.085,.19]);
   }
+  const board=createSkateboard();root.add(board.root);
   let phase=0,blend=0;
-  function animate(dt,travel,speed,grounded,time){
+  function animate(dt,travel,speed,grounded,time,skating=false,boost=false){
+    board.root.visible=skating;
+    rig.position.y=skating?.22:0;
+    rig.rotation.y=skating?.85:0;
+    board.update(skating?travel:0,boost);
+    if(skating){
+      legs[0].rotation.x=-.12;legs[1].rotation.x=.15;
+      arms[0].rotation.x=arms[1].rotation.x=-.13;
+      arms[0].rotation.z=-.60;arms[1].rotation.z=.60;
+      body.rotation.z=boost&&speed>1?.10:.03;body.position.y=-.015;
+      head.rotation.y=-.65;eyes.forEach(e=>e.scale.y=time%4.1<.13?.012:.085);
+      return;
+    }
     blend=T.MathUtils.damp(blend,grounded&&speed>.05?1:0,12,dt);
     phase+=travel*4.8;
     const swing=Math.sin(phase)*.66*blend;
@@ -66,5 +80,5 @@ export function createCharacter() {
     eyes.forEach(e=>e.scale.y=blink?.012:.085);
     head.rotation.y=grounded?Math.sin(time*.7)*.045*(1-blend):0;
   }
-  return {root,animate,legs,arms,eyes};
+  return {root,animate,legs,arms,eyes,board:board.root};
 }

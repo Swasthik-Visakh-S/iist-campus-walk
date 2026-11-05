@@ -4,13 +4,13 @@ if (!base || !/^https:\/\/[a-z0-9-]+\.github\.io\/iist-campus-walk\/$/.test(base
   throw new Error('Expected the project Pages URL ending in /iist-campus-walk/');
 }
 const paths = [
-  ['', 'url=./dist/?v=7'],
-  ['dist/', 'VERSION 7'],
-  ['dist/app.js', 'createTourUI'],
-  ['dist/exploration.js', 'iist-discovery-v1'],
-  ['dist/tour-ui.js', 'createTourUI'],
+  ['', 'url=./dist/?v=8'],
+  ['dist/', 'VERSION 8'],
+  ['dist/app.js', 'toggleBoard'],
+  ['dist/transit.js', 'createCheckpoint'],
+  ['dist/site-details.js', 'perimeterRails'],
   ['dist/world.js', 'addEntrances'],
-  ['dist/model-config.json', '"version": 6'],
+  ['dist/model-config.json', '"version": 8'],
   ['dist/entrances.js', 'planEntrances'],
   ['dist/gates.js', 'addGates'],
   ['dist/quality.js', 'applyQuality'],
@@ -23,7 +23,7 @@ async function check(path, marker) {
   let error;
   for (let attempt = 1; attempt <= 10; attempt++) {
     try {
-      const response = await fetch(new URL(path+'?v=7', base), {signal: AbortSignal.timeout(12000), cache: 'no-store'});
+      const response = await fetch(new URL(path+'?v=8', base), {signal: AbortSignal.timeout(12000), cache: 'no-store'});
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const body = await response.text();
       if (!body.includes(marker)) throw new Error(`expected content missing`);

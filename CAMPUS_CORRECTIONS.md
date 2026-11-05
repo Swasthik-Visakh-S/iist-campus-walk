@@ -44,9 +44,9 @@ These updates use the owner's written corrections and marked SAC/OAT/MPH image. 
 - A visible chibi student in a collared shirt, skirt, backpack and ID lanyard walks and runs with articulated arms and legs. A following camera rotates with the mouse or touch drag and zooms with the scroll wheel.
 - Space and the touch Jump button trigger one jump per press. Gravity and collision stay active while airborne; landing follows the terrain.
 
-## Version 7 discovery layer
+## November 5 annotated views
 
-The map and all Version 6 geometry/configuration remain unchanged. An optional five-stop trail, compass/distance HUD, gold destination marker, campus notes, pause menu and browser-local progress sit on top of the existing walk. Only the interface and exploration logic change. All stops use existing safe destinations.
+Version 8 uses the marked entrances and visible roof outlines on the two supplied campus views. The overlap provides four common entrance marks. The map has 23 distinct marked doors plus estimated entrances on the remaining occupied buildings. The long southern pond is treated as Bhagirati, the western pond as Bhagirati 2.0 and the outlined small pond as Bhagirati 3.0.
 
 ## Validation limits
 

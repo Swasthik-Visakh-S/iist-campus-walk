@@ -38,16 +38,17 @@ export function makeTerrain(data, config, buildings, ponds) {
     return {t,d:Math.hypot(x-r.a[0]-t*r.dx,z-r.a[1]-t*r.dz),height:r.y0+(r.y1-r.y0)*t};
   }
   function groundAt(x,z) {
-    let h=baseHeight(x,z),sum=0,weights=0,blend=0;
+    let h=baseHeight(x,z),sum=0,weights=0,blend=0,roadInterior=0;
     for(const p of ponds){const d=edgeDistance(x,z,p.points);if(d<13){const dest=inside(x,z,p.points)?p.level-2:p.level+.25;h+=(dest-h)*(1-smooth(d/13));}}
     for(const r of routes) {
       if(!r.grade)continue;
       if(x<Math.min(r.a[0],r.b[0])-8||x>Math.max(r.a[0],r.b[0])+8||z<Math.min(r.a[1],r.b[1])-8||z>Math.max(r.a[1],r.b[1])+8)continue;
-      const s=routeSample(x,z,r),d=Math.max(0,s.d-r.width/2);
+      const s=routeSample(x,z,r);if(r.width>4)roadInterior=Math.max(roadInterior,1-smooth(s.d/(r.width*.5)));
+      const d=Math.max(0,s.d-r.width/2);
       if(d<5){const w=(1-smooth(d/5))/(.2+s.d*s.d)**2;sum+=w*s.height;weights+=w;blend=Math.max(blend,1-smooth(d/5));}
     }
     if(weights)h+=(sum/weights-h)*blend;
-    for(const b of buildings){const d=edgeDistance(x,z,b.points);if(d<5)h+=(b.level-h)*(1-smooth(d/5));}
+    for(const b of buildings){const d=edgeDistance(x,z,b.points);if(d<5)h+=(b.level-h)*(1-smooth(d/5))*(1-roadInterior*smooth(d/.7));}
     return h;
   }
   const stepRoutes=routes.filter(r=>r.steps);

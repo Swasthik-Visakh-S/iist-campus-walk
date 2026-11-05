@@ -1,7 +1,7 @@
 import * as T from './vendor/three.module.js';
 import {inside,distSegment} from './geometry.js?v=6';
 // Continuous mitered ribbons prevent the gaps left by separate road rectangles.
-export function addRoads(scene,data,boundary,groundAt,blocked,materials,terrainSurface){
+export function addRoads(scene,data,boundary,groundAt,blocked,materials,terrainSurface,exteriorRoad=()=>false){
   const features=data.features.filter(f=>f.tags.highway),roads=[],surface=[[],[]],paint=[],kerbs=[];
   const width=f=>f.width??(['footway','steps','path'].includes(f.tags.highway)?2.4:6.5);
   const majors=features.filter(f=>width(f)>4);
@@ -27,10 +27,10 @@ export function addRoads(scene,data,boundary,groundAt,blocked,materials,terrainS
     }
     for(let i=1;i<samples.length;i++){
       const a=samples[i-1],b=samples[i],p=[(a.p[0]+b.p[0])/2,(a.p[1]+b.p[1])/2];
-      if(!inside(...p,boundary)||(narrow&&blocked(...p)))continue;
+      if((!inside(...p,boundary)&&!exteriorRoad(...p))||(narrow&&blocked(...p)))continue;
       roads.push({a:a.p,b:b.p,width:w,id:f.id,covered:f.tags.covered==='yes',steps:f.tags.highway==='steps'});
       // Cross-sections keep broad surfaces attached to the terrain on sloping bends.
-      quad(surface[+narrow],a.offset(-w/2),a.offset(w/2),b.offset(-w/2),b.offset(w/2),.14);
+      quad(surface[+narrow],a.offset(-w/2),a.offset(w/2),b.offset(-w/2),b.offset(w/2),narrow?.12:.14);
       if(narrow)continue;
       for(const side of [-1,1]){
         const edge=a.offset(side*(w/2-.22));

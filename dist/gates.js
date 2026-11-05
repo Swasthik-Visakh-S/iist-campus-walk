@@ -4,6 +4,7 @@ export function addGates(gates,scene,box,m,groundAt){
  const uniform=new T.MeshStandardMaterial({color:'#b4a07a',roughness:1}),skin=new T.MeshStandardMaterial({color:'#b77c57',roughness:.85}),cap=new T.MeshStandardMaterial({color:'#274237',roughness:1}),boot=new T.MeshStandardMaterial({color:'#303033',roughness:1});
  const head=new T.SphereGeometry(.18,10,8);let officers=0;
  for(const g of gates){
+  g.muzzles=[];
   const angle=Math.atan2(g.n[0],g.n[1]),part=(mat,u,y,v,w,h,d)=>{const p=g.point(u,v);box(mat,p[0],g.level+y,p[1],w,h,d,angle);};
   for(const side of [-1,1]){
    const post=g.point(side*g.width/2,0),base=groundAt(...post),height=Math.max(1,g.level+4.4-base);box(m.brick,post[0],base+height/2,post[1],1.2,height,1.3,angle);part(m.white,side*g.width/2,4.5,0,1.5,.25,1.6);
@@ -16,7 +17,12 @@ export function addGates(gates,scene,box,m,groundAt){
    function piece(geo,mat,x,yy,z){const mesh=new T.Mesh(geo,mat);mesh.position.set(x,yy,z);mesh.castShadow=true;person.add(mesh);return mesh;}
    const cube=(mat,x,yy,z,w,h,d)=>piece(new T.BoxGeometry(w,h,d),mat,x,yy,z);
    cube(uniform,0,1.05,0,.44,.57,.27);cube(boot,0,.82,0,.45,.07,.28);
-   for(const s of [-1,1]){cube(uniform,s*.13,.46,0,.17,.65,.2);cube(boot,s*.13,.12,.05,.19,.16,.31);cube(uniform,s*.29,1.04,0,.14,.48,.17);piece(new T.SphereGeometry(.075,8,6),skin,s*.29,.76,0);cube(cap,s*.16,1.35,0,.13,.03,.27);}
+   for(const s of [-1,1]){cube(uniform,s*.13,.46,0,.17,.65,.2);cube(boot,s*.13,.12,.05,.19,.16,.31);cube(uniform,s*.26,1.13,.09,.14,.32,.16).rotation.x=-.55;cube(uniform,s*.20,1.00,.20,.14,.14,.25);piece(new T.SphereGeometry(.075,8,6),skin,s*.17,1.01,.31);cube(cap,s*.16,1.35,0,.13,.03,.27);}
+   // Both hands meet the stock and fore-end of a low-detail carried rifle.
+   cube(boot,-.17,1.04,.23,.13,.13,.27);cube(boot,-.04,1.06,.35,.33,.12,.13);
+   cube(cap,.10,1.06,.39,.24,.085,.11);cube(boot,.24,1.06,.42,.22,.045,.045);
+   cube(boot,-.02,.96,.32,.075,.15,.07);
+   const muzzle=person.localToWorld(new T.Vector3(.35,1.06,.42));g.muzzles.push(muzzle);
    piece(head,skin,0,1.52,0);piece(new T.SphereGeometry(.20,10,6),cap,0,1.68,-.01).scale.set(1,.35,1.1);cube(m.white,.11,1.17,.145,.12,.045,.015);
   }
   part(m.white,0,4.35,0,g.width+1,.45,1);part(cap,0,4.35,.54,Math.min(9,g.width-1),.34,.06);
