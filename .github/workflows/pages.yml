@@ -19,5 +19,12 @@ jobs:
       - run: node scripts/check-corrections.mjs
       - run: node scripts/check-character.mjs
       - run: node scripts/check-v6.mjs
-      - run: node scripts/check-discovery.mjs
+      - run: node scripts/check-transit.mjs
       - run: node --experimental-vm-modules scripts/check-controls.mjs
+      - run: python3 scripts/check-browser.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: campus-browser-views
+          path: browser-checks/*.png
+          if-no-files-found: ignore

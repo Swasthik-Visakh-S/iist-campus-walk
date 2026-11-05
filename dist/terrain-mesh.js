@@ -72,8 +72,13 @@ export function createTerrainSurface(groundAt,routes,soil){
         }
         clipped=next;
       }
-      for(let n=1;n<clipped.length-1;n++)for(const p of [clipped[0],clipped[n+1],clipped[n]]){
+      for(let n=1;n<clipped.length-1;n++){
+        const [a,b,c]=[clipped[0],clipped[n],clipped[n+1]];
+        const cross=(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]);
+        if(Math.abs(cross)<1e-10)continue;
+        for(const p of (cross>0?[a,c,b]:[a,b,c])){
         const weights=bary(...p,tri);list.push(p[0],weights.reduce((s,w,k)=>s+w*tri[k][1],0)+offset,p[1]);
+        }
       }
     }
   }

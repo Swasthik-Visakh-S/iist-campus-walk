@@ -44,6 +44,13 @@ export function applyReferenceLayout(data, config) {
       return {...f,points:[entry,...loop],reference:'Library garden perimeter, aligned to the revised entrance axis.'};
     });
   }
+  features = features.map(feature => {
+    const survey = edits.surveyFeatures?.[feature.id];
+    if (!survey) return feature;
+    const tags = {...feature.tags};
+    if (survey.name) tags.name = survey.name;
+    return {...feature, tags, points: survey.points || feature.points};
+  });
   return {...data, features};
 }
 export function libraryGarden(features, config) {

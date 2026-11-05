@@ -14,7 +14,7 @@ assert.equal(b(12).level,b(11).level,'Water tower shares Phalguni ground level')
 assert(b(3).level<b(1).level&&b(4).level<b(3).level);
 assert(Math.abs(w.groundAt(...w.details.roundabout)-b(1).level)<.01);
 assert(Math.abs(w.groundAt(...w.garden.fountain)-b(1).level)<.01);
-const mph=w.buildings.find(b=>b.id==='user-mph');assert.equal(mph.level,b(7).level);assert.equal(w.buildings.length,25);
+const mph=w.buildings.find(b=>b.id==='user-mph');assert.equal(mph.level,b(7).level);assert.equal(w.buildings.length,28);
 for(const pond of w.ponds)assert(pond.level<Math.min(...w.buildings.map(b=>b.level))-8);
 for(const wall of w.walls.slice(0,25))assert(w.blocked((wall.a[0]+wall.b[0])/2,(wall.a[1]+wall.b[1])/2));
 assert(w.details.wallCount>100&&w.details.roofSegments>10&&w.details.stairCount>50&&w.details.bambooStems>60&&w.details.mastHeight>=20);
@@ -43,7 +43,7 @@ console.log('Road grades remain continuous, with gradual academic approaches.');
 let roadTriangles=0;
 for(const name of ['Continuous asphalt','Pedestrian surfaces','Road edge and centre paint']){
  const positions=scene.getObjectByName(name).geometry.attributes.position;assert(positions.count>0);
- const offset=name.includes('paint')?.17:.14;
+ const offset=name.includes('paint')?.17:name==='Pedestrian surfaces'?.12:.14;
  for(let i=0;i<positions.count;i+=3){
   const x=(positions.getX(i)+positions.getX(i+1)+positions.getX(i+2))/3;
   const z=(positions.getZ(i)+positions.getZ(i+1)+positions.getZ(i+2))/3;
