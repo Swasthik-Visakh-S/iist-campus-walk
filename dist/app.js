@@ -14,7 +14,7 @@ quality=chooseQuality(qualityPreference,{coarse,width:innerWidth,cores:navigator
 let mode='aerial',yaw=Math.PI,pitch=.32,orbit=0.35,tilt=.85,distance=710,drag=null,last=0,travel=0;
 const player=Object.assign(new T.Vector3(),{vy:0,grounded:true}),target=new T.Vector3(0,18,-30);
 const scene=new T.Scene();scene.background=new T.Color('#b8c5c6');scene.fog=new T.Fog('#b8c5c6',850,1900);
-const camera=new T.PerspectiveCamera(52,innerWidth/innerHeight,.1,2500);
+const camera=new T.PerspectiveCamera(52,innerWidth/innerHeight,8,2500);
 let renderer;
 try{renderer=new T.WebGLRenderer({canvas,antialias:!coarse&&quality!=='low',powerPreference:quality==='low'?'low-power':'high-performance'});}catch(e){import('./fallback.js?v=8');throw e;}
 renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,quality==='low'?1:1.25));renderer.shadowMap.enabled=quality!=='low';renderer.shadowMap.autoUpdate=false;renderer.shadowMap.type=T.PCFSoftShadowMap;renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
@@ -77,9 +77,35 @@ function fireAtPlayer(gate){
 $('death').addEventListener('cancel',e=>e.preventDefault());
 $('respawn').onclick=()=>{$('death').close();restartWalk();setMode('walk');};
 $('boardButton').onclick=toggleBoard;$('idButton').onclick=showID;
-function setMode(m){if(dead)return;mode=m;updateCheckpoint();resetTouch();document.activeElement?.blur();keys.clear();document.body.classList.toggle('walk',m==='walk');$('overview').classList.toggle('active',m==='aerial');$('walk').classList.toggle('active',m==='walk');$('walking').hidden=m!=='walk';$('crosshair').hidden=true;jumpQueued=false;avatar.root.visible=m==='walk';contactShadow.visible=m==='walk';if(m==='aerial')document.exitPointerLock?.();}
+function setMode(m){if(dead)return;
+ // The overview looks across hundreds of metres. A larger near plane keeps
+ // asphalt, its markings and the terrain distinct at that distance.
+ if(mode!==m){
+  camera.near=m==='aerial'?8:.1;
+  camera.updateProjectionMatrix();
+ }
+ mode=m;updateCheckpoint();resetTouch();document.activeElement?.blur();keys.clear();document.body.classList.toggle('walk',m==='walk');$('overview').classList.toggle('active',m==='aerial');$('walk').classList.toggle('active',m==='walk');$('walking').hidden=m!=='walk';$('crosshair').hidden=true;jumpQueued=false;avatar.root.visible=m==='walk';contactShadow.visible=m==='walk';if(m==='aerial')document.exitPointerLock?.();}
 async function capture(){if(mode!=='walk')return;try{await canvas.requestPointerLock?.();}catch{ /* Drag-to-look remains available in embedded previews. */ }}
-$('start').onclick=()=>{restartWalk();yaw=Math.PI;pitch=.32;avatar.root.rotation.y=0;setMode('walk');capture()};$('walk').onclick=()=>{setMode('walk');capture()};$('overview').onclick=()=>setMode('aerial');$('reset').onclick=()=>{document.activeElement?.blur();keys.clear();jumpQueued=false;resetTouch();restartWalk();yaw=Math.PI;pitch=.32;avatar.root.rotation.y=0;distance=710;orbit=.35;tilt=.85;travel=0};$('about').onclick=()=>{$('info').showModal();document.exitPointerLock?.();keys.clear();jumpQueued=false;resetTouch()};$('closeInfo').onclick=()=>$('info').close();$('destination').onchange=e=>{if(e.target.value==='')return;const p=places[+e.target.value];e.target.blur();checkpoint.reset();resetMotion(player,...p.p,world);setMode('walk');document.body.classList.remove('map-open');$('mapToggle').setAttribute('aria-expanded','false');pitch=.32;if(p.name==='Library fountain & garden'){const c=world.garden.libraryCenter;yaw=Math.atan2(player.x-c[0],player.z-c[1]);}e.target.value='';};
+$('start').onclick=()=>{restartWalk();yaw=Math.PI;pitch=.32;avatar.root.rotation.y=0;setMode('walk');capture()};$('walk').onclick=()=>{setMode('walk');capture()};$('overview').onclick=()=>setMode('aerial');$('reset').onclick=()=>{document.activeElement?.blur();keys.clear();jumpQueued=false;resetTouch();restartWalk();yaw=Math.PI;pitch=.32;avatar.root.rotation.y=0;distance=710;orbit=.35;tilt=.85;travel=0};$('about').onclick=()=>{$('info').showModal();document.exitPointerLock?.();keys.clear();jumpQueued=false;resetTouch()};$('closeInfo').onclick=()=>$('info').close();
+$('destination').onchange=e=>{
+ if(e.target.value==='')return;
+ const place=places[+e.target.value];
+ e.target.blur();
+ checkpoint.reset();
+ resetMotion(player,...place.p,world);
+ setMode('walk');
+ document.body.classList.remove('map-open');
+ $('mapToggle').setAttribute('aria-expanded','false');
+ const gate=world.gates.find(g=>g.name===place.name);
+ const entrance=world.entrances?.find(entry=>entry.porch===place.p);
+ const facing=gate?.center||entrance?.door||(place.name==='Library fountain & garden'?world.garden.libraryCenter:null);
+ if(facing){
+  yaw=Math.atan2(player.x-facing[0],player.z-facing[1]);
+  avatar.root.rotation.y=yaw+Math.PI;
+ }
+ pitch=.32;
+ e.target.value='';
+};
 window.addEventListener('keydown',e=>{if(['SELECT','INPUT','BUTTON'].includes(e.target.tagName)||$('info').open||dead)return;if(e.code==='KeyB'&&!e.repeat)toggleBoard();if(e.code==='KeyI'&&!e.repeat)showID();if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();keys.add(e.code);if(e.code==='Space'&&!e.repeat&&mode==='walk')jumpQueued=true;if(e.code==='KeyV'&&!e.repeat)setMode(mode==='walk'?'aerial':'walk');if(e.code==='Enter'){setMode('walk');capture()}});window.addEventListener('keyup',e=>keys.delete(e.code));window.addEventListener('blur',()=>{drag=null;keys.clear();jumpQueued=false;resetTouch();});document.addEventListener('visibilitychange',()=>{keys.clear();jumpQueued=false;resetTouch();});
 canvas.addEventListener('pointerdown',e=>{drag=[e.clientX,e.clientY,e.pointerId];canvas.setPointerCapture(e.pointerId);if(mode==='walk'&&e.pointerType==='mouse')capture()});canvas.addEventListener('pointerup',e=>{if(drag?.[2]===e.pointerId)drag=null});canvas.addEventListener('pointercancel',()=>drag=null);canvas.addEventListener('lostpointercapture',()=>drag=null);
 function look(dx,dy){yaw-=dx*.003;pitch=Math.max(.12,Math.min(1.0,pitch+dy*.003));}
