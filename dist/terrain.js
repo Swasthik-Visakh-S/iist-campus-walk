@@ -9,11 +9,30 @@ export function makeTerrain(data, config, buildings, ponds) {
     b.height=config.heights[b.id]??(b.tags.tourism==='hostel'?16:b.tags.man_made==='storage_tank'?4:12);
   }
   for(const p of ponds)p.level=spec.pondLevel;
+  const forest=config.landscape.libraryForest;
+  const terraces=(spec.terraces||[]).map(t=>{
+    if(t.profile==='forest')return t;
+    const xs=t.points.map(p=>p[0]),zs=t.points.map(p=>p[1]);
+    return {...t,minX:Math.min(...xs)-t.blend,maxX:Math.max(...xs)+t.blend,minZ:Math.min(...zs)-t.blend,maxZ:Math.max(...zs)+t.blend};
+  });
+  function forestHeight(x,z,h){
+    if(!forest || x<forest.west-20 || x>forest.east+40 || z < -95 || z>25)return h;
+    const d=edgeDistance(x,z,forest.points);
+    if(d>=forest.blend)return h;
+    const u=clamp((x-forest.west)/(forest.east-forest.west));
+    const undulation=Math.sin(Math.PI*u)*(.62*Math.sin(x*.079+z*.054)+.4*Math.cos(z*.14-x*.035));
+    const hillside=forest.upperLevel+(forest.lowerLevel-forest.upperLevel)*smooth(u)+undulation;
+    return h+(hillside-h)*(1-smooth(d/forest.blend));
+  }
   function baseHeight(x,z) {
     let sum=0,weight=0;
     for(const a of anchors){const w=1/(36+(x-a.point[0])**2+(z-a.point[1])**2)**1.6;sum+=a.height*w;weight+=w;}
     let h=sum/weight;
-    for(const t of spec.terraces||[]){const d=edgeDistance(x,z,t.points);if(d<t.blend)h+=(t.level-h)*(1-smooth(d/t.blend));}
+    for(const t of terraces){
+      if(t.profile==='forest'){h=forestHeight(x,z,h);continue;}
+      if(x<t.minX||x>t.maxX||z<t.minZ||z>t.maxZ)continue;
+      const d=edgeDistance(x,z,t.points);if(d<t.blend)h+=(t.level-h)*(1-smooth(d/t.blend));
+    }
     return h;
   }
   const widthForFeature=f=>f.width??(['footway','steps','path'].includes(f.tags.highway)?2.4:6.5);

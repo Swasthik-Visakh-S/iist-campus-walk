@@ -19,14 +19,23 @@ export function mergeStaticMeshes(root){
  return saved;
 }
 export function foliageChunks(scene,trees,groundAt,materials){
+ const leaf=new T.MeshStandardMaterial({color:0xffffff,roughness:1});
+ // Crown proportions and hues distinguish mango, rain tree and upright jackfruit.
+ const species=[{w:.31,h:.30,spread:.28,tint:'#437442'},{w:.39,h:.17,spread:.48,tint:'#507f4e'},{w:.20,h:.36,spread:.20,tint:'#547d39'}];
  const cells=new Map(),groups=[],dummy=new T.Object3D();let seed=174;
  const rand=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
  const trunkGeo=new T.CylinderGeometry(.3,.65,1,5),crownGeo=new T.IcosahedronGeometry(1,1);
  for(const t of trees){const k=Math.floor(t[0]/80)+','+Math.floor(t[1]/80);if(!cells.has(k))cells.set(k,[]);cells.get(k).push(t);}
  for(const list of cells.values()){
-  const trunks=new T.InstancedMesh(trunkGeo,materials.trunk,list.length),crowns=new T.InstancedMesh(crownGeo,materials.leaf,list.length*3);
+  const trunks=new T.InstancedMesh(trunkGeo,materials.trunk,list.length),crowns=new T.InstancedMesh(crownGeo,leaf,list.length*3);
   list.forEach(([x,z,h],i)=>{const y=groundAt(x,z);dummy.position.set(x,y+h*.4,z);dummy.rotation.set(0,0,0);dummy.scale.set(1,h*.8,1);dummy.updateMatrix();trunks.setMatrixAt(i,dummy.matrix);
-   for(let j=0;j<3;j++){dummy.position.set(x+(rand()-.5)*h*.4,y+h*(.7+rand()*.24),z+(rand()-.5)*h*.4);dummy.scale.set(h*(.25+rand()*.12),h*(.23+rand()*.1),h*(.26+rand()*.12));dummy.updateMatrix();crowns.setMatrixAt(i*3+j,dummy.matrix);crowns.setColorAt(i*3+j,new T.Color().setHSL(.27+rand()*.08,.22+rand()*.2,.16+rand()*.13));}
+   const tree=species[Math.floor(rand()*species.length)];
+   for(let j=0;j<3;j++){
+     const angle=i*2.3+j*Math.PI*2/3;
+     dummy.position.set(x+Math.cos(angle)*h*tree.spread*.48,y+h*(.72+rand()*.13),z+Math.sin(angle)*h*tree.spread*.48);
+     dummy.rotation.y=angle;dummy.scale.set(h*tree.w,h*tree.h,h*tree.w*(.88+rand()*.16));dummy.updateMatrix();
+     crowns.setMatrixAt(i*3+j,dummy.matrix);crowns.setColorAt(i*3+j,new T.Color(tree.tint).multiplyScalar(.83+rand()*.28));
+   }
   });crowns.castShadow=true;trunks.computeBoundingSphere();crowns.computeBoundingSphere();scene.add(trunks,crowns);groups.push({trunks,crowns,count:list.length});
  }
  return groups;

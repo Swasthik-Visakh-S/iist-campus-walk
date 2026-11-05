@@ -27,7 +27,11 @@ function markedEntrance(b, mark, index, buildings, ponds, routes, terrain, bound
       if(!clear(porch))continue;
       const postDepth=Math.min(depth*.5,1.3),span=1.7;
       const pillars=[-1,1].map(side=>[door[0]+n[0]*postDepth+right[0]*span*side,door[1]+n[1]*postDepth+right[1]*span*side]);
-      const ends=routes.map(r=>nearest(porch,r.a,r.b)).filter(clear).sort((a,b)=>Math.hypot(a[0]-porch[0],a[1]-porch[1])-Math.hypot(b[0]-porch[0],b[1]-porch[1]));
+      // Keep the photographed door, and give it a road-facing approach on the exterior side of its wall.
+      const forward=p=>(p[0]-door[0])*n[0]+(p[1]-door[1])*n[1];
+      const ends=routes.map(r=>nearest(porch,r.a,r.b)).filter(p=>forward(p)>.65&&clear(p));
+      const cost=p=>Math.hypot(p[0]-porch[0],p[1]-porch[1])+.6*Math.abs((p[0]-door[0])*right[0]+(p[1]-door[1])*right[1]);
+      ends.sort((a,b)=>cost(a)-cost(b));
       const accessible=(a,b)=>visible(a,b)&&pillars.every(p=>distSegment(...p,a,b)>1.03);
       let end=ends.find(p=>accessible(porch,p)),bend=null;
       if(!end){
@@ -56,6 +60,7 @@ export function planEntrances(data,buildings,ponds,terrain,config){
   if(mark){
     const entry=markedEntrance(b,mark,index,buildings,ponds,routes,terrain,boundary);
     if(!config.layout.markedDoors?.[b.id])delete entry.mark;
+    entry.stepCount=config.layout.entranceStairs?.[b.id]||0;
     entries.push(entry);continue;
   }
   const choices=[];
@@ -101,11 +106,30 @@ export function clearOfEntrances(x,z,entries,margin=0){
    &&distSegment(x,z,e.porch,e.bend||e.end)>e.width/2+margin
    &&(!e.bend||distSegment(x,z,e.bend,e.end)>e.width/2+margin));
 }
+export const riser=.15, tread=.30, landing=.84, stairWidth=4.6;
+export function hostelStepHeight(x,z,entry){
+ const dx=x-entry.door[0],dz=z-entry.door[1];
+ const depth=dx*entry.n[0]+dz*entry.n[1];
+ if(depth<-.05||depth>=landing+tread*entry.stepCount||Math.abs(dx*entry.right[0]+dz*entry.right[1])>stairWidth/2)return null;
+ const down=Math.max(0,Math.floor((depth-landing)/tread));
+ return entry.level+.15+(entry.stepCount-down)*riser;
+}
 export function addEntrances(entries,box,m){
  for(const e of entries){
   const span=e.span||2.55,depth=e.postDepth||2.4;
   const angle=Math.atan2(e.n[0],e.n[1]),point=(u,v)=>[e.door[0]+e.right[0]*u+e.n[0]*v,e.door[1]+e.right[1]*u+e.n[1]*v];
-  const part=(mat,u,y,v,w,h,d)=>{const p=point(u,v);box(mat,p[0],e.level+y,p[1],w,h,d,angle);};
+  const steps=e.stepCount||0;
+  const part=(mat,u,y,v,w,h,d)=>{const p=point(u,v);box(mat,p[0],e.level+steps*riser+y,p[1],w,h,d,angle);};
+  if(steps){
+    // From the road the first tread rises one riser. The last joins the landing.
+    for(let i=0;i<steps;i++){
+      const top=(steps-i)*riser+.15;
+      const p=point(0,landing+(i+.5)*tread);
+      box(m.roof,p[0],e.level+top/2,p[1],stairWidth,top,tread+.002,angle);
+      box(m.white,p[0]+e.n[0]*(tread/2-.019),e.level+top+.004,p[1]+e.n[1]*(tread/2-.019),stairWidth,.01,.035,angle);
+    }
+    part(m.roof,0,.15-(steps*riser+.15)/2,landing/2,stairWidth,steps*riser+.15,landing);
+  }
   // Red entrance piers, cream lintel and a projecting sheltered porch.
   for(const side of [-1,1]){part(m.brick,side*span,1.8,depth,.8,3.6,.85);part(m.white,side*span,3.55,depth,1,.18,1.05);}
   part(m.white,0,3.75,depth/2,span*2+1.6,.4,depth+1.8);part(m.roof,0,4.03,depth/2,span*2+1.4,.16,depth+1.6);

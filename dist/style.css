@@ -9,3 +9,6 @@
 #idButton{background:#254d42;color:white}#death{min-width:min(320px,85vw)}#death h2{font-size:34px}
 @media(max-width:760px),(pointer:coarse){#travelTools{left:16px;top:182px;max-width:calc(100vw - 32px)}.map-open #travelTools{display:none}#travelTools kbd{display:none}}
 @media(max-height:500px) and (orientation:landscape){#travelTools{left:16px;top:111px}.walk #travelTools button{padding:7px 10px}.map-open #travelTools{display:none}}
+
+.dying nav,.dying #walking,.dying #travelTools,.dying #controls,.dying #touch,.dying #mapCard,.dying footer{visibility:hidden}
+footer #soundButton{min-width:66px}

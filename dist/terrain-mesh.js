@@ -1,8 +1,8 @@
 import * as T from './vendor/three.module.js';
-import {inside,distSegment} from './geometry.js?v=6';
+import {distSegment} from './geometry.js?v=6';
 // Refine the terrain only where a road crosses curved ground. Road paint and
 // asphalt are clipped to these same triangles, so hills cannot hide them.
-export function createTerrainSurface(groundAt,routes,soil){
+export function createTerrainSurface(groundAt,routes){
   const extent=800,step=10,count=160,heights=new Map(),fine=new Set(),candidates=new Set(),tiles=new Map();
   const key=(i,j)=>i+count*j;
   function height(x,z){const k=x+','+z;if(!heights.has(k))heights.set(k,groundAt(x,z));return heights.get(k);}
@@ -44,7 +44,7 @@ export function createTerrainSurface(groundAt,routes,soil){
     if(candidates.has(k))tiles.set(k,tris);return tris;
   }
   const positions=[],colours=[],indices=[],verts=new Map();
-  function add(p){const k=p[0]+','+p[2];if(verts.has(k))return verts.get(k);const n=positions.length/3;verts.set(k,n);positions.push(p[0],p[1]-.04,p[2]);const color=inside(p[0],p[2],soil)?new T.Color('#a4865c'):new T.Color().setHSL(.27,.36,.26+.045*Math.sin(p[0]*.041)*Math.cos(p[2]*.031));colours.push(color.r,color.g,color.b);return n;}
+  function add(p){const k=p[0]+','+p[2];if(verts.has(k))return verts.get(k);const n=positions.length/3;verts.set(k,n);positions.push(p[0],p[1]-.04,p[2]);const color=new T.Color().setHSL(.27,.36,.26+.045*Math.sin(p[0]*.041)*Math.cos(p[2]*.031));colours.push(color.r,color.g,color.b);return n;}
   for(let j=0;j<count;j++)for(let i=0;i<count;i++)for(const tri of tile(i,j))indices.push(...tri.map(add));
   const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(positions,3));geometry.setAttribute('color',new T.Float32BufferAttribute(colours,3));geometry.setIndex(indices);geometry.computeVertexNormals();
   positions.length=0;colours.length=0;indices.length=0;verts.clear();
