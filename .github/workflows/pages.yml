@@ -20,6 +20,8 @@ jobs:
       - run: node scripts/check-character.mjs
       - run: node scripts/check-v6.mjs
       - run: node scripts/check-transit.mjs
+      - run: node scripts/check-pitch.mjs
+      - run: node scripts/check-campus-life.mjs
       - run: node --experimental-vm-modules scripts/check-controls.mjs
       - run: python3 scripts/check-browser.py
       - name: Verify the public GitHub Pages files

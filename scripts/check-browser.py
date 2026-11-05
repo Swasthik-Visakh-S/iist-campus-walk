@@ -46,9 +46,22 @@ def check(session, site):
         time.sleep(.5)
     assert js("return !document.querySelector('#walk').disabled && !!document.querySelector('#world').getContext('webgl2')")
     capture('campus-overview')
+    # Use a trusted user gesture to check real browser audio unlocking and decoding.
+    button=request(session+'/element',{'using':'css selector','value':'#soundButton'})
+    sound_id=next(iter(button.values()))
+    for enabled in [False, True]:
+        request(session+'/element/'+sound_id+'/click',{})
+        assert js("return document.querySelector('#soundButton').getAttribute('aria-pressed')") == str(enabled).lower()
+    assert js("return !!document.createElement('audio').canPlayType('audio/mpeg')")
+    probe=request(session+'/execute/async',{'script':'''
+        const done=arguments[arguments.length-1],audio=new Audio('./audio/plucky-comedy.mp3');
+        audio.onloadedmetadata=()=>done(audio.duration);audio.onerror=()=>done(0);audio.load();
+    ''','args':[]})
+    assert 80 < probe < 83, 'Music must decode to the full uploaded song'
+
     js("document.querySelector('#start').click();document.querySelector('#boardButton').click()")
     assert js("return document.querySelector('#boardButton').getAttribute('aria-pressed') === 'true'")
-    for place, file in [('Crystal Jubilee Hostel','crystal-hostel'),('Front gate','front-checkpoint')]:
+    for place, file in [('Football turf','football-turf'),('Chitra','chitra-steps'),('Dhanishta','dhanishta-steps'),('Library ground','library-ground'),('Muthiyammain Kshethram','shrine'),('Front gate','front-checkpoint')]:
         js("""const menu=document.querySelector('#destination');
             menu.value=[...menu.options].find(o=>o.textContent===%s).value;
             menu.dispatchEvent(new Event('change'));""" % json.dumps(place))

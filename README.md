@@ -1,4 +1,4 @@
-# IIST Campus Walk — Version 8
+# IIST Campus Walk — Version 9
 
 A browser walkthrough generated from the supplied OpenStreetMap campus export.
 
@@ -25,7 +25,13 @@ Then open http://localhost:8000 in Chrome or Firefox. No Blender, npm install, A
 
 WebGL 2 is needed for 3D. If unsupported, a 2D campus map appears automatically. Enable graphics acceleration or try another browser for 3D.
 
-Press **B** or tap **Skateboard** to switch between foot and board. Hold **Shift** to boost on the board. On phones the Run button becomes Boost. Walk up to a checkpoint and press **I** or tap **Show student ID**. One check covers leaving and returning through that gate. Crossing without clearance triggers a fictional shot, a death screen and a return to the roundabout.
+Press **B** or tap **Skateboard** to switch between foot and board. Hold **Shift** to boost on the board. On phones the Run button becomes Boost. Walk up to a checkpoint and press **I** or tap **Show student ID**. One check covers leaving and returning through that gate. Crossing without clearance triggers a fictional shot and fall. The respawn prompt appears five seconds later.
+
+## Turf, hostel avenue and library woods
+
+Choose **Football turf** in the map menu and walk or skate into the ball to kick it. The larger pitch has a goal at each end, a seven-metre perimeter net, an open roof and a pedestrian gate. The supplied *Plucky Comedy* track loops after the first tap or keypress. **Sound** mutes the music, skateboard boost and death effects together.
+
+The cafeteria and upper hostel avenue share one road terrace. Chitra has ten wide entrance steps, Dhanishta has four and Dhruva has a level approach. The marked library clearing has moved toward the roundabout. Its former site is woodland descending to the basketball court, with Bhagirati 3.0 below the adjacent road. The open shrine stands under a banyan. Six students, three cats, a husky and four Indian street dogs follow short walking routes.
 
 ## November 5 map corrections
 

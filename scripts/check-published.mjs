@@ -4,13 +4,17 @@ if (!base || !/^https:\/\/[a-z0-9-]+\.github\.io\/iist-campus-walk\/$/.test(base
   throw new Error('Expected the project Pages URL ending in /iist-campus-walk/');
 }
 const paths = [
-  ['', 'url=./dist/?v=8'],
-  ['dist/', 'VERSION 8'],
+  ['', 'url=./dist/?v=9'],
+  ['dist/', 'VERSION 9'],
   ['dist/app.js', 'toggleBoard'],
+  ['dist/pitch.js', 'ballRadius'],
+  ['dist/planting.js', 'addBanyan'],
+  ['dist/residents.js', 'createResidents'],
+  ['dist/audio.js', 'playDeathCue'],
   ['dist/transit.js', 'createCheckpoint'],
   ['dist/site-details.js', 'perimeterRails'],
   ['dist/world.js', 'addEntrances'],
-  ['dist/model-config.json', '"version": 8'],
+  ['dist/model-config.json', '"version": 9'],
   ['dist/entrances.js', 'planEntrances'],
   ['dist/gates.js', 'addGates'],
   ['dist/quality.js', 'applyQuality'],
@@ -23,7 +27,7 @@ async function check(path, marker) {
   let error;
   for (let attempt = 1; attempt <= 10; attempt++) {
     try {
-      const response = await fetch(new URL(path+'?v=8', base), {signal: AbortSignal.timeout(12000), cache: 'no-store'});
+      const response = await fetch(new URL(path+'?v=9', base), {signal: AbortSignal.timeout(12000), cache: 'no-store'});
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const body = await response.text();
       if (!body.includes(marker)) throw new Error(`expected content missing`);
@@ -37,4 +41,6 @@ async function check(path, marker) {
   throw new Error(`${new URL(path, base)}: ${error.message}`);
 }
 await Promise.all(paths.map(([path, marker]) => check(path, marker)));
+const audio=await fetch(new URL('dist/audio/plucky-comedy.mp3?v=9',base),{headers:{Range:'bytes=0-2'}});
+if(!audio.ok || Buffer.from(await audio.arrayBuffer()).subarray(0,3).toString()!=='ID3')throw Error('Published MP3 unavailable');
 console.log(`Published campus verified at ${base}`);

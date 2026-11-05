@@ -61,21 +61,4 @@ export function addSurveyDetails({scene,rails,sites,surface,mesh,box,m}){
   }
 }
 
-// Pitch stripes and paint conform to the same terrain triangles as the roads.
-export function addTurf(scene,points,surface){
-  const [a,b,c,d]=points;
-  const at=(u,v)=>[0,1].map(k=>(a[k]*(1-u)+b[k]*u)*(1-v)+(d[k]*(1-u)+c[k]*u)*v);
-  const buffers=[[],[],[]];
-  const rect=(u,v,U,V,layer)=>surface.project([at(u,v),at(U,v),at(U,V),at(u,V)],layer===2?.19:.16,buffers[layer]);
-  for(let i=0;i<10;i++)rect(0,i/10,1,(i+1)/10,i%2);
-  for(const u of [.025,.966])rect(u,.025,u+.008,.975,2);
-  for(const v of [.025,.498,.966])rect(.025,v,.974,v+.006,2);
-  for(let i=0;i<40;i++){
-    const p=(t,r)=>at(.5+Math.cos(t)*r,.5+Math.sin(t)*r*.76),t=i*Math.PI/20,T1=(i+1)*Math.PI/20;
-    surface.project([p(t,.12),p(T1,.12),p(T1,.113),p(t,.113)],.19,buffers[2]);
-  }
-  buffers.forEach((verts,i)=>{
-    const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(verts,3));g.computeVertexNormals();
-    const obj=new T.Mesh(g,new T.MeshStandardMaterial({color:['#3e774b','#508b54','#f5efde'][i],side:T.DoubleSide}));scene.add(obj);
-  });
-}
+export {addTurf} from './pitch.js?v=9';
