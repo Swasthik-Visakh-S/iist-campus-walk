@@ -68,7 +68,7 @@ def check(session, site):
 
     js("document.querySelector('#start').click();document.querySelector('#boardButton').click()")
     assert js("return document.querySelector('#boardButton').getAttribute('aria-pressed') === 'true'")
-    for place, file in [('OAT hostel steps','oat-hostel-steps'),('Football turf entrance','turf-entrance'),
+    for place, file in [('OAT hostel steps','oat-hostel-steps'),('Open Air Theatre','oat-interior'),
                         ('Medical Services','medical-services'),('Basketball court','basketball-court'),('Front gate','front-checkpoint')]:
         js("""const menu=document.querySelector('#destination');
             menu.value=[...menu.options].find(o=>o.textContent===%s).value;
