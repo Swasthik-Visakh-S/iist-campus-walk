@@ -1,10 +1,10 @@
-import {createCampusAudio} from './audio.js?v=10';
-import {createResidents} from './residents.js?v=10';
-import {createCheckpoint,nearbyGate,transitSpeed} from './transit.js?v=10';
+import {createCampusAudio} from './audio.js?v=11';
+import {createResidents} from './residents.js?v=11';
+import {createCheckpoint,nearbyGate,transitSpeed} from './transit.js?v=11';
 import {chooseQuality,applyQuality} from './quality.js?v=6';
-import {createCharacter} from './character.js?v=10';
-import {resetMotion,stepMotion,followCamera} from './movement.js?v=10';
-import {buildWorld,inside} from './world.js?v=10';
+import {createCharacter} from './character.js?v=11';
+import {resetMotion,stepMotion,followCamera} from './movement.js?v=11';
+import {buildWorld,inside} from './world.js?v=11';
 import * as T from './vendor/three.module.js';
 const $=id=>document.getElementById(id);
 const canvas=$('world'), keys=new Set();
@@ -18,7 +18,7 @@ const player=Object.assign(new T.Vector3(),{vy:0,grounded:true}),target=new T.Ve
 const scene=new T.Scene();scene.background=new T.Color('#b8c5c6');scene.fog=new T.Fog('#b8c5c6',850,1900);
 const camera=new T.PerspectiveCamera(52,innerWidth/innerHeight,8,2500);
 let renderer;
-try{renderer=new T.WebGLRenderer({canvas,antialias:!coarse&&quality!=='low',powerPreference:quality==='low'?'low-power':'high-performance'});}catch(e){import('./fallback.js?v=10');throw e;}
+try{renderer=new T.WebGLRenderer({canvas,antialias:!coarse&&quality!=='low',powerPreference:quality==='low'?'low-power':'high-performance'});}catch(e){import('./fallback.js?v=11');throw e;}
 const sound=createCampusAudio($('soundButton'));
 renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,quality==='low'?1:1.25));renderer.shadowMap.enabled=quality!=='low';renderer.shadowMap.autoUpdate=false;renderer.shadowMap.type=T.PCFSoftShadowMap;renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
 scene.add(new T.HemisphereLight(0xe5f5ff,0x59614b,1.8));
@@ -37,7 +37,7 @@ function label(text,p,height){
 
 const blocked=(x,z)=>world.blocked(x,z);
 try{
-const [data,config,heights]=await Promise.all(['campus.json','model-config.json','heights.json'].map(async path=>{const r=await fetch(path+'?v=10');if(!r.ok)throw Error(path+' unavailable');return r.json()}));
+const [data,config,heights]=await Promise.all(['campus.json','model-config.json','heights.json'].map(async path=>{const r=await fetch(path+'?v=11');if(!r.ok)throw Error(path+' unavailable');return r.json()}));
 config.heights={...config.heights,...heights};world=buildWorld(scene,data,config);residents=createResidents(scene,world);applyQuality(renderer,sun,world,quality,devicePixelRatio);({buildings,roads,places,ponds,boundary,spawn}=world);
 for(const p of places)label(p.shortName||p.name,p.label,p.height);
 for(let i=0;i<places.length;i++){let o=document.createElement('option');o.value=i;o.textContent=places[i].name;$('destination').append(o);}
@@ -101,12 +101,12 @@ $('destination').onchange=e=>{
  $('mapToggle').setAttribute('aria-expanded','false');
  const gate=world.gates.find(g=>g.name===place.name);
  const goal=place.name==='Football turf'?world.pitch.aim:null;
- const facing=gate?.center||place.door||place.viewToward||goal||(place.name==='Library fountain & garden'?world.garden.libraryCenter:null);
+ const facing=gate?.center||place.viewToward||place.door||goal||(place.name==='Library fountain & garden'?world.garden.libraryCenter:null);
  if(facing){
   yaw=Math.atan2(player.x-facing[0],player.z-facing[1]);
   avatar.root.rotation.y=yaw+Math.PI;
  }
- pitch=.32;
+ pitch=place.viewPitch??.32;
  e.target.value='';
 };
 window.addEventListener('keydown',e=>{if(['SELECT','INPUT','BUTTON'].includes(e.target.tagName)||$('info').open||dead)return;if(e.code==='KeyB'&&!e.repeat)toggleBoard();if(e.code==='KeyI'&&!e.repeat)showID();if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();keys.add(e.code);if(e.code==='Space'&&!e.repeat&&mode==='walk')jumpQueued=true;if(e.code==='KeyV'&&!e.repeat)setMode(mode==='walk'?'aerial':'walk');if(e.code==='Enter'){setMode('walk');capture()}});window.addEventListener('keyup',e=>keys.delete(e.code));window.addEventListener('blur',()=>{drag=null;keys.clear();jumpQueued=false;resetTouch();});document.addEventListener('visibilitychange',()=>{keys.clear();jumpQueued=false;resetTouch();});

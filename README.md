@@ -1,4 +1,4 @@
-# IIST Campus Walk — Version 10
+# IIST Campus Walk — Version 11
 
 A browser walkthrough generated from the supplied OpenStreetMap campus export.
 
@@ -26,6 +26,12 @@ Then open http://localhost:8000 in Chrome or Firefox. No Blender, npm install, A
 WebGL 2 is needed for 3D. If unsupported, a 2D campus map appears automatically. Enable graphics acceleration or try another browser for 3D.
 
 Press **B** or tap **Skateboard** to switch between foot and board. Hold **Shift** to boost on the board. On phones the Run button becomes Boost. Walk up to a checkpoint and press **I** or tap **Show student ID**. One check covers leaving and returning through that gate. Crossing without clearance triggers a fictional shot and fall. The respawn prompt appears three seconds later.
+
+## Inside OAT and at Medical Services
+
+Select **Open Air Theatre** to see the seating tiers, stair aisles, patterned stage and open concrete bays modeled from the campus panorama. Select **Medical Services** for the vehicle porch and parked Force Traveller N ambulance. The four-metre setback is measured from the asphalt edge. Shrubs line the remaining frontage.
+
+Vehicle roads are 7.4 m wide on open stretches. The asphalt tapers beside close buildings, and gaps in the kerbs and edge paint give access to entrances. The compacted-earth approach to the turf meets its 3.5 m gate.
 
 ## OAT routes and sports access
 

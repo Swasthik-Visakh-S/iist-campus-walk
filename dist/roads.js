@@ -1,16 +1,31 @@
+import {roadWidth} from './road-width.js?v=11';
 import * as T from './vendor/three.module.js';
 import {inside,distSegment} from './geometry.js?v=6';
 // Continuous mitered ribbons prevent the gaps left by separate road rectangles.
-export function addRoads(scene,data,boundary,groundAt,blocked,materials,terrainSurface,exteriorRoad=()=>false){
+export function addRoads(scene,data,boundary,groundAt,blocked,materials,terrainSurface,exteriorRoad=()=>false,inDriveway=()=>false){
   const features=data.features.filter(f=>f.tags.highway),roads=[],surface=[[],[]],soil=[],paint=[],kerbs=[];
-  const width=f=>f.width??(['footway','steps','path'].includes(f.tags.highway)?2.4:6.5);
-  const majors=features.filter(f=>width(f)>4);
-  function otherRoad(x,z,f,margin=0){return majors.some(g=>g.id!==f.id&&g.points.slice(1).some((b,i)=>distSegment(x,z,g.points[i],b)<width(g)/2+margin));}
+  const obstacles=data.features.filter(f=>f.tags.building||f.tags.natural==='water').flatMap(f=>
+    f.points.slice(1).map((b,i)=>({a:f.points[i],b})));
+  // Measure the room on each side independently where a mapped facade borders a lane.
+  function clearance(p,nx,nz,reach){
+    let clear=reach;
+    for(const {a,b} of obstacles){
+      if(p[0]<Math.min(a[0],b[0])-reach-2||p[0]>Math.max(a[0],b[0])+reach+2||
+         p[1]<Math.min(a[1],b[1])-reach-2||p[1]>Math.max(a[1],b[1])+reach+2)continue;
+      const dx=b[0]-a[0],dz=b[1]-a[1],det=nx*dz-nz*dx;
+      if(Math.abs(det)<1e-8)continue;
+      const x=a[0]-p[0],z=a[1]-p[1],along=(x*dz-z*dx)/det,u=(x*nz-z*nx)/det;
+      if(along>=0&&u>=0&&u<=1)clear=Math.min(clear,Math.max(0,along-.38));
+    }
+    return clear;
+  }
+  const majors=features.filter(f=>roadWidth(f)>4);
+  function otherRoad(x,z,f,margin=0){return majors.some(g=>g.id!==f.id&&g.points.slice(1).some((b,i)=>distSegment(x,z,g.points[i],b)<roadWidth(g)/2+margin));}
   function quad(list,a,b,c,d,h){terrainSurface.project([a,b,d,c],h,list);}
   let edgePieces=0,dashPieces=0;
   for(const f of features){
     const unpaved=f.tags.surface==='compacted';
-    const w=width(f),narrow=['footway','steps','path'].includes(f.tags.highway),samples=[];let distance=0;
+    const w=roadWidth(f),narrow=['footway','steps','path'].includes(f.tags.highway),samples=[];let distance=0;
     for(let i=1;i<f.points.length;i++){
       const a=f.points[i-1],b=f.points[i],len=Math.hypot(b[0]-a[0],b[1]-a[1]);if(!len)continue;
       const n=Math.ceil(len);
@@ -24,7 +39,21 @@ export function addRoads(scene,data,boundary,groundAt,blocked,materials,terrainS
       const norm=(a,b)=>{const dx=b[0]-a[0],dz=b[1]-a[1],l=Math.hypot(dx,dz)||1;return[-dz/l,dx/l];};
       let a=norm(prev.p,samples[i].p),b=norm(samples[i].p,next.p);if(i===0&&!closed)a=b;if(i===samples.length-1&&!closed)b=a;
       let nx=a[0]+b[0],nz=a[1]+b[1],l=Math.hypot(nx,nz)||1;nx/=l;nz/=l;
-      const factor=1/Math.max(.65,nx*b[0]+nz*b[1]);samples[i].offset=d=>[samples[i].p[0]+nx*d*factor,samples[i].p[1]+nz*d*factor];
+      const factor=1/Math.max(.65,nx*b[0]+nz*b[1]);const sample=samples[i];
+      const lateralX=nx*factor,lateralZ=nz*factor;
+      sample.half=[-1,1].map(side=>narrow?w/2:clearance(sample.p,side*lateralX,side*lateralZ,w/2));
+      sample.offset=d=>{
+        const actual=d*sample.half[Number(d>0)]/(w/2);
+        return [sample.p[0]+lateralX*actual,sample.p[1]+lateralZ*actual];
+      };
+    }
+    // Taper back to full width over several metres instead of kinking at a corner.
+    for(const direction of [1,-1]){
+      for(let k=1;k<samples.length;k++){
+        const i=direction===1?k:samples.length-1-k,previous=samples[i-direction],current=samples[i];
+        const change=.32*Math.abs(current.d-previous.d);
+        for(let side=0;side<2;side++)current.half[side]=Math.min(current.half[side],previous.half[side]+change);
+      }
     }
     for(let i=1;i<samples.length;i++){
       const a=samples[i-1],b=samples[i],p=[(a.p[0]+b.p[0])/2,(a.p[1]+b.p[1])/2];
@@ -37,10 +66,10 @@ export function addRoads(scene,data,boundary,groundAt,blocked,materials,terrainS
       for(const side of [-1,1]){
         const edge=a.offset(side*(w/2-.22));
         if(otherRoad(...edge,f,.35))continue;
-        quad(paint,a.offset(side*(w/2-.30)),a.offset(side*(w/2-.14)),b.offset(side*(w/2-.30)),b.offset(side*(w/2-.14)),.17);
         // Low pale kerbs; no kerbs across road junctions or pedestrian crossings.
         const outside=a.offset(side*(w/2+.14));
-        const crossing=features.some(g=>width(g)<=4&&g.points.slice(1).some((q,j)=>distSegment(...outside,g.points[j],q)<width(g)/2+.5));
+        const crossing=inDriveway(...outside)||features.some(g=>roadWidth(g)<=4&&g.points.slice(1).some((q,j)=>distSegment(...outside,g.points[j],q)<roadWidth(g)/2+.5));
+        if(!crossing)quad(paint,a.offset(side*(w/2-.30)),a.offset(side*(w/2-.14)),b.offset(side*(w/2-.30)),b.offset(side*(w/2-.14)),.17);
         if(!crossing&&!blocked(...outside)&&inside(...outside,boundary)){
           quad(kerbs,a.offset(side*w/2),a.offset(side*(w/2+.28)),b.offset(side*w/2),b.offset(side*(w/2+.28)),.23);edgePieces++;
         }

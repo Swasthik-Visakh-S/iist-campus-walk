@@ -1,3 +1,4 @@
+import {roadWidth} from './road-width.js?v=11';
 import {inside, edgeDistance} from './geometry.js?v=6';
 const clamp=t=>Math.max(0,Math.min(1,t));
 const smooth=t=>{t=clamp(t);return t*t*(3-2*t);};
@@ -39,7 +40,6 @@ export function makeTerrain(data, config, buildings, ponds) {
     return h;
   }
   const surveyedBeds=new Set(['365911687','365911688','365911691','618490368','turf-soil-road','hostel-lower-landing','hostel-upper-landing']);
-  const widthForFeature=f=>f.width??(['footway','steps','path'].includes(f.tags.highway)?2.4:6.5);
   const routes=[],highways=data.features.filter(f=>f.tags.highway),junctions=new Map();
   const key=p=>p.join(',');
   // Shared junctions inherit explicit road elevations instead of unrelated base terrain.
@@ -47,9 +47,9 @@ export function makeTerrain(data, config, buildings, ponds) {
   for(const f of highways) {
     const profile=f.levels??spec.roadProfiles?.[f.id];
     if(Array.isArray(profile)&&profile.length!==f.points.length)throw Error(`Road ${f.id}: ${profile.length} levels for ${f.points.length} points`);
-    const grade=widthForFeature(f)>4||!!f.levels;
+    const grade=roadWidth(f)>4||!!f.levels;
     const levels=f.points.map((p,i)=>junctions.get(key(p))??(typeof profile==='number'?profile:profile?.[i]??baseHeight(...p)));
-    const width=f.width??(['footway','steps','path'].includes(f.tags.highway)?2.4:6.5);
+    const width=roadWidth(f);
     for(let i=1;i<f.points.length;i++) {
       const a=f.points[i-1],b=f.points[i],dx=b[0]-a[0],dz=b[1]-a[1],length=Math.hypot(dx,dz);
       if(!length)continue;

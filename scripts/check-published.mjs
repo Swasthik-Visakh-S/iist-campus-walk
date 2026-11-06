@@ -4,9 +4,13 @@ if (!base || !/^https:\/\/[a-z0-9-]+\.github\.io\/iist-campus-walk\/$/.test(base
   throw new Error('Expected the project Pages URL ending in /iist-campus-walk/');
 }
 const paths = [
-  ['', 'url=./dist/?v=10'],
-  ['dist/', 'VERSION 10'],
+  ['', 'url=./dist/?v=11'],
+  ['dist/', 'VERSION 11'],
   ['dist/app.js', 'toggleBoard'],
+  ['dist/oat.js','createOat'],
+  ['dist/ambulance.js','addAmbulance'],
+  ['dist/road-width.js','7.4'],
+  ['dist/medical.js','Ambulance'],
   ['dist/pitch.js', 'entranceU'],
   ['dist/basketball.js', 'Basketball hoops'],
   ['dist/movement.js', 'Math.max(0,pitch)'],
@@ -18,7 +22,7 @@ const paths = [
   ['dist/transit.js', 'createCheckpoint'],
   ['dist/site-details.js', 'perimeterRails'],
   ['dist/world.js', 'addEntrances'],
-  ['dist/model-config.json', '"version": 10'],
+  ['dist/model-config.json', '"version": 11'],
   ['dist/entrances.js', 'planEntrances'],
   ['dist/gates.js', 'addGates'],
   ['dist/quality.js', 'applyQuality'],
@@ -31,7 +35,7 @@ async function check(path, marker) {
   let error;
   for (let attempt = 1; attempt <= 10; attempt++) {
     try {
-      const response = await fetch(new URL(path+'?v=10', base), {signal: AbortSignal.timeout(12000), cache: 'no-store'});
+      const response = await fetch(new URL(path+'?v=11', base), {signal: AbortSignal.timeout(12000), cache: 'no-store'});
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const body = await response.text();
       if (!body.includes(marker)) throw new Error(`expected content missing`);
@@ -45,6 +49,6 @@ async function check(path, marker) {
   throw new Error(`${new URL(path, base)}: ${error.message}`);
 }
 await Promise.all(paths.map(([path, marker]) => check(path, marker)));
-const audio=await fetch(new URL('dist/audio/plucky-comedy.mp3?v=10',base),{headers:{Range:'bytes=0-2'}});
+const audio=await fetch(new URL('dist/audio/plucky-comedy.mp3?v=11',base),{headers:{Range:'bytes=0-2'}});
 if(!audio.ok || Buffer.from(await audio.arrayBuffer()).subarray(0,3).toString()!=='ID3')throw Error('Published MP3 unavailable');
 console.log(`Published campus verified at ${base}`);
