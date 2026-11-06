@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import {resetMotion,stepMotion,followCamera} from '../dist/movement.js';
 import {createCharacter} from '../dist/character.js';
+import {createResidents} from '../dist/residents.js';
+import {Box3,Scene,Vector3} from '../dist/vendor/three.module.js';
 const flat={walkHeight:()=>0,blocked:(x,z)=>x>3||z>3,cameraBlocked:(x,y,z)=>z>2};
 for(const fps of [30,60,144]){
  const s={};resetMotion(s,0,0,flat);let peak=0;
@@ -19,3 +21,32 @@ const cliff={...slope,walkHeight:x=>x>1?5:0};resetMotion(s,0,0,cliff);for(let i=
 const girl=createCharacter();girl.animate(.016,.2,3.6,true,1);assert(girl.legs[0].rotation.x*girl.legs[1].rotation.x<0);assert(girl.arms[0].rotation.x*girl.legs[0].rotation.x<0);
 for(const grounded of [true,false]){girl.animate(.05,.3,7.5,grounded,2);girl.root.updateMatrixWorld(true);girl.root.traverse(o=>{assert(o.matrixWorld.elements.every(Number.isFinite));if(o.geometry)assert([...o.geometry.attributes.position.array].every(Number.isFinite));});}
 console.log('Passed jump/landing at 30–144 FPS, collision, no double jump, teleport, camera clearance, slopes, gait and character geometry.');
+
+for(const ground of [flat,{walkHeight:()=>0,cameraBlocked:()=>false}]){
+ const {position,target}=followCamera({x:0,y:0,z:0},.3,-80*Math.PI/180,5.8,ground);
+ const angle=Math.atan2(target.y-position.y,Math.hypot(target.x-position.x,target.z-position.z));
+ assert(angle>=75*Math.PI/180&&position.y>.3,'Can see the sky from above the ground');
+}
+
+// Measure both meshes in campus metres. A single straight lane produces one
+// neutral, forward-facing resident, with no other residents in its GPU batch.
+const route={a:[0,0],b:[0,30],dx:0,dz:30,width:6,length:30};
+const comparisonWorld={...flat,blocked:()=>false,spawn:[0,0],places:[],terrainModel:{routes:[route]}};
+const residents=createResidents(new Scene(),comparisonWorld);
+assert.equal(residents.actors.length,1);
+const student=residents.group.getObjectByName('Resident figures');
+student.computeBoundingBox();
+const peerSize=student.boundingBox.getSize(new Vector3());
+const player=createCharacter();
+player.animate(0,0,0,true,0);
+player.root.updateMatrixWorld(true);
+const uprightRig=player.legs[0].parent;
+const standingBounds=new Box3().setFromObject(uprightRig,true);
+const playerSize=standingBounds.getSize(new Vector3());
+for(const axis of ['x','y','z'])assert(Math.abs(playerSize[axis]-peerSize[axis])<.035,'Player and resident size agree on '+axis);
+assert(Math.abs(standingBounds.min.y)<.005,'Shoes meet the ground');
+player.animate(0,0,0,true,0,true);
+player.root.updateMatrixWorld(true);
+const deckTop=new Box3().setFromObject(player.board.children[1],true).max.y;
+for(const leg of player.legs)assert(Math.abs(new Box3().setFromObject(leg,true).min.y-deckTop)<.015,'Both feet on the deck');
+console.log('Playable student matches resident dimensions and stands on the skateboard.');

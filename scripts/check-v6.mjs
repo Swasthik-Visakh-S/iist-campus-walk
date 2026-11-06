@@ -13,8 +13,8 @@ for(const e of w.entrances){
  for(const t of w.details.bambooPositions)assert(!w.noPlants(...t,4),'Bamboo intrudes on an entrance');
 }
 const oat=w.places.find(p=>p.name==='Open Air Theatre');assert(!w.blocked(...oat.p));
-for(const id of ['sac-oat-link','oat-mph-link']){const f=w.data.features.find(f=>f.id===id);assert(f.points.some(p=>Math.hypot(p[0]-w.amph.x,p[1]-w.amph.z)<.01),'Path passes through OAT stage');}
-const approach=w.data.features.find(f=>f.id==='365911687').points[0];assert(Math.hypot(approach[0]-24,approach[1]+145)<1,'Hostel road starts at the mapped junction, clear of MPH');
+const stageLink=w.data.features.find(f=>f.id==='oat-stage-access');
+assert.deepEqual(stageLink.points.at(-1),oat.p,'Stage remains accessible from the through aisle');
 for(const g of w.gates){assert(!w.blocked(...w.safePoint(g.point(0,6))));for(const t of w.trees)assert(Math.hypot(t[0]-g.center[0],t[1]-g.center[1])>g.width/2+18,'Gate approach clear of trees');}
 assert.equal(chooseQuality('auto',{coarse:true,width:390,cores:8}),'low');assert.equal(chooseQuality('auto',{width:1400,cores:8}),'balanced');assert.equal(chooseQuality('high',{coarse:true}),'high');assert.equal(qualitySettings('low').shadows,false);
 const renderer={shadowMap:{},setPixelRatio(n){this.ratio=n}},sun={shadow:{}};applyQuality(renderer,sun,w,'low',3);assert.equal(renderer.ratio,1);assert.equal(renderer.shadowMap.autoUpdate,false);assert(w.foliage.every(g=>g.crowns.count===g.trunks.count*3));applyQuality(renderer,sun,w,'high',2);assert(w.foliage.every(g=>g.trunks.count===g.count));

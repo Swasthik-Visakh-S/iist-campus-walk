@@ -11,7 +11,8 @@ These updates use the owner's written corrections and marked SAC/OAT/MPH image. 
 | 7 | Open Air Theatre | 22 |
 | 8 | Student Activity Centre | 22 |
 | New | Multipurpose Hall | 22 |
-| 9, 11, 14, 19 | Infirmary, Phalguni, Ardra, Ashwini | 36 |
+| 9 | Medical Services | 30 |
+| 11, 14, 19 | Phalguni, Ardra, Ashwini | 36 |
 | 12 | Water tank on a four-pillar concrete tower | 36 |
 | 13, 18 | Anuradha, Arundhathy | 39 |
 | 15, 17, 21 | Chitra, Dhanishta, Dhruva | 30 |
@@ -48,6 +49,12 @@ These updates use the owner's written corrections and marked SAC/OAT/MPH image. 
 
 Version 8 uses the marked entrances and visible roof outlines on the two supplied campus views. The overlap provides four common entrance marks. The map has 23 distinct marked doors plus estimated entrances on the remaining occupied buildings. The long southern pond is treated as Bhagirati, the western pond as Bhagirati 2.0 and the outlined small pond as Bhagirati 3.0.
 
-## Validation limits
+## OAT and sports access in version 10
 
-Automated checks cover geometry, collisions, elevation order, destinations, road clearance, connecting paths, entrances, gates, planting exclusions, jumping and control state. The Version 6 local preview was blocked in the development browser. Control tests use a DOM/renderer test double, not real WebGL pixels. Final 3D appearance, touch hardware and frame rates still need device verification.
+The solid blue trace sets the open aisle and road alignment. The two dotted stretches have overhead concrete. The short red flight links the lower road to the U-shaped upper loop. The modeled flight rises 3.5 m in twenty risers. Its width, rise and supporting details are approximate. Ground-floor clearance at MPH follows the passage, with the building above it.
+
+Medical Services shares Chitra’s terrace. A compacted-earth road leaves the asphalt near Crystal Jubilee Hostel and enters the turf through its hostel-facing end. The basketball court retains its mapped footprint and lower terrace.
+
+## Validation
+
+The walking checks traverse the OAT route in both directions, including every riser, and enter the football turf from the asphalt. Other tests measure the player against a resident, check the upward camera angle, and time the respawn prompt. Browser checks render desktop and phone-sized views in Chrome. Hardware frame rates depend on the device.

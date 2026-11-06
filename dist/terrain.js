@@ -1,6 +1,9 @@
 import {inside, edgeDistance} from './geometry.js?v=6';
 const clamp=t=>Math.max(0,Math.min(1,t));
 const smooth=t=>{t=clamp(t);return t*t*(3-2*t);};
+// Use the same tread index for player contact and the rendered stair boxes.
+export function stepCount(r){return Math.max(1,Math.ceil(Math.abs(r.y1-r.y0)/.175));}
+export function stepTop(r,index){return r.y0+(r.y1-r.y0)*(index+1)/stepCount(r)+.14;}
 export function makeTerrain(data, config, buildings, ponds) {
   const spec=config.terrain;
   const anchors=buildings.map(b=>({point:b.center,height:spec.levels[b.id]??spec.defaultLevel})).concat(spec.anchors||[]);
@@ -35,6 +38,7 @@ export function makeTerrain(data, config, buildings, ponds) {
     }
     return h;
   }
+  const surveyedBeds=new Set(['365911687','365911688','365911691','618490368','turf-soil-road','hostel-lower-landing','hostel-upper-landing']);
   const widthForFeature=f=>f.width??(['footway','steps','path'].includes(f.tags.highway)?2.4:6.5);
   const routes=[],highways=data.features.filter(f=>f.tags.highway),junctions=new Map();
   const key=p=>p.join(',');
@@ -49,30 +53,50 @@ export function makeTerrain(data, config, buildings, ponds) {
     for(let i=1;i<f.points.length;i++) {
       const a=f.points[i-1],b=f.points[i],dx=b[0]-a[0],dz=b[1]-a[1],length=Math.hypot(dx,dz);
       if(!length)continue;
-      routes.push({grade,id:f.id,a,b,dx,dz,length,width,y0:levels[i-1],y1:levels[i],steps:f.tags.highway==='steps',covered:f.tags.covered==='yes'});
+      routes.push({grade,surveyedBed:surveyedBeds.has(f.id),id:f.id,a,b,dx,dz,length,width,y0:levels[i-1],y1:levels[i],steps:f.tags.highway==='steps',covered:f.tags.covered==='yes'});
     }
   }
   function routeSample(x,z,r) {
     const t=clamp(((x-r.a[0])*r.dx+(z-r.a[1])*r.dz)/r.length**2);
     return {t,d:Math.hypot(x-r.a[0]-t*r.dx,z-r.a[1]-t*r.dz),height:r.y0+(r.y1-r.y0)*t};
   }
+  const stepRoutes=routes.filter(r=>r.steps);
+  const hostelFlight=stepRoutes.find(r=>r.id==='hostel-stairs');
+  function stairPosition(x,z,r){
+    const t=((x-r.a[0])*r.dx+(z-r.a[1])*r.dz)/r.length**2;
+    const side=Math.abs((x-r.a[0])*r.dz-(z-r.a[1])*r.dx)/r.length;
+    return {t,side};
+  }
   function groundAt(x,z) {
-    let h=baseHeight(x,z),sum=0,weights=0,blend=0,roadInterior=0;
+    let h=baseHeight(x,z),sum=0,weights=0,blend=0,roadInterior=0,bedWeight=0;
     for(const p of ponds){const d=edgeDistance(x,z,p.points);if(d<13){const dest=inside(x,z,p.points)?p.level-2:p.level+.25;h+=(dest-h)*(1-smooth(d/13));}}
     for(const r of routes) {
       if(!r.grade)continue;
       if(x<Math.min(r.a[0],r.b[0])-8||x>Math.max(r.a[0],r.b[0])+8||z<Math.min(r.a[1],r.b[1])-8||z>Math.max(r.a[1],r.b[1])+8)continue;
       const s=routeSample(x,z,r);if(r.width>4)roadInterior=Math.max(roadInterior,1-smooth(s.d/(r.width*.5)));
       const d=Math.max(0,s.d-r.width/2);
+      if(r.surveyedBed)bedWeight=Math.max(bedWeight,1-smooth(d/3));
       if(d<5){const w=(1-smooth(d/5))/(.2+s.d*s.d)**2;sum+=w*s.height;weights+=w;blend=Math.max(blend,1-smooth(d/5));}
     }
     if(weights)h+=(sum/weights-h)*blend;
     for(const b of buildings){const d=edgeDistance(x,z,b.points);if(d<5)h+=(b.level-h)*(1-smooth(d/5))*(1-roadInterior*smooth(d/.7));}
+    if(bedWeight&&weights)h+=(sum/weights-h)*bedWeight;
+    if(hostelFlight){
+      const r=hostelFlight;
+      if(Math.abs(x-r.a[0])<12&&Math.abs(z-r.a[1])<16){
+        const s=routeSample(x,z,r);
+        const shoulder=smooth(1-(s.d-r.width/2-1)/2.5);
+        h+=(s.height-h)*shoulder;
+      }
+    }
     return h;
   }
-  const stepRoutes=routes.filter(r=>r.steps);
   function stairHeight(x,z) {
-    for(const r of stepRoutes){const s=routeSample(x,z,r);if(s.d<=r.width/2+.02){const n=Math.max(1,Math.ceil(Math.abs(r.y1-r.y0)/.18));return r.y0+(r.y1-r.y0)*Math.round(s.t*n)/n+.12;}}
+    for(const r of stepRoutes){
+      const {t,side}=stairPosition(x,z,r);
+      if(t<0||t>1||side>r.width/2)continue;
+      return stepTop(r,Math.min(stepCount(r)-1,Math.floor(t*stepCount(r))));
+    }
     return null;
   }
   return {groundAt,baseHeight,routes,routeSample,stairHeight};

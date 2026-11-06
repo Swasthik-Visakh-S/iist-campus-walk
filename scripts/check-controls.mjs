@@ -35,8 +35,8 @@ const key=(code,down)=>{for(const fn of handlers.get(down?'keydown':'keyup'))fn(
 nodes.get('boardButton').onclick();assert.equal(nodes.get('runButton').textContent,'Boost');
 key('KeyW',true);advance(10);assert(doc.body.classList.contains('dying'));
 assert(!nodes.get('death').open,'Fall is visible before the prompt');
-advance(282);assert(!nodes.get('death').open,'Wait five seconds before showing the prompt');
-advance(20);assert(nodes.get('death').open,'Uncleared crossing opens the prompt after five seconds');
+advance(162);assert(!nodes.get('death').open,'Wait three seconds before showing the prompt');
+advance(20);assert(nodes.get('death').open,'Uncleared crossing opens the prompt after three seconds');
 nodes.get('respawn').onclick();assert(!nodes.get('death').open);
 key('KeyI',true);advance(14);assert(nodes.get('idButton').disabled,'Showing ID grants clearance');
 key('ShiftLeft',true);key('KeyW',true);advance(12);key('KeyW',false);key('ShiftLeft',false);

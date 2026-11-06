@@ -3,6 +3,8 @@ import {distSegment, inside} from './geometry.js?v=6';
 
 const turfOffset = .16;
 const ballRadius = .225;
+// The short baseline facing Crystal Jubilee is v=0. Keep the opening clear of the goal.
+const entranceU = .25;
 
 function pitchFrame(points) {
   const [a,b,c,d] = points;
@@ -64,7 +66,7 @@ function netTexture() {
 
 function addStructure(scene,surface,frame) {
   const {at,width,length}=frame;
-  const height=7, gateHeight=2.65, opening=1.75/length;
+  const height=7, gateHeight=2.65, opening=1.75/width;
   const walls=[],goalBacks=[],bars=[[],[]],nets=[[],[]],uvs=[[],[]],texture=netTexture();
   const up=new T.Vector3(0,1,0), transform=new T.Object3D();
   const point=(p,h)=>new T.Vector3(p[0],surface.heightAt(...p)+turfOffset+h,p[1]);
@@ -97,12 +99,12 @@ function addStructure(scene,surface,frame) {
     }
     if(bottom===0) walls.push([a,b]);
   }
-  fence(at(0,0),at(1,0));
+  fence(at(0,0),at(entranceU-opening,0));
+  fence(at(entranceU-opening,0),at(entranceU+opening,0),gateHeight);
+  fence(at(entranceU+opening,0),at(1,0));
   fence(at(1,0),at(1,1));
   fence(at(1,1),at(0,1));
-  fence(at(0,1),at(0,.5+opening));
-  fence(at(0,.5+opening),at(0,.5-opening),gateHeight);
-  fence(at(0,.5-opening),at(0,0));
+  fence(at(0,1),at(0,0));
 
   for(const sign of [1,-1]) {
     const v=sign===1?.07:.93;
@@ -235,5 +237,5 @@ export function addTurf(scene,points,surface) {
     }
     pos.y=ballFloor();
   }
-  return {spawn:at(.43,.30),aim:at(.5,.94),gate:at(0,.5),ball,blocked,contains,update};
+  return {spawn:at(.43,.30),aim:at(.5,.94),gate:at(entranceU,0),ball,blocked,contains,update};
 }

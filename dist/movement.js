@@ -21,7 +21,10 @@ export function stepMotion(state,dx,dz,dt,jump,world){
 }
 export function followCamera(state,yaw,pitch,distance,world){
   const target={x:state.x,y:state.y+1.25,z:state.z};
-  const desired={x:target.x+Math.sin(yaw)*Math.cos(pitch)*distance,y:target.y+Math.sin(pitch)*distance,z:target.z+Math.cos(yaw)*Math.cos(pitch)*distance};
+  // For skyward views the camera turns upwards from shoulder height.
+  // Orbiting under the student instead would put the camera underground.
+  const boom=Math.max(0,pitch),sinYaw=Math.sin(yaw),cosYaw=Math.cos(yaw);
+  const desired={x:target.x+sinYaw*Math.cos(boom)*distance,y:target.y+Math.sin(boom)*distance,z:target.z+cosYaw*Math.cos(boom)*distance};
   let position={...target};
   const n=Math.ceil(distance/.15);
   for(let i=1;i<=n;i++){
@@ -29,5 +32,10 @@ export function followCamera(state,yaw,pitch,distance,world){
     if(p.y<world.walkHeight(p.x,p.z)+.3||world.cameraBlocked(p.x,p.y,p.z))break;
     position=p;
   }
-  return {position,target};
+  const aim={
+    x:position.x-sinYaw*Math.cos(pitch),
+    y:position.y-Math.sin(pitch),
+    z:position.z-cosYaw*Math.cos(pitch)
+  };
+  return {position,target:aim};
 }

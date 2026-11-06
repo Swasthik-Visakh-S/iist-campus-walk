@@ -36,7 +36,13 @@ def check(session, site):
         return request(session + '/execute/sync', {'script': code, 'args': []})
 
     def capture(name):
-        (OUT / (name + '.png')).write_bytes(base64.b64decode(request(session + '/screenshot')))
+        for attempt in range(3):
+            try:
+                (OUT / (name + '.png')).write_bytes(base64.b64decode(request(session + '/screenshot')))
+                return
+            except RuntimeError as error:
+                if attempt == 2 or 'Timed out receiving message from renderer' not in str(error):
+                    raise
 
     request(session + '/url', {'url': site})
     deadline = time.monotonic() + 100
@@ -45,6 +51,7 @@ def check(session, site):
             raise AssertionError(js('return document.body.innerText'))
         time.sleep(.5)
     assert js("return !document.querySelector('#walk').disabled && !!document.querySelector('#world').getContext('webgl2')")
+    js("const q=document.querySelector('#quality'); q.value='low'; q.dispatchEvent(new Event('change'));")
     capture('campus-overview')
     # Use a trusted user gesture to check real browser audio unlocking and decoding.
     button=request(session+'/element',{'using':'css selector','value':'#soundButton'})
@@ -61,7 +68,8 @@ def check(session, site):
 
     js("document.querySelector('#start').click();document.querySelector('#boardButton').click()")
     assert js("return document.querySelector('#boardButton').getAttribute('aria-pressed') === 'true'")
-    for place, file in [('Football turf','football-turf'),('Chitra','chitra-steps'),('Dhanishta','dhanishta-steps'),('Library ground','library-ground'),('Muthiyammain Kshethram','shrine'),('Front gate','front-checkpoint')]:
+    for place, file in [('OAT hostel steps','oat-hostel-steps'),('Football turf entrance','turf-entrance'),
+                        ('Medical Services','medical-services'),('Basketball court','basketball-court'),('Front gate','front-checkpoint')]:
         js("""const menu=document.querySelector('#destination');
             menu.value=[...menu.options].find(o=>o.textContent===%s).value;
             menu.dispatchEvent(new Event('change'));""" % json.dumps(place))
