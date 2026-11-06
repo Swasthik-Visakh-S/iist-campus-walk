@@ -101,12 +101,12 @@ $('destination').onchange=e=>{
  $('mapToggle').setAttribute('aria-expanded','false');
  const gate=world.gates.find(g=>g.name===place.name);
  const goal=place.name==='Football turf'?world.pitch.aim:null;
- const facing=gate?.center||place.door||place.viewToward||goal||(place.name==='Library fountain & garden'?world.garden.libraryCenter:null);
+ const facing=gate?.center||place.viewToward||place.door||goal||(place.name==='Library fountain & garden'?world.garden.libraryCenter:null);
  if(facing){
   yaw=Math.atan2(player.x-facing[0],player.z-facing[1]);
   avatar.root.rotation.y=yaw+Math.PI;
  }
- pitch=.32;
+ pitch=place.viewPitch??.32;
  e.target.value='';
 };
 window.addEventListener('keydown',e=>{if(['SELECT','INPUT','BUTTON'].includes(e.target.tagName)||$('info').open||dead)return;if(e.code==='KeyB'&&!e.repeat)toggleBoard();if(e.code==='KeyI'&&!e.repeat)showID();if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();keys.add(e.code);if(e.code==='Space'&&!e.repeat&&mode==='walk')jumpQueued=true;if(e.code==='KeyV'&&!e.repeat)setMode(mode==='walk'?'aerial':'walk');if(e.code==='Enter'){setMode('walk');capture()}});window.addEventListener('keyup',e=>keys.delete(e.code));window.addEventListener('blur',()=>{drag=null;keys.clear();jumpQueued=false;resetTouch();});document.addEventListener('visibilitychange',()=>{keys.clear();jumpQueued=false;resetTouch();});

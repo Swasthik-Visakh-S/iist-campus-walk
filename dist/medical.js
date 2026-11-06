@@ -37,7 +37,7 @@ export function planMedical(entry,routes){
     return u>=-41-margin&&u<=8+margin&&v>=-1-margin&&v<=5+margin;
   }
   return {entry,level,at,local,posts,parked,roadEdge,apron,inDriveway,clearPlanting,cameraBlocked,
-    blocked:(x,z)=>vehicle(x,z,.22),spawn:at(-7.8,11.8)};
+    blocked:(x,z)=>vehicle(x,z,.22),spawn:at(6,9),aim:at(-3,.9)};
 }
 
 export function addMedical(scene,medical,surface,box,m){

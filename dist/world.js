@@ -140,7 +140,7 @@ export function buildWorld(scene,data,config){
  if(name){
    const entrance=entrances.find(e=>e.buildingId===b.id);
    const destination=entrance===clinic?safePoint(medical.spawn):entrance?.stepCount?entrance.end:entrance?.porch||safePoint(b.center);
-   landmarks.push({name,p:destination,door:entrance?.door,label:b.center,height:y+h});
+   landmarks.push({name,p:destination,door:entrance?.door,viewToward:entrance===clinic?medical.aim:undefined,viewPitch:entrance===clinic?.16:undefined,label:b.center,height:y+h});
  }
 
  }
