@@ -14,7 +14,11 @@ for(let i=0;i<net.count;i++) {
   assert(Math.abs(Math.abs(net.getX(i))-16)<1e-5||Math.abs(Math.abs(net.getZ(i))-21)<1e-5,'Only perimeter netting encloses the turf');
 }
 assert(pitch.contains(...pitch.spawn));
-assert(!pitch.blocked(...pitch.gate)&&pitch.blocked(-16,5),'Roadside opening and fence collision');
+assert.deepEqual(pitch.gate,[-8,-21],'Gate opens on the hostel-facing baseline, off centre');
+assert(!pitch.blocked(...pitch.gate)&&pitch.blocked(-16,0),'Old west-side entrance has a continuous net');
+for(let z=-22;z<=-16;z+=.2)for(const side of [-1,0,1]){
+  assert(!pitch.blocked(pitch.gate[0]+side,z),'The entrance clears the goal and both gateposts');
+}
 assert(pitch.blocked(0,-21*(1-.14)-1.55)&&!pitch.blocked(0,-21*(1-.14)),'Goal net has a back and an open mouth');
 const y=13.16,dt=1/60;
 pitch.update(dt,{x:0,y,z:.25},0,0);

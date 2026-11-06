@@ -1,5 +1,6 @@
 import * as T from './vendor/three.module.js';
 import {inside,distSegment,edgeDistance,center} from './geometry.js?v=6';
+import {stepCount,stepTop} from './terrain.js?v=10';
 export function wallSegments(boundary,routes,spec){
   const walls=[];
   for(let i=1;i<boundary.length;i++){
@@ -21,7 +22,11 @@ export function addCampusDetails(o){
   for(const w of walls){const x=(w.a[0]+w.b[0])/2,z=(w.a[1]+w.b[1])/2,len=Math.hypot(w.b[0]-w.a[0],w.b[1]-w.a[1]),y=Math.min(terrainSurface.heightAt(...w.a),terrainSurface.heightAt(...w.b))-.1,h=spec.boundaryWall.height+Math.abs(terrainSurface.heightAt(...w.a)-terrainSurface.heightAt(...w.b))+.1;box(wallMat,x,y+h/2,z,spec.boundaryWall.thickness,h,len+.1,Math.atan2(w.b[0]-w.a[0],w.b[1]-w.a[1]));}
   // Grass verges are laid on the same terrain as the asphalt, stopping at buildings and water.
   const verge=[];
+  const hostelFlight=terrainModel.routes.find(r=>r.id==='hostel-stairs');
   for(const r of roads.filter(r=>r.width>4)){
+    // Both roads share one grass bank here. Separate verge ribbons fragment
+    // the slope into overlapping strips where the upper loop turns back.
+    if(hostelFlight&&distSegment(...r.a,hostelFlight.a,hostelFlight.b)<18)continue;
     const dx=r.b[0]-r.a[0],dz=r.b[1]-r.a[1],len=Math.hypot(dx,dz),nx=-dz/len,nz=dx/len;
     for(const side of [-1,1]){
       const points=[r.a,r.b].flatMap(p=>[r.width/2+.2,r.width/2+spec.vergeWidth].map(d=>[p[0]+side*nx*d,p[1]+side*nz*d]));
@@ -30,19 +35,36 @@ export function addCampusDetails(o){
     }
   }
   const vg=new T.BufferGeometry();vg.setAttribute('position',new T.Float32BufferAttribute(verge,3));vg.computeVertexNormals();const lawn=mesh(vg,m.lawn);lawn.material.side=T.DoubleSide;lawn.castShadow=false;
-  // Red dotted markup: separate roofs supported along both sides of the paths.
+  // The two dotted spans are concrete soffits over the walking route.
   let roofSegments=0,stairCount=0;
+  const concrete=material('#b6afa0');
   for(const r of terrainModel.routes){
     const angle=Math.atan2(r.dx,r.dz);
-    if(r.covered){const n=Math.ceil(r.length/4);for(let k=0;k<n;k++){
-      const t=(k+.5)/n,x=r.a[0]+r.dx*t,z=r.a[1]+r.dz*t,y=groundAt(x,z)+3.4;
-      box(m.roof,x,y,z,r.width+1,.2,r.length/n+.15,angle);roofSegments++;
-      for(const side of [-1,1]){const px=x-side*r.dz/r.length*(r.width/2+.25),pz=z+side*r.dx/r.length*(r.width/2+.25);box(m.white,px,(groundAt(px,pz)+y)/2,pz,.13,y-groundAt(px,pz),.13);}
-    }}
-    if(r.steps){const n=Math.max(1,Math.ceil(Math.abs(r.y1-r.y0)/.18));for(let k=0;k<=n;k++){
-      const t=k/n,x=r.a[0]+r.dx*t,z=r.a[1]+r.dz*t,y=r.y0+(r.y1-r.y0)*t+.12;
-      const bottom=Math.min(groundAt(x,z),y)-.25;box(m.white,x,(y+bottom)/2,z,r.width,y-bottom,r.length/n+.035,angle);stairCount++;
-    }}
+    if(r.covered){
+      const y=r.y0+3.85,span=r.width+.8;
+      box(concrete,(r.a[0]+r.b[0])/2,y,(r.a[1]+r.b[1])/2,span,.5,r.length+.12,angle);
+      roofSegments++;
+      const bays=Math.ceil(r.length/5);
+      for(let k=0;k<bays;k++)for(const side of [-1,1]){
+        const x=r.a[0]+r.dx*(k+.5)/bays-side*r.dz/r.length*(span/2-.18);
+        const z=r.a[1]+r.dz*(k+.5)/bays+side*r.dx/r.length*(span/2-.18);
+        const bottom=terrainSurface.heightAt(x,z)-.12;
+        box(concrete,x,(bottom+y)/2,z,.28,y-bottom,.32,angle);
+      }
+    }
+    if(r.steps){
+      const count=stepCount(r),tread=r.length/count;
+      for(let i=0;i<count;i++){
+        const t=(i+.5)/count,x=r.a[0]+r.dx*t,z=r.a[1]+r.dz*t;
+        const top=stepTop(r,i),bottom=Math.min(r.y0+(r.y1-r.y0)*t,top)-.48;
+        box(concrete,x,(top+bottom)/2,z,r.width,top-bottom,tread+.002,angle);
+        if(r===hostelFlight){
+          const front=tread*.5-.026;
+          box(m.white,x-front*r.dx/r.length,top+.006,z-front*r.dz/r.length,r.width-.10,.012,.048,angle);
+        }
+        stairCount++;
+      }
+    }
   }
   // Tall bamboo in the road-enclosed central hostel space, with a grass understory.
   let seed=974;const rand=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};

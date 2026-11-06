@@ -1,4 +1,4 @@
-import {createSkateboard} from './skateboard.js?v=9';
+import {createSkateboard} from './skateboard.js?v=10';
 import * as T from './vendor/three.module.js';
 // Original articulated chibi model; faces local +Z, feet at Y=0.
 export function createCharacter() {
@@ -9,20 +9,23 @@ export function createCharacter() {
   function oval(parent,m,p,s){const o=new T.Mesh(sphere,m);o.position.set(...p);o.scale.set(...s);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o;}
   function part(parent,g,m,p){const o=new T.Mesh(g,m);o.position.set(...p);o.castShadow=true;parent.add(o);return o;}
   const body=new T.Group();rig.add(body);
-  oval(body,shirt,[0,.92,0],[.28,.36,.19]);
-  part(body,new T.CylinderGeometry(.22,.39,.38,12),cloth,[0,.69,0]);
-  part(body,new T.CylinderGeometry(.38,.4,.045,24),cream,[0,.50,0]);
-  oval(body,cream,[0,1.13,.13],[.22,.06,.10]);
+  // In campus metres the other students have a .48 m torso and stand about 1.85 m tall.
+  // Fit the uniform to the same frame while keeping the original accessories.
+  const uniform=new T.Group();uniform.position.y=.09;uniform.scale.set(.86,1,.86);body.add(uniform);
+  oval(uniform,shirt,[0,.92,0],[.28,.36,.19]);
+  part(uniform,new T.CylinderGeometry(.22,.39,.38,12),cloth,[0,.69,0]).scale.z=.78;
+  part(uniform,new T.CylinderGeometry(.38,.4,.045,24),cream,[0,.50,0]).scale.z=.78;
+  oval(uniform,cream,[0,1.13,.13],[.22,.06,.10]);
   // Student clothes: collared blue shirt, navy pleated skirt and ID lanyard.
-  for(const side of [-1,1]){const collar=oval(body,cream,[side*.09,1.12,.19],[.08,.09,.025]);collar.rotation.z=side*.4;}
-  oval(body,ribbon,[0,1.08,.215],[.045,.065,.025]);
-  for(const side of [-1,1]){const lace=part(body,new T.BoxGeometry(.018,.30,.018),cloth,[side*.06,.98,.198]);lace.rotation.z=side*.23;}
-  part(body,new T.BoxGeometry(.12,.15,.025),cream,[0,.80,.223]);part(body,new T.BoxGeometry(.075,.035,.027),shirt,[0,.835,.228]);
+  for(const side of [-1,1]){const collar=oval(uniform,cream,[side*.09,1.12,.19],[.08,.09,.025]);collar.rotation.z=side*.4;}
+  oval(uniform,ribbon,[0,1.08,.215],[.045,.065,.025]);
+  for(const side of [-1,1]){const lace=part(uniform,new T.BoxGeometry(.018,.30,.018),cloth,[side*.06,.98,.198]);lace.rotation.z=side*.23;}
+  part(uniform,new T.BoxGeometry(.12,.15,.025),cream,[0,.80,.223]);part(uniform,new T.BoxGeometry(.075,.035,.027),shirt,[0,.835,.228]);
 
   // Small backpack and straps read clearly from the following camera.
-  oval(body,shoe,[0,.94,-.23],[.23,.26,.11]);
-  for(const side of [-1,1])oval(body,cream,[side*.19,1.01,.17],[.028,.20,.025]);
-  const head=new T.Group();head.position.y=1.43;body.add(head);
+  oval(uniform,shoe,[0,.94,-.23],[.23,.26,.11]);
+  for(const side of [-1,1])oval(uniform,cream,[side*.19,1.01,.17],[.028,.20,.025]);
+  const head=new T.Group();head.position.y=1.55;head.scale.set(.60,.60,.60);body.add(head);
   oval(head,hair,[0,.04,-.05],[.46,.45,.40]);
   oval(head,skin,[0,-.01,.08],[.405,.38,.35]);
   oval(head,hair,[0,.24,.09],[.43,.21,.34]);
@@ -40,23 +43,23 @@ export function createCharacter() {
   const smile=new T.TubeGeometry(new T.CatmullRomCurve3([new T.Vector3(-.065,-.178,.397),new T.Vector3(0,-.195,.407),new T.Vector3(.065,-.178,.397)]),12,.009,5,false);part(head,smile,eye,[0,0,0]);
   const tails=[];
   for(const side of [-1,1]){
-    const tail=new T.Group();tail.position.set(side*.40,.12,-.08);head.add(tail);tails.push(tail);
-    oval(tail,hair,[side*.06,-.13,-.025],[.18,.30,.17]);
+    const tail=new T.Group();tail.position.set(side*.38,.12,-.08);head.add(tail);tails.push(tail);
+    oval(tail,hair,[side*.045,-.13,-.025],[.145,.30,.17]);
     oval(tail,ribbon,[0,0,0],[.13,.075,.14]);
     oval(tail,ribbon,[side*.07,.03,.05],[.09,.07,.045]);
   }
   const arms=[],legs=[];
   for(const side of [-1,1]){
-    const arm=new T.Group();arm.position.set(side*.29,1.10,0);body.add(arm);arms.push(arm);
-    oval(arm,shirt,[side*.025,-.13,0],[.10,.20,.10]);oval(arm,skin,[side*.035,-.32,.015],[.083,.10,.085]);
-    const leg=new T.Group();leg.position.set(side*.145,.52,0);rig.add(leg);legs.push(leg);
-    oval(leg,skin,[0,-.19,0],[.09,.21,.09]);oval(leg,cream,[0,-.33,0],[.095,.10,.095]);oval(leg,shoe,[0,-.44,.055],[.12,.085,.19]);
+    const arm=new T.Group();arm.position.set(side*.248,1.21,0);body.add(arm);arms.push(arm);
+    oval(arm,shirt,[side*.017,-.11,0],[.081,.17,.082]);oval(arm,skin,[side*.020,-.295,.016],[.064,.123,.067]);
+    const leg=new T.Group();leg.position.set(side*.115,.70,0);rig.add(leg);legs.push(leg);
+    oval(leg,skin,[0,-.27,0],[.091,.29,.091]);oval(leg,cream,[0,-.48,0],[.093,.12,.092]);oval(leg,shoe,[0,-.615,.045],[.109,.085,.152]);
   }
   const board=createSkateboard();root.add(board.root);
   let phase=0,blend=0;
   function animate(dt,travel,speed,grounded,time,skating=false,boost=false){
     board.root.visible=skating;
-    rig.position.y=skating?.22:0;
+    rig.position.y=skating?.212:0;
     rig.rotation.y=skating?.85:0;
     board.update(skating?travel:0,boost);
     if(skating){

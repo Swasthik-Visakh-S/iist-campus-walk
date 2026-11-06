@@ -49,7 +49,7 @@ export function applyReferenceLayout(data, config) {
     if (!survey) return feature;
     const tags = {...feature.tags};
     if (survey.name) tags.name = survey.name;
-    return {...feature, tags, points: survey.points || feature.points};
+    return {...feature, ...survey, tags, points: survey.points || feature.points};
   });
   return {...data, features};
 }

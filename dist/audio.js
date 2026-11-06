@@ -2,7 +2,7 @@
 export function createCampusAudio(button) {
   if (typeof Audio === 'undefined') {
     if (button) button.hidden = true;
-    return {setBoost() {}, setDead() {}};
+    return {setDead() {}};
   }
 
   const music = new Audio();
@@ -12,7 +12,7 @@ export function createCampusAudio(button) {
   let enabled = true;
   try { enabled = localStorage.getItem('iist-sound') !== 'off'; } catch {}
   let activated = false, away = false, dead = false;
-  let ctx, noise, boost;
+  let ctx;
   const notes = new Set();
   const audible = () => enabled && activated && !document.hidden && !away;
 
@@ -36,41 +36,7 @@ export function createCampusAudio(button) {
     }
     if (ctx) ctx.resume().catch(() => {});
   }
-  function setBoost(on) {
-    on = !!(on && audible() && !dead && ctx?.state === 'running');
-    if (on === !!boost) return;
-    if (!on) {
-      const {source, gain} = boost;
-      gain.gain.cancelScheduledValues(ctx.currentTime);
-      gain.gain.setTargetAtTime(.0001, ctx.currentTime, .018);
-      source.stop(ctx.currentTime + .09);
-      boost = null;
-      return;
-    }
-    if (!noise) {
-      noise = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
-      const data = noise.getChannelData(0);
-      for (let i = 0; i < data.length; i++) data[i] = 2 * Math.random() - 1;
-    }
-    const t = ctx.currentTime;
-    const source = ctx.createBufferSource();
-    source.buffer = noise;
-    source.loop = true;
-    const filter = ctx.createBiquadFilter();
-    filter.type = 'bandpass';
-    filter.Q.value = .85;
-    filter.frequency.setValueAtTime(520, t);
-    filter.frequency.exponentialRampToValueAtTime(1550, t + .36);
-    const gain = ctx.createGain();
-    gain.gain.setValueAtTime(.0001, t);
-    gain.gain.exponentialRampToValueAtTime(.17, t + .12);
-    source.connect(filter).connect(gain).connect(ctx.destination);
-    source.onended = () => { source.disconnect(); filter.disconnect(); gain.disconnect(); };
-    source.start();
-    boost = {source, gain};
-  }
   function quietEffects() {
-    setBoost(false);
     for (const note of notes) note.stop();
   }
   function playDeathCue() {
@@ -129,7 +95,6 @@ export function createCampusAudio(button) {
   window.addEventListener('pageshow', () => { away = false; syncPlayback(); });
   updateButton();
   return {
-    setBoost,
     setDead(value) {
       if (dead === value) return;
       dead = value;
