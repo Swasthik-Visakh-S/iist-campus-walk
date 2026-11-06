@@ -22,7 +22,11 @@ export function addCampusDetails(o){
   for(const w of walls){const x=(w.a[0]+w.b[0])/2,z=(w.a[1]+w.b[1])/2,len=Math.hypot(w.b[0]-w.a[0],w.b[1]-w.a[1]),y=Math.min(terrainSurface.heightAt(...w.a),terrainSurface.heightAt(...w.b))-.1,h=spec.boundaryWall.height+Math.abs(terrainSurface.heightAt(...w.a)-terrainSurface.heightAt(...w.b))+.1;box(wallMat,x,y+h/2,z,spec.boundaryWall.thickness,h,len+.1,Math.atan2(w.b[0]-w.a[0],w.b[1]-w.a[1]));}
   // Grass verges are laid on the same terrain as the asphalt, stopping at buildings and water.
   const verge=[];
+  const hostelFlight=terrainModel.routes.find(r=>r.id==='hostel-stairs');
   for(const r of roads.filter(r=>r.width>4)){
+    // Both roads share one grass bank here. Separate verge ribbons fragment
+    // the slope into overlapping strips where the upper loop turns back.
+    if(hostelFlight&&distSegment(...r.a,hostelFlight.a,hostelFlight.b)<18)continue;
     const dx=r.b[0]-r.a[0],dz=r.b[1]-r.a[1],len=Math.hypot(dx,dz),nx=-dz/len,nz=dx/len;
     for(const side of [-1,1]){
       const points=[r.a,r.b].flatMap(p=>[r.width/2+.2,r.width/2+spec.vergeWidth].map(d=>[p[0]+side*nx*d,p[1]+side*nz*d]));
@@ -54,6 +58,10 @@ export function addCampusDetails(o){
         const t=(i+.5)/count,x=r.a[0]+r.dx*t,z=r.a[1]+r.dz*t;
         const top=stepTop(r,i),bottom=Math.min(r.y0+(r.y1-r.y0)*t,top)-.48;
         box(concrete,x,(top+bottom)/2,z,r.width,top-bottom,tread+.002,angle);
+        if(r===hostelFlight){
+          const front=tread*.5-.026;
+          box(m.white,x-front*r.dx/r.length,top+.006,z-front*r.dz/r.length,r.width-.10,.012,.048,angle);
+        }
         stairCount++;
       }
     }
