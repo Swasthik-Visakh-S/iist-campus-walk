@@ -1,23 +1,24 @@
-import {planForecourt,addForecourt} from './turf-forecourt.js?v=12';
-import {planCafeteria,addCafeteria} from './cafeteria.js?v=12';
-import {academicIds,addAcademicEntrances,academicCanopyBlocked} from './academic.js?v=12';
-import {planMedical,addMedical} from './medical.js?v=12';
-import {createOat} from './oat.js?v=12';
-import {addBasketballCourt} from './basketball.js?v=12';
-import {addAvenueShrubs,addBanyan} from './planting.js?v=12';
-import {perimeterRails,addSurveyDetails,addTurf} from './site-details.js?v=12';
-import {applyReferenceLayout,libraryGarden} from './layout.js?v=12';
+import {addCrystalFacade} from './crystal.js?v=13';
+import {planForecourt,addForecourt} from './turf-forecourt.js?v=13';
+import {planCafeteria,addCafeteria} from './cafeteria.js?v=13';
+import {academicIds,addAcademicEntrances,academicCanopyBlocked} from './academic.js?v=13';
+import {planMedical,addMedical} from './medical.js?v=13';
+import {createOat} from './oat.js?v=13';
+import {addBasketballCourt} from './basketball.js?v=13';
+import {addAvenueShrubs,addBanyan} from './planting.js?v=13';
+import {perimeterRails,addSurveyDetails,addTurf} from './site-details.js?v=13';
+import {applyReferenceLayout,libraryGarden} from './layout.js?v=13';
 import {addLibraryFacade,addLibraryGarden} from './library.js?v=6';
 import * as T from './vendor/three.module.js';
 import {inside,distSegment,center,edgeDistance} from './geometry.js?v=6';
 export {inside,distSegment,center} from './geometry.js?v=6';
-import {addRoads} from './roads.js?v=12';
-import {createTerrainSurface} from './terrain-mesh.js?v=12';
-import {planEntrances,entrancePaths,clearOfEntrances,addEntrances,hostelStepHeight,riser} from './entrances.js?v=12';
-import {planGates,addGates} from './gates.js?v=12';
-import {foliageChunks,mergeStaticMeshes} from './render-utils.js?v=12';
-import {makeTerrain} from './terrain.js?v=12';
-import {addCampusDetails,wallSegments} from './campus-details.js?v=12';
+import {addRoads} from './roads.js?v=13';
+import {createTerrainSurface} from './terrain-mesh.js?v=13';
+import {planEntrances,entrancePaths,clearOfEntrances,addEntrances,hostelStepHeight,riser} from './entrances.js?v=13';
+import {planGates,addGates} from './gates.js?v=13';
+import {foliageChunks,mergeStaticMeshes} from './render-utils.js?v=13';
+import {makeTerrain} from './terrain.js?v=13';
+import {addCampusDetails,wallSegments} from './campus-details.js?v=13';
 export function buildWorld(scene,data,config){
  data=applyReferenceLayout(data,config);
  const material=(color,extra={})=>new T.MeshStandardMaterial({color,roughness:.9,...extra});
@@ -42,7 +43,7 @@ export function buildWorld(scene,data,config){
  const cafeEntry=entrances.find(e=>e.buildingId==='cafeteria');
  const cafe=planCafeteria(cafeEntry);
  const forecourt=planForecourt(config);
- const columns=entrances.flatMap(e=>e===clinic?medical.posts:e===cafeEntry?cafe.posts:e.pillars);
+ const columns=entrances.flatMap(e=>e===clinic?medical.posts:e===cafeEntry?cafe.posts:e.buildingId==='crystal-hostel'?[-1,1].map(side=>[e.door[0]+e.right[0]*side*2.35+e.n[0]*.3,e.door[1]+e.right[1]*side*2.35+e.n[1]*.3]):e.pillars);
  const sports=data.features.filter(f=>f.tags.sport);
  const courts=sports.filter(f=>f.tags.sport!=='soccer');
  const fieldEdges=[...sports,forecourt].flatMap(f=>f.points.slice(1).map((b,i)=>({a:f.points[i],b,width:1})));
@@ -77,9 +78,9 @@ export function buildWorld(scene,data,config){
    if(medical.cameraBlocked(x,y,z)||y<clinic.level+4.3&&medical.posts.some(p=>Math.hypot(x-p[0],z-p[1])<.5))return true;
    if(basketball?.cameraBlocked(x,y,z))return true;
    if(!inside(x,z,boundary)&&!exteriorRoad(x,z))return true;
-   if(entrances.some(e=>{if(e===clinic||e===cafeEntry)return false;if(academicIds.has(e.buildingId))return academicCanopyBlocked(x,y,z,e);const dx=x-e.door[0],dz=z-e.door[1],u=dx*e.right[0]+dz*e.right[1],v=dx*e.n[0]+dz*e.n[1];return Math.abs(u)<3.6&&v>-.8&&v<4.3&&y>e.level+3.4&&y<e.level+4.3;}))return true;
+   if(entrances.some(e=>{if(e===clinic||e===cafeEntry||e.buildingId==='crystal-hostel')return false;if(academicIds.has(e.buildingId))return academicCanopyBlocked(x,y,z,e);const dx=x-e.door[0],dz=z-e.door[1],u=dx*e.right[0]+dz*e.right[1],v=dx*e.n[0]+dz*e.n[1];return Math.abs(u)<3.6&&v>-.8&&v<4.3&&y>e.level+3.4&&y<e.level+4.3;}))return true;
    if(terrainModel.routes.some(r=>r.covered&&distSegment(x,z,r.a,r.b)<r.width/2+.6&&Math.abs(y-r.y0-3.85)<.4))return true;
-   if(entrances.some(e=>e!==clinic&&e!==cafeEntry&&y<e.level+4.3&&e.pillars.some(p=>Math.hypot(x-p[0],z-p[1])<.9)))return true;
+   if(entrances.some(e=>e.buildingId!=='crystal-hostel'&&e!==clinic&&e!==cafeEntry&&y<e.level+4.3&&e.pillars.some(p=>Math.hypot(x-p[0],z-p[1])<.9)))return true;
    if(gates.some(g=>g.obstacles.some(o=>y<g.level+4.7&&Math.hypot(x-o.p[0],z-o.p[1])<o.r)))return true;
    if(walls.some(w=>distSegment(x,z,w.a,w.b)<.6&&y<groundAt(x,z)+config.landscape.boundaryWall.height+.2))return true;
    return buildings.some(b=>{
@@ -148,7 +149,7 @@ export function buildWorld(scene,data,config){
  const name=t.amenity==='library'?'Library':t.name;
  if(name){
    const entrance=entrances.find(e=>e.buildingId===b.id);
-   const destination=academicIds.has(b.id)?entrance.end:entrance===cafeEntry?cafe.spawn:entrance===clinic?safePoint(medical.spawn):entrance?.stepCount?entrance.end:entrance?.porch||safePoint(b.center);
+   const destination=b.id==='crystal-hostel'?entrance.end:academicIds.has(b.id)?entrance.end:entrance===cafeEntry?cafe.spawn:entrance===clinic?safePoint(medical.spawn):entrance?.stepCount?entrance.end:entrance?.porch||safePoint(b.center);
    landmarks.push({name,p:destination,door:entrance?.door,viewToward:academicIds.has(b.id)?entrance.door:entrance===cafeEntry?cafe.aim:entrance===clinic?medical.aim:undefined,viewPitch:entrance===clinic?.16:undefined,label:b.center,height:y+h});
  }
 
@@ -176,11 +177,12 @@ export function buildWorld(scene,data,config){
    const approach=name==='Muthiyammain Kshethram'?[p[0]+5,p[1]+4]:[p[0]-2,p[1]];
    landmarks.push({name,p:safePoint(approach),viewToward:p,label:p,height:walkHeight(...p)+1});
  }
+ addCrystalFacade(entrances.find(e=>e.buildingId==='crystal-hostel'),buildings.find(b=>b.id==='crystal-hostel'),box,m);
  addCafeteria({scene,cafe,box,m,mesh,polygon});
  addForecourt(forecourt,box,polygon,m);
  addMedical(scene,medical,terrainSurface,box,m);
  addAcademicEntrances(scene,entrances,buildings,m);
- addEntrances(entrances.filter(e=>e!==cafeEntry&&e!==clinic&&!academicIds.has(e.buildingId)),box,m);
+ addEntrances(entrances.filter(e=>e.buildingId!=='crystal-hostel'&&e!==cafeEntry&&e!==clinic&&!academicIds.has(e.buildingId)),box,m);
  addBanyan({site:sites.shrine,surface:terrainSurface,mesh});
  const avenueShrubs=addAvenueShrubs({scene,config,routes:terrainModel.routes,buildings,boundary,surface:terrainSurface,noPlants});
  const gateDetails=addGates(gates,scene,box,m,(x,z)=>terrainSurface.heightAt(x,z)-.04);
