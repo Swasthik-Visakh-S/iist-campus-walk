@@ -8,7 +8,7 @@ const b=n=>w.buildings.find(b=>b.surveyNumber===n);
 const names={21:'Dhruva',15:'Chitra',20:'Revati',16:'Rohini',22:'Vishaka',19:'Ashwini',11:'Phalguni',17:'Dhanishta',13:'Anuradha',23:'Tripthi canteen',7:'Open Air Theatre',8:'Student Activity Centre'};
 for(const [n,name] of Object.entries(names))assert.equal(b(+n).tags.name,name);
 assert.equal(b(14).tags.name,'Ardra');assert.equal(b(18).tags.name,'Arundhathy');
-for(const group of [[16,20,22,23],[15,17,21],[14,19,11],[18,13],[1,2],[4,5],[7,8]])for(const n of group)assert.equal(b(n).level,b(group[0]).level);
+for(const group of [[16,20,22,23],[14,19,11],[18,13],[1,2],[4,5],[7,8]])for(const n of group)assert.equal(b(n).level,b(group[0]).level);
 assert(b(15).level>b(16).level&&b(18).level>b(19).level&&b(7).level>b(16).level&&b(7).level<b(19).level);
 assert.equal(b(9).tags.name,'Medical Services');assert.equal(b(9).level,b(15).level,'Medical Services shares the Chitra terrace');
 assert.equal(b(12).level,b(11).level,'Water tower shares Phalguni ground level');assert.equal(w.tower.pillars.length,4);assert(w.tower.supportHeight>=15);for(const p of w.tower.pillars)assert(w.blocked(...p),'Tower pillar collision');assert(!w.blocked(...b(12).center),'Open space below tank');assert(w.roadDetails.edgePieces>100&&w.roadDetails.dashPieces>100,'Roads have defined edges and markings');

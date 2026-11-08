@@ -1,4 +1,4 @@
-# IIST Campus Walk — Version 13
+# IIST Campus Walk — Version 14
 
 A browser walkthrough generated from the supplied OpenStreetMap campus export.
 
@@ -13,6 +13,12 @@ Open a terminal in this extracted folder and run:
     python3 -m http.server 8000 --directory dist --bind 127.0.0.1
 
 Then open http://localhost:8000 in Chrome or Firefox. No Blender, npm install, API key or internet connection is required. Stop the server with Ctrl+C. Do not open index.html directly: browsers restrict fetching local data that way.
+
+## Cafe seating and hostel road
+
+Facing the cafe from the road, all eight umbrellas are on the left: three beside the entrance and five in the extension beyond the building. LED strips run under each umbrella rim. The right side has a roofed seating shed with ceiling lights. Lights follow the Morning/Night setting.
+
+The strongest climb remains beside Crystal Jubilee; a gentler climb continues along the hostel avenue toward Medical Services. Hostel foundations follow the adjoining road at each entrance. Exact grades remain estimates from the written description.
 
 ## Morning and night
 
@@ -55,7 +61,7 @@ Choose **OAT hostel steps** to see the short flight between the lower road and t
 
 Choose **Football turf** in the map menu and walk or skate into the ball to kick it. The larger pitch has a goal at each end, a seven-metre perimeter net, an open roof and a pedestrian gate. The supplied *Plucky Comedy* track loops after the first tap or keypress. **Sound** mutes the music and the death cue. Skateboard boost is silent.
 
-The cafeteria and upper hostel avenue share one road terrace. Chitra has ten wide entrance steps, Dhanishta has four and Dhruva has a level approach. The marked library clearing has moved toward the roundabout. Its former site is woodland descending to the basketball court, with Bhagirati 3.0 below the adjacent road. The open shrine stands under a banyan. Six students, three cats, a husky and four Indian street dogs follow short walking routes.
+The cafeteria and upper hostel avenue follow the gradual road climb toward Medical Services. Chitra has ten wide entrance steps, Dhanishta has four and Dhruva has a level approach. The marked library clearing has moved toward the roundabout. Its former site is woodland descending to the basketball court, with Bhagirati 3.0 below the adjacent road. The open shrine stands under a banyan. Six students, three cats, a husky and four Indian street dogs follow short walking routes.
 
 ## November 5 map corrections
 

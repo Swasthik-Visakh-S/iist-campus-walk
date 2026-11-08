@@ -42,7 +42,7 @@ export function addSurveyDetails({scene,rails,sites,surface,mesh,box,m}){
   const railing=new T.InstancedMesh(new T.BoxGeometry(),steel,transforms.length);
   transforms.forEach((matrix,i)=>railing.setMatrixAt(i,matrix));railing.name='Pond rails and checkpoint fence';scene.add(railing);
   for(const p of sites.umbrellaCentres){
-    const [x,z]=p,y=ground(p);
+    const [x,z]=p,y=sites.umbrellaLevel??ground(p);
     mesh(new T.ConeGeometry(1.9,.58,10),steel,x,y+2.65,z);
     box(steel,x,y+1.2,z,.10,2.5,.10);
     mesh(new T.CylinderGeometry(.82,.82,.10,12),m.roof,x,y+.82,z);
@@ -61,4 +61,4 @@ export function addSurveyDetails({scene,rails,sites,surface,mesh,box,m}){
   }
 }
 
-export {addTurf} from './pitch.js?v=13';
+export {addTurf} from './pitch.js?v=14';

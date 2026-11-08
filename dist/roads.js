@@ -1,4 +1,4 @@
-import {roadWidth} from './road-width.js?v=13';
+import {roadWidth} from './road-width.js?v=14';
 import * as T from './vendor/three.module.js';
 import {inside,distSegment} from './geometry.js?v=6';
 // Continuous mitered ribbons prevent the gaps left by separate road rectangles.

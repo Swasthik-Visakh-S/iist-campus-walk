@@ -10,8 +10,8 @@ const config=read('model-config.json'),scene=new T.Scene(),w=buildWorld(scene,re
 for(const [name,count] of [['Chitra',10],['Dhanishta',4],['Dhruva',0],['Cafeteria',0]]){
  const entry=w.entrances.find(e=>e.name===name);
  assert.equal(entry.stepCount||0,count);
- assert.equal(entry.level,30);
- assert(Math.abs(w.walkHeight(...entry.end)-30.14)<.09,name+' road connection');
+ assert(entry.level>=24&&entry.level<=30);
+ assert(Math.abs(w.walkHeight(...entry.end)-entry.endLevel-.14)<.09,name+' road connection');
  if(!count)continue;
  const point=d=>entry.door.map((v,i)=>v+entry.n[i]*d);
  const player={};resetMotion(player,...point(landing+count*tread+.10),w);
