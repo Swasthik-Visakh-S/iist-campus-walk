@@ -1,4 +1,4 @@
-import {createSkateboard} from './skateboard.js?v=12';
+import {createSkateboard} from './skateboard.js?v=13';
 import * as T from './vendor/three.module.js';
 // Original articulated chibi model; faces local +Z, feet at Y=0.
 export function createCharacter() {

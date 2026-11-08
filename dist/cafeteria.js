@@ -47,6 +47,18 @@ export function addCafeteria({scene,cafe,box,m,mesh,polygon}){
   for(const [x,z] of posts)box(dark,x,level+1.73,z,.13,3.46,.13,yaw);
   part(cream,0,3.46,1.9,13,.24,4.2);
   part(cream,0,3.29,1.9,12.8,.10,4.0);
+  // Broad red tiled roof with a white soffit, slender posts and warm pendant fittings.
+  const roofPoint=at(0,1.3),roof=mesh(new T.BoxGeometry(14.8,.18,7.5),red,roofPoint[0],level+4.65,roofPoint[1]);
+  roof.rotation.order='YXZ';roof.rotation.set(-.10,yaw,0);
+  for(let u=-7.2;u<7.3;u+=.32){const p=at(u,1.3),rib=mesh(new T.BoxGeometry(.035,.035,7.5),red,p[0],level+4.76,p[1]);rib.rotation.order='YXZ';rib.rotation.set(-.10,yaw,0);}
+  for(const u of [-5.5,5.5])part(dark,u,3.9,3.4,.13,.9,.13);
+  for(const u of [-3.7,0,3.7]){
+    part(dark,u,3.02,2.4,.035,.6,.035);
+    part(cream,u,2.7,2.4,.18,.28,.18);
+    part(cream,u,3.27,2,1.7,.035,.08);
+  }
+  // Thin vertical bars complete the front fence while keeping its opening clear.
+  for(const side of [-1,1])for(let u=2.65;u<8.2;u+=.42)part(dark,u*side,.68,10.5,.025,1.04,.025);
   // Bamboo facing and a broad counter opening follow the supplied entrance photo.
   part(timber,0,.76,.09,13.8,1.52,.12);
   for(let u=-6.8;u<6.9;u+=.19)part(red,u,.76,.16,.035,1.48,.025);

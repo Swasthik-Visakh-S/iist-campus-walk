@@ -68,12 +68,18 @@ def check(session, site):
 
     js("document.querySelector('#start').click();document.querySelector('#boardButton').click()")
     assert js("return document.querySelector('#boardButton').getAttribute('aria-pressed') === 'true'")
-    for place, file in [('OAT hostel steps','oat-hostel-steps'),('Rohini','rohini-road'),
+    for place, file in [('Crystal Jubilee Hostel','crystal-front'),('Rohini','rohini-road'),
                         ('Football turf entrance','turf-entrance'),('Interdisciplinary Block','d1-entrance'),
                         ('Avionics Block','d3-entrance'),('Cafeteria','cafeteria-frontage'),('Front gate','front-checkpoint')]:
         js("""const menu=document.querySelector('#destination');
             menu.value=[...menu.options].find(o=>o.textContent===%s).value;
             menu.dispatchEvent(new Event('change'));""" % json.dumps(place))
+        time.sleep(.8)
+        capture(file)
+    js("const m=document.querySelector('#timeOfDay');m.value='night';m.dispatchEvent(new Event('change'));")
+    assert js("return document.body.classList.contains('night')")
+    for place,file in [('Cafeteria','cafeteria-night'),('Crystal Jubilee Hostel','crystal-night'),('Roundabout','roads-night'),('Front gate','gate-night')]:
+        js("const m=document.querySelector('#destination');m.value=[...m.options].find(o=>o.textContent===%s).value;m.dispatchEvent(new Event('change'));" % json.dumps(place))
         time.sleep(.8)
         capture(file)
     request(session + '/window/rect', {'width': 430, 'height': 850})

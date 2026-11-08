@@ -1,10 +1,11 @@
-import {createCampusAudio} from './audio.js?v=12';
-import {createResidents} from './residents.js?v=12';
-import {createCheckpoint,nearbyGate,transitSpeed} from './transit.js?v=12';
+import {createLighting} from './lighting.js?v=13';
+import {createCampusAudio} from './audio.js?v=13';
+import {createResidents} from './residents.js?v=13';
+import {createCheckpoint,nearbyGate,transitSpeed} from './transit.js?v=13';
 import {chooseQuality,applyQuality} from './quality.js?v=6';
-import {createCharacter} from './character.js?v=12';
-import {resetMotion,stepMotion,followCamera} from './movement.js?v=12';
-import {buildWorld,inside} from './world.js?v=12';
+import {createCharacter} from './character.js?v=13';
+import {resetMotion,stepMotion,followCamera} from './movement.js?v=13';
+import {buildWorld,inside} from './world.js?v=13';
 import * as T from './vendor/three.module.js';
 const $=id=>document.getElementById(id);
 const canvas=$('world'), keys=new Set();
@@ -18,15 +19,16 @@ const player=Object.assign(new T.Vector3(),{vy:0,grounded:true}),target=new T.Ve
 const scene=new T.Scene();scene.background=new T.Color('#b8c5c6');scene.fog=new T.Fog('#b8c5c6',850,1900);
 const camera=new T.PerspectiveCamera(52,innerWidth/innerHeight,8,2500);
 let renderer;
-try{renderer=new T.WebGLRenderer({canvas,antialias:!coarse&&quality!=='low',powerPreference:quality==='low'?'low-power':'high-performance'});}catch(e){import('./fallback.js?v=12');throw e;}
+try{renderer=new T.WebGLRenderer({canvas,antialias:!coarse&&quality!=='low',powerPreference:quality==='low'?'low-power':'high-performance'});}catch(e){import('./fallback.js?v=13');throw e;}
 const sound=createCampusAudio($('soundButton'));
 renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,quality==='low'?1:1.25));renderer.shadowMap.enabled=quality!=='low';renderer.shadowMap.autoUpdate=false;renderer.shadowMap.type=T.PCFSoftShadowMap;renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
-scene.add(new T.HemisphereLight(0xe5f5ff,0x59614b,1.8));
+const sky=new T.HemisphereLight(0xe5f5ff,0x59614b,1.8);scene.add(sky);
 const sun=new T.DirectionalLight(0xffedcf,2.5);sun.position.set(-230,440,150);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-470,right:470,top:470,bottom:-470,near:1,far:1000});sun.shadow.bias=-.0004;scene.add(sun);
 let jumpQueued=false,followDistance=5.8,contextLost=false;
 const avatar=createCharacter();avatar.root.traverse(o=>{if(o.isMesh)o.castShadow=false});scene.add(avatar.root);
 const shadowGeometry=new T.CircleGeometry(.5,24);shadowGeometry.rotateX(-Math.PI/2);
 const contactShadow=new T.Mesh(shadowGeometry,new T.MeshBasicMaterial({color:'#172820',transparent:true,opacity:.22,depthWrite:false}));contactShadow.userData.dynamic=true;scene.add(contactShadow);
+let lighting;
 let buildings=[],roads=[],places=[],labels=[],ponds=[],boundary,spawn,world,residents;
 function label(text,p,height){
  const c=document.createElement('canvas');c.width=384;c.height=80;
@@ -37,8 +39,8 @@ function label(text,p,height){
 
 const blocked=(x,z)=>world.blocked(x,z);
 try{
-const [data,config,heights]=await Promise.all(['campus.json','model-config.json','heights.json'].map(async path=>{const r=await fetch(path+'?v=12');if(!r.ok)throw Error(path+' unavailable');return r.json()}));
-config.heights={...config.heights,...heights};world=buildWorld(scene,data,config);residents=createResidents(scene,world);applyQuality(renderer,sun,world,quality,devicePixelRatio);({buildings,roads,places,ponds,boundary,spawn}=world);
+const [data,config,heights]=await Promise.all(['campus.json','model-config.json','heights.json'].map(async path=>{const r=await fetch(path+'?v=13');if(!r.ok)throw Error(path+' unavailable');return r.json()}));
+config.heights={...config.heights,...heights};world=buildWorld(scene,data,config);residents=createResidents(scene,world);lighting=createLighting(scene,renderer,sun,sky,world);applyQuality(renderer,sun,world,quality,devicePixelRatio);({buildings,roads,places,ponds,boundary,spawn}=world);
 for(const p of places)label(p.shortName||p.name,p.label,p.height);
 for(let i=0;i<places.length;i++){let o=document.createElement('option');o.value=i;o.textContent=places[i].name;$('destination').append(o);}
 resetMotion(player,...spawn,world);avatar.root.visible=false;contactShadow.visible=false;$('loading').remove();addSigns();requestAnimationFrame(frame);
@@ -121,6 +123,8 @@ joy.onpointerdown=e=>{e.preventDefault();joyPointer=e.pointerId;joy.setPointerCa
 $('jumpButton').onpointerdown=e=>{e.preventDefault();if(mode==='walk')jumpQueued=true;};$('jumpButton').onclick=e=>{if(e.detail===0&&mode==='walk')jumpQueued=true;};
 $('runButton').onclick=()=>{touchRun=!touchRun;$('runButton').setAttribute('aria-pressed',String(touchRun));};
 $('mapToggle').onclick=()=>{document.activeElement?.blur();const open=document.body.classList.toggle('map-open');$('mapToggle').setAttribute('aria-expanded',String(open));};
+$('timeOfDay').onchange=e=>{lighting?.setMode(e.target.value);document.body.classList.toggle('night',e.target.value==='night');e.target.blur?.();try{localStorage.setItem('iist-time',e.target.value)}catch{}};
+try{const saved=localStorage.getItem('iist-time');if(saved==='night'){$('timeOfDay').value=saved;$('timeOfDay').onchange({target:$('timeOfDay')});}}catch{}
 $('quality').value=qualityPreference;$('quality').onchange=e=>{qualityPreference=e.target.value;e.target.blur?.();quality=chooseQuality(qualityPreference,{coarse,width:innerWidth,cores:navigator.hardwareConcurrency});applyQuality(renderer,sun,world,quality,devicePixelRatio);try{localStorage.setItem('iist-quality',qualityPreference)}catch{}};
 canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();contextLost=true;keys.clear();resetTouch();$('renderMessage').hidden=false;});
 canvas.addEventListener('webglcontextrestored',()=>{contextLost=false;renderer.shadowMap.needsUpdate=true;$('renderMessage').hidden=true;});
@@ -172,5 +176,5 @@ function frame(time){
   if(elapsed>=3&&!$('death').open)$('death').showModal();
  }
  labels.forEach(l=>{l.visible=mode==='aerial'||l.position.distanceTo(player)<110});
- if(time-lastMap>125){lastMap=time;if(!coarse||document.body.classList.contains('map-open'))map();}renderer.render(scene,camera);requestAnimationFrame(frame);
+ if(time-lastMap>125){lastMap=time;if(!coarse||document.body.classList.contains('map-open'))map();}lighting?.update(camera);renderer.render(scene,camera);requestAnimationFrame(frame);
 }

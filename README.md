@@ -1,4 +1,4 @@
-# IIST Campus Walk — Version 12
+# IIST Campus Walk — Version 13
 
 A browser walkthrough generated from the supplied OpenStreetMap campus export.
 
@@ -13,6 +13,10 @@ Open a terminal in this extracted folder and run:
     python3 -m http.server 8000 --directory dist --bind 127.0.0.1
 
 Then open http://localhost:8000 in Chrome or Firefox. No Blender, npm install, API key or internet connection is required. Stop the server with Ctrl+C. Do not open index.html directly: browsers restrict fetching local data that way.
+
+## Morning and night
+
+Use **Time → Morning / Night** in the top controls. The selection is remembered. LED fixtures follow the roads and open walking paths. At night all lamp heads glow, with ground light pools and a fixed pool of six nearby lights; cafe and hostel entrance lights also turn on. No extra shadow maps are rendered for streetlights. The cafeteria canopy and Crystal Jubilee entrance now follow the supplied November 8 photographs; dimensions remain approximate.
 
 ## Controls
 
