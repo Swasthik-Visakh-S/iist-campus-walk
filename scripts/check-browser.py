@@ -68,8 +68,9 @@ def check(session, site):
 
     js("document.querySelector('#start').click();document.querySelector('#boardButton').click()")
     assert js("return document.querySelector('#boardButton').getAttribute('aria-pressed') === 'true'")
-    for place, file in [('OAT hostel steps','oat-hostel-steps'),('Open Air Theatre','oat-interior'),
-                        ('Medical Services','medical-services'),('Basketball court','basketball-court'),('Front gate','front-checkpoint')]:
+    for place, file in [('OAT hostel steps','oat-hostel-steps'),('Rohini','rohini-road'),
+                        ('Football turf entrance','turf-entrance'),('Interdisciplinary Block','d1-entrance'),
+                        ('Avionics Block','d3-entrance'),('Cafeteria','cafeteria-frontage'),('Front gate','front-checkpoint')]:
         js("""const menu=document.querySelector('#destination');
             menu.value=[...menu.options].find(o=>o.textContent===%s).value;
             menu.dispatchEvent(new Event('change'));""" % json.dumps(place))

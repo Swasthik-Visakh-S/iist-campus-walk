@@ -1,4 +1,4 @@
-# IIST Campus Walk — Version 11
+# IIST Campus Walk — Version 12
 
 A browser walkthrough generated from the supplied OpenStreetMap campus export.
 
@@ -26,6 +26,14 @@ Then open http://localhost:8000 in Chrome or Firefox. No Blender, npm install, A
 WebGL 2 is needed for 3D. If unsupported, a 2D campus map appears automatically. Enable graphics acceleration or try another browser for 3D.
 
 Press **B** or tap **Skateboard** to switch between foot and board. Hold **Shift** to boost on the board. On phones the Run button becomes Boost. Walk up to a checkpoint and press **I** or tap **Show student ID**. One check covers leaving and returning through that gate. Crossing without clearance triggers a fictional shot and fall. The respawn prompt appears three seconds later.
+
+## November 8 terrain and entrances
+
+The steep OAT descent now ends at Rohini; the road beyond stays on the lower hostel terrace. D1 and D2 share a level, with D3 two relative metres lower. The western academic road and Vishaka connection have level grass verges, and the academic route has trees along both sides where entrances and buildings leave room.
+
+The short soil access starts at the road beside the turf and reaches its hostel-facing gate. Interlocked paving fills the space between the turf and Crystal Jubilee at turf level. Select **Cafeteria** for the road-facing fenced forecourt, three entrance steps, accessible side ramp and covered counter. Its rear wall is now against the campus boundary. **Interdisciplinary Block**, **Science Block** and **Avionics Block** have photo-inspired red entrance piers, sloped canopy panels, dark steel beams and patterned entrance facades.
+
+The supplied screenshot's 50 m bar spans approximately 75 pixels. Seven campus landmarks fit about 1.45 pixels per model metre, within roughly 5% of the reference. Existing metre-based footprints and 7.4 m vehicle roads are retained; local clearances still taper the asphalt. These are image estimates, not survey dimensions.
 
 ## Inside OAT and at Medical Services
 
@@ -85,6 +93,7 @@ Edit dist/heights.json to set building heights in metres by OSM way ID, e.g. {"6
 - scripts/check-character.mjs: jump/landing at several frame rates, collision, camera clearance, slopes and character animation.
 - scripts/check-v6.mjs: entrance access, vegetation clearance, connected paths, gates and geometry budgets.
 - scripts/check-transit.mjs: survey markers, railings, travel speeds and both gate round trips.
+- scripts/check-campus-levels.mjs: Rohini grades, level verges, tree rows, turf access, cafe ramp/stairs and scale reference.
 - scripts/check-browser.py: WebGL2 checks and screenshots on the GitHub runner.
 - scripts/check-controls.mjs: app bootstrap and control state using DOM/renderer test doubles.
 - scripts/prepare-entrances.mjs: regenerate approximate entrance placements after editing footprints or roads.

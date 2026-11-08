@@ -1,4 +1,4 @@
-# Campus corrections — updated 3 November 2026
+# Campus corrections — updated 8 November 2026
 
 These updates use the owner's written corrections and marked SAC/OAT/MPH image. Numbers refer to the two-page correction map, not the illustrated reference plan's legend.
 
@@ -7,7 +7,8 @@ These updates use the owner's written corrections and marked SAC/OAT/MPH image. 
 | 1 | Library | 20 |
 | 2 | Admin Block | 20 |
 | 3 | Aerospace Block | 15 |
-| 4, 5, 6 | Interdisciplinary, Science, Avionics blocks | 7 |
+| 4, 5 | Interdisciplinary, Science blocks | 7 |
+| 6 | Avionics Block | 5 |
 | 7 | Open Air Theatre | 22 |
 | 8 | Student Activity Centre | 22 |
 | New | Multipurpose Hall | 22 |
@@ -58,3 +59,12 @@ Medical Services shares Chitra’s terrace. A compacted-earth road leaves the as
 ## Validation
 
 The walking checks traverse the OAT route in both directions, including every riser, and enter the football turf from the asphalt. Other tests measure the player against a resident, check the upward camera angle, and time the respawn prompt. Browser checks render desktop and phone-sized views in Chrome. Hardware frame rates depend on the device.
+
+## Version 12: reference scale, road verges and entrances
+
+- OAT-to-Rohini falls from relative level 22 to 12 before Rohini. The continuation stays near 12. The short separate flight to the upper hostels is retained.
+- D1/D2 are at 7; D3 is at 5. The small western service building is also at 7, removing its artificial bank next to the academic road. Six metres of level verge blend into the wider terrain; Vishaka has five-metre verges. Trees line both sides without blocking entrances.
+- Turf and the new Crystal Jubilee interlock forecourt are at 13. Its compacted access is about 18 m long, directly from the nearby road at 10; the old path past the hostel entrance is removed. The adjacent junction is brought to 10 to avoid an artificial 8 m ramp over this short distance. The canteen approach still dips to 4 and the basketball court stays at 2.
+- Academic entrance canopies, patterned red/cream facade panels and black under-roof frames follow the D3 photo while retaining the supplied entrance marks and footprints. They are simplified geometry.
+- Cafeteria footprint: 14 x 8.5 m, rear approximately 0.72 m from the boundary centreline to accommodate wall thickness. Its west-facing frontage opens toward Dhruva road. A gap in the front fence leads to a covered counter, three 18 cm steps and a 6 m ramp rising 54 cm. Metal umbrella seating is in front.
+- Scale check: the 1090 x 868 satellite screenshot has a roughly 75 px bar for 50 m (1.5 px/m). Approximate OAT, roundabout, D1, D2, D3, library and turf centres fit 1.43–1.47 px/m in the two principal directions. This supports the existing metre scale within about 5%; no unsupported global resize is applied. Main roads remain 7.4 m (about 11 px on this map), narrow access paths remain 2.4–3.6 m. Pixel placement, architectural dimensions and numeric elevations remain estimates.
