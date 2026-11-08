@@ -1,20 +1,23 @@
-import {planMedical,addMedical} from './medical.js?v=11';
-import {createOat} from './oat.js?v=11';
-import {addBasketballCourt} from './basketball.js?v=11';
-import {addAvenueShrubs,addBanyan} from './planting.js?v=11';
-import {perimeterRails,addSurveyDetails,addTurf} from './site-details.js?v=11';
-import {applyReferenceLayout,libraryGarden} from './layout.js?v=11';
+import {planForecourt,addForecourt} from './turf-forecourt.js?v=12';
+import {planCafeteria,addCafeteria} from './cafeteria.js?v=12';
+import {academicIds,addAcademicEntrances,academicCanopyBlocked} from './academic.js?v=12';
+import {planMedical,addMedical} from './medical.js?v=12';
+import {createOat} from './oat.js?v=12';
+import {addBasketballCourt} from './basketball.js?v=12';
+import {addAvenueShrubs,addBanyan} from './planting.js?v=12';
+import {perimeterRails,addSurveyDetails,addTurf} from './site-details.js?v=12';
+import {applyReferenceLayout,libraryGarden} from './layout.js?v=12';
 import {addLibraryFacade,addLibraryGarden} from './library.js?v=6';
 import * as T from './vendor/three.module.js';
 import {inside,distSegment,center,edgeDistance} from './geometry.js?v=6';
 export {inside,distSegment,center} from './geometry.js?v=6';
-import {addRoads} from './roads.js?v=11';
-import {createTerrainSurface} from './terrain-mesh.js?v=11';
-import {planEntrances,entrancePaths,clearOfEntrances,addEntrances,hostelStepHeight,riser} from './entrances.js?v=11';
-import {planGates,addGates} from './gates.js?v=11';
-import {foliageChunks,mergeStaticMeshes} from './render-utils.js?v=11';
-import {makeTerrain} from './terrain.js?v=11';
-import {addCampusDetails,wallSegments} from './campus-details.js?v=11';
+import {addRoads} from './roads.js?v=12';
+import {createTerrainSurface} from './terrain-mesh.js?v=12';
+import {planEntrances,entrancePaths,clearOfEntrances,addEntrances,hostelStepHeight,riser} from './entrances.js?v=12';
+import {planGates,addGates} from './gates.js?v=12';
+import {foliageChunks,mergeStaticMeshes} from './render-utils.js?v=12';
+import {makeTerrain} from './terrain.js?v=12';
+import {addCampusDetails,wallSegments} from './campus-details.js?v=12';
 export function buildWorld(scene,data,config){
  data=applyReferenceLayout(data,config);
  const material=(color,extra={})=>new T.MeshStandardMaterial({color,roughness:.9,...extra});
@@ -36,14 +39,17 @@ export function buildWorld(scene,data,config){
  const {groundAt}=terrainModel;
  const clinic=entrances.find(e=>e.name==='Medical Services');
  const medical=planMedical(clinic,terrainModel.routes);
- const columns=entrances.flatMap(e=>e===clinic?medical.posts:e.pillars);
+ const cafeEntry=entrances.find(e=>e.buildingId==='cafeteria');
+ const cafe=planCafeteria(cafeEntry);
+ const forecourt=planForecourt(config);
+ const columns=entrances.flatMap(e=>e===clinic?medical.posts:e===cafeEntry?cafe.posts:e.pillars);
  const sports=data.features.filter(f=>f.tags.sport);
  const courts=sports.filter(f=>f.tags.sport!=='soccer');
- const fieldEdges=sports.flatMap(f=>f.points.slice(1).map((b,i)=>({a:f.points[i],b,width:1})));
+ const fieldEdges=[...sports,forecourt].flatMap(f=>f.points.slice(1).map((b,i)=>({a:f.points[i],b,width:1})));
  const terrainSurface=createTerrainSurface(groundAt,[...terrainModel.routes,...fieldEdges]);
  const gardenLevel=lib.level+.02;
  const gates=planGates(config,groundAt);
- const noPlants=(x,z,margin=0)=>medical.clearPlanting(x,z,margin)||sites.umbrellaCentres.some(p=>Math.hypot(x-p[0],z-p[1])<2.2+margin)||Math.hypot(x-sites.shrine[0],z-sites.shrine[1])<2+margin||!clearOfEntrances(x,z,entrances,margin)||gates.some(g=>Math.hypot(x-g.center[0],z-g.center[1])<g.width/2+7+margin);
+ const noPlants=(x,z,margin=0)=>forecourt.clear(x,z,margin+1)||cafe.noPlants(x,z,margin)||medical.clearPlanting(x,z,margin)||sites.umbrellaCentres.some(p=>Math.hypot(x-p[0],z-p[1])<2.2+margin)||Math.hypot(x-sites.shrine[0],z-sites.shrine[1])<2+margin||!clearOfEntrances(x,z,entrances,margin)||gates.some(g=>Math.hypot(x-g.center[0],z-g.center[1])<g.width/2+7+margin);
  const towerSpec=config.layout.waterTower,tower=buildings.find(b=>b.id===towerSpec.id);
  const towerPillars=tower.points.slice(0,4).map(p=>[tower.center[0]+(p[0]-tower.center[0])*.67,tower.center[1]+(p[1]-tower.center[1])*.67]);
  const walls=wallSegments(boundary,terrainModel.routes,config.landscape.boundaryWall);
@@ -51,6 +57,8 @@ export function buildWorld(scene,data,config){
  const theatre=createOat(amph,sac.level,aisleRoutes);
  const routeCells=new Map();for(const r of terrainModel.routes){const m=r.width/2+2;for(let x=Math.floor((Math.min(r.a[0],r.b[0])-m)/32);x<=Math.floor((Math.max(r.a[0],r.b[0])+m)/32);x++)for(let z=Math.floor((Math.min(r.a[1],r.b[1])-m)/32);z<=Math.floor((Math.max(r.a[1],r.b[1])+m)/32);z++){const k=x+','+z;if(!routeCells.has(k))routeCells.set(k,[]);routeCells.get(k).push(r);}}
  function walkHeight(x,z){
+  if(forecourt.contains(x,z))return forecourt.level+.16;
+  const cafeFloor=cafe.heightAt(x,z);if(cafeFloor!==null)return cafeFloor;
   for(const e of hostelSteps){const step=hostelStepHeight(x,z,e);if(step!==null)return step;}
   const stair=terrainModel.stairHeight(x,z);
   if(stair!==null)return stair;
@@ -62,15 +70,16 @@ export function buildWorld(scene,data,config){
    return along<=2&&along>=-g.exteriorLength&&Math.abs(across)<g.width/2-.8;
  });}
  const exteriorRoad=(x,z)=>!!exteriorGate(x,z);
- function blocked(x,z){if(medical.blocked(x,z)||theatre.blocked(x,z))return true;if(pitch?.blocked(x,z)||basketball?.blocked(x,z))return true;if(rails.some(r=>distSegment(x,z,r.a,r.b)<.42))return true;if(columns.some(p=>Math.hypot(x-p[0],z-p[1])<.9)||gates.some(g=>g.obstacles.some(o=>Math.hypot(x-o.p[0],z-o.p[1])<o.r)))return true;if((!inside(x,z,boundary)&&!exteriorRoad(x,z))||walls.some(w=>distSegment(x,z,w.a,w.b)<config.landscape.boundaryWall.thickness/2+.35))return true;if(garden&&Math.hypot(x-garden.fountain[0],z-garden.fountain[1])<garden.basinRadius+.6)return true;if(ponds.some(p=>edgeDistance(x,z,p.points)<.8))return true;return buildings.some(b=>{if(b===sac)return false;if(b===tower)return towerPillars.some(p=>Math.hypot(x-p[0],z-p[1])<towerSpec.pillarWidth*.75+.45);return edgeDistance(x,z,b.groundPoints||b.points)<.65;});}
+ function blocked(x,z){if(cafe.blocked(x,z)||medical.blocked(x,z)||theatre.blocked(x,z))return true;if(pitch?.blocked(x,z)||basketball?.blocked(x,z))return true;if(rails.some(r=>distSegment(x,z,r.a,r.b)<.42))return true;if(columns.some(p=>Math.hypot(x-p[0],z-p[1])<.9)||gates.some(g=>g.obstacles.some(o=>Math.hypot(x-o.p[0],z-o.p[1])<o.r)))return true;if((!inside(x,z,boundary)&&!exteriorRoad(x,z))||walls.some(w=>distSegment(x,z,w.a,w.b)<config.landscape.boundaryWall.thickness/2+.35))return true;if(garden&&Math.hypot(x-garden.fountain[0],z-garden.fountain[1])<garden.basinRadius+.6)return true;if(ponds.some(p=>edgeDistance(x,z,p.points)<.8))return true;return buildings.some(b=>{if(b===sac)return false;if(b===tower)return towerPillars.some(p=>Math.hypot(x-p[0],z-p[1])<towerSpec.pillarWidth*.75+.45);return edgeDistance(x,z,b.groundPoints||b.points)<.65;});}
  function cameraBlocked(x,y,z){
+   if(cafe.cameraBlocked(x,y,z))return true;
    if(theatre.cameraBlocked(x,y,z))return true;
    if(medical.cameraBlocked(x,y,z)||y<clinic.level+4.3&&medical.posts.some(p=>Math.hypot(x-p[0],z-p[1])<.5))return true;
    if(basketball?.cameraBlocked(x,y,z))return true;
    if(!inside(x,z,boundary)&&!exteriorRoad(x,z))return true;
-   if(entrances.some(e=>{if(e===clinic)return false;const dx=x-e.door[0],dz=z-e.door[1],u=dx*e.right[0]+dz*e.right[1],v=dx*e.n[0]+dz*e.n[1];return Math.abs(u)<3.6&&v>-.8&&v<4.3&&y>e.level+3.4&&y<e.level+4.3;}))return true;
+   if(entrances.some(e=>{if(e===clinic||e===cafeEntry)return false;if(academicIds.has(e.buildingId))return academicCanopyBlocked(x,y,z,e);const dx=x-e.door[0],dz=z-e.door[1],u=dx*e.right[0]+dz*e.right[1],v=dx*e.n[0]+dz*e.n[1];return Math.abs(u)<3.6&&v>-.8&&v<4.3&&y>e.level+3.4&&y<e.level+4.3;}))return true;
    if(terrainModel.routes.some(r=>r.covered&&distSegment(x,z,r.a,r.b)<r.width/2+.6&&Math.abs(y-r.y0-3.85)<.4))return true;
-   if(entrances.some(e=>e!==clinic&&y<e.level+4.3&&e.pillars.some(p=>Math.hypot(x-p[0],z-p[1])<.9)))return true;
+   if(entrances.some(e=>e!==clinic&&e!==cafeEntry&&y<e.level+4.3&&e.pillars.some(p=>Math.hypot(x-p[0],z-p[1])<.9)))return true;
    if(gates.some(g=>g.obstacles.some(o=>y<g.level+4.7&&Math.hypot(x-o.p[0],z-o.p[1])<o.r)))return true;
    if(walls.some(w=>distSegment(x,z,w.a,w.b)<.6&&y<groundAt(x,z)+config.landscape.boundaryWall.height+.2))return true;
    return buildings.some(b=>{
@@ -139,8 +148,8 @@ export function buildWorld(scene,data,config){
  const name=t.amenity==='library'?'Library':t.name;
  if(name){
    const entrance=entrances.find(e=>e.buildingId===b.id);
-   const destination=entrance===clinic?safePoint(medical.spawn):entrance?.stepCount?entrance.end:entrance?.porch||safePoint(b.center);
-   landmarks.push({name,p:destination,door:entrance?.door,viewToward:entrance===clinic?medical.aim:undefined,viewPitch:entrance===clinic?.16:undefined,label:b.center,height:y+h});
+   const destination=academicIds.has(b.id)?entrance.end:entrance===cafeEntry?cafe.spawn:entrance===clinic?safePoint(medical.spawn):entrance?.stepCount?entrance.end:entrance?.porch||safePoint(b.center);
+   landmarks.push({name,p:destination,door:entrance?.door,viewToward:academicIds.has(b.id)?entrance.door:entrance===cafeEntry?cafe.aim:entrance===clinic?medical.aim:undefined,viewPitch:entrance===clinic?.16:undefined,label:b.center,height:y+h});
  }
 
  }
@@ -167,8 +176,11 @@ export function buildWorld(scene,data,config){
    const approach=name==='Muthiyammain Kshethram'?[p[0]+5,p[1]+4]:[p[0]-2,p[1]];
    landmarks.push({name,p:safePoint(approach),viewToward:p,label:p,height:walkHeight(...p)+1});
  }
+ addCafeteria({scene,cafe,box,m,mesh,polygon});
+ addForecourt(forecourt,box,polygon,m);
  addMedical(scene,medical,terrainSurface,box,m);
- addEntrances(entrances.filter(e=>e!==clinic),box,m);
+ addAcademicEntrances(scene,entrances,buildings,m);
+ addEntrances(entrances.filter(e=>e!==cafeEntry&&e!==clinic&&!academicIds.has(e.buildingId)),box,m);
  addBanyan({site:sites.shrine,surface:terrainSurface,mesh});
  const avenueShrubs=addAvenueShrubs({scene,config,routes:terrainModel.routes,buildings,boundary,surface:terrainSurface,noPlants});
  const gateDetails=addGates(gates,scene,box,m,(x,z)=>terrainSurface.heightAt(x,z)-.04);
@@ -178,11 +190,13 @@ export function buildWorld(scene,data,config){
  let seed=3954;const random=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
  const trees=[];
  function plantable(x,z){return !noPlants(x,z,11)&&inside(x,z,boundary)&&!(garden&&Math.hypot(x-garden.center[0],z-garden.center[1])<34)&&!inside(x,z,config.landscape.soilGround.points)&&!inside(x,z,config.landscape.bamboo.points)&&Math.hypot(x-details.roundabout[0],z-details.roundabout[1])>16&&!buildings.some(b=>edgeDistance(x,z,b.points)<5)&&!ponds.some(p=>edgeDistance(x,z,p.points)<5)&&!terrainModel.routes.some(r=>distSegment(x,z,r.a,r.b)<r.width/2+(r.covered||r.steps||oat.aisleRoutes.includes(r.id)||r.id.startsWith('hostel-')||r.id==='turf-soil-road'?9:3))&&!sports.some(f=>edgeDistance(x,z,f.points)<3)&&Math.hypot(x-amph.x,z-amph.z)>amph.r+2;}
+ for(const r of terrainModel.routes.filter(r=>r.id==='365911682')){for(let d=8;d<r.length;d+=17)for(const side of [-1,1]){const x=r.a[0]+r.dx*d/r.length-side*r.dz/r.length*9,z=r.a[1]+r.dz*d/r.length+side*r.dx/r.length*9;if(plantable(x,z)&&trees.every(p=>Math.hypot(x-p[0],z-p[1])>5))trees.push([x,z,9+random()*5]);}}
  for(let i=0;i<40000&&trees.length<1300;i++){const x=(random()-.5)*700,z=(random()-.5)*800;if(!plantable(x,z))continue;const slope=inside(x,z,config.landscape.woodedSlope.points);if(!slope&&random()>.6)continue;trees.push([x,z,8+random()*10]);}
  // Closely spaced trees on the steep hostel bank and regular shade trees beside roads.
  for(let i=0;i<900;i++){const x=65+random()*100,z=-240+random()*110;if(inside(x,z,config.landscape.woodedSlope.points)&&plantable(x,z)&&trees.every(p=>Math.hypot(x-p[0],z-p[1])>3))trees.push([x,z,13+random()*7]);}
- for(const r of terrainModel.routes.filter(r=>r.width>4)){for(let d=8;d<r.length;d+=17)for(const side of [-1,1]){const x=r.a[0]+r.dx*d/r.length-side*r.dz/r.length*9,z=r.a[1]+r.dz*d/r.length+side*r.dx/r.length*9;if(plantable(x,z)&&trees.every(p=>Math.hypot(x-p[0],z-p[1])>5))trees.push([x,z,9+random()*5]);}}
 
+
+ for(const r of terrainModel.routes.filter(r=>r.width>4&&r.id!=='365911682')){for(let d=8;d<r.length;d+=17)for(const side of [-1,1]){const x=r.a[0]+r.dx*d/r.length-side*r.dz/r.length*9,z=r.a[1]+r.dz*d/r.length+side*r.dx/r.length*9;if(plantable(x,z)&&trees.every(p=>Math.hypot(x-p[0],z-p[1])>5))trees.push([x,z,9+random()*5]);}}
  const forest=config.landscape.libraryForest;
  const clearingCenter=center(config.landscape.soilGround.points);
  landmarks.push({name:'Library ground',p:safePoint(clearingCenter),viewToward:center(forest.core),label:clearingCenter,height:groundAt(...clearingCenter)});
@@ -196,5 +210,5 @@ export function buildWorld(scene,data,config){
  for(const [mat,list] of batches){const inst=new T.InstancedMesh(new T.BoxGeometry(1,1,1),mat,list.length);list.forEach((b,i)=>{dummy.position.set(b.x,b.y,b.z);dummy.rotation.set(0,b.angle,0);dummy.scale.set(b.sx,b.sy,b.sz);dummy.updateMatrix();inst.setMatrixAt(i,dummy.matrix)});inst.castShadow=true;inst.receiveShadow=true;scene.add(inst);}
  const mergedDrawCalls=mergeStaticMeshes(scene);
  for(const g of gates)landmarks.push({name:g.name,p:safePoint(g.point(0,6)),label:g.point(0,0),height:g.level+5});
- return {medical,landscape:config.landscape,pitch,basketball,avenueShrubs,rails,exteriorRoad,exteriorGate,entrances,gates,gateDetails,foliage,mergedDrawCalls,noPlants,buildings,boundary,ponds,roads,places:landmarks,spawn,groundAt,walkHeight,blocked,safePoint,amph,garden,treeCount:trees.length,trees,walls,details,terrainModel,data,cameraBlocked,roadDetails,terrainSurface,tower:{building:tower,pillars:towerPillars,...towerSpec}};
+ return {forecourt,cafe,medical,landscape:config.landscape,pitch,basketball,avenueShrubs,rails,exteriorRoad,exteriorGate,entrances,gates,gateDetails,foliage,mergedDrawCalls,noPlants,buildings,boundary,ponds,roads,places:landmarks,spawn,groundAt,walkHeight,blocked,safePoint,amph,garden,treeCount:trees.length,trees,walls,details,terrainModel,data,cameraBlocked,roadDetails,terrainSurface,tower:{building:tower,pillars:towerPillars,...towerSpec}};
 }

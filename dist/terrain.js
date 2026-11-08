@@ -1,4 +1,4 @@
-import {roadWidth} from './road-width.js?v=11';
+import {roadWidth} from './road-width.js?v=12';
 import {inside, edgeDistance} from './geometry.js?v=6';
 const clamp=t=>Math.max(0,Math.min(1,t));
 const smooth=t=>{t=clamp(t);return t*t*(3-2*t);};
@@ -53,7 +53,7 @@ export function makeTerrain(data, config, buildings, ponds) {
     for(let i=1;i<f.points.length;i++) {
       const a=f.points[i-1],b=f.points[i],dx=b[0]-a[0],dz=b[1]-a[1],length=Math.hypot(dx,dz);
       if(!length)continue;
-      routes.push({grade,surveyedBed:surveyedBeds.has(f.id),id:f.id,a,b,dx,dz,length,width,y0:levels[i-1],y1:levels[i],steps:f.tags.highway==='steps',covered:f.tags.covered==='yes'});
+      routes.push({grade,verge:spec.roadVerges?.[f.id]||0,surveyedBed:surveyedBeds.has(f.id),id:f.id,a,b,dx,dz,length,width,y0:levels[i-1],y1:levels[i],steps:f.tags.highway==='steps',covered:f.tags.covered==='yes'});
     }
   }
   function routeSample(x,z,r) {
@@ -69,18 +69,24 @@ export function makeTerrain(data, config, buildings, ponds) {
   }
   function groundAt(x,z) {
     let h=baseHeight(x,z),sum=0,weights=0,blend=0,roadInterior=0,bedWeight=0;
+    let vergeHeight=0,vergeWeight=0,vergeBlend=0;
     for(const p of ponds){const d=edgeDistance(x,z,p.points);if(d<13){const dest=inside(x,z,p.points)?p.level-2:p.level+.25;h+=(dest-h)*(1-smooth(d/13));}}
     for(const r of routes) {
       if(!r.grade)continue;
-      if(x<Math.min(r.a[0],r.b[0])-8||x>Math.max(r.a[0],r.b[0])+8||z<Math.min(r.a[1],r.b[1])-8||z>Math.max(r.a[1],r.b[1])+8)continue;
+      const margin=Math.max(8,r.width/2+r.verge+9);
+      if(x<Math.min(r.a[0],r.b[0])-margin||x>Math.max(r.a[0],r.b[0])+margin||z<Math.min(r.a[1],r.b[1])-margin||z>Math.max(r.a[1],r.b[1])+margin)continue;
       const s=routeSample(x,z,r);if(r.width>4)roadInterior=Math.max(roadInterior,1-smooth(s.d/(r.width*.5)));
       const d=Math.max(0,s.d-r.width/2);
+      if(r.verge&&d<r.verge+9){const w=1/(1+s.d*s.d);vergeHeight+=w*s.height;vergeWeight+=w;vergeBlend=Math.max(vergeBlend,1-smooth((d-r.verge)/9));}
       if(r.surveyedBed)bedWeight=Math.max(bedWeight,1-smooth(d/3));
       if(d<5){const w=(1-smooth(d/5))/(.2+s.d*s.d)**2;sum+=w*s.height;weights+=w;blend=Math.max(blend,1-smooth(d/5));}
     }
+    if(vergeWeight)h+=(vergeHeight/vergeWeight-h)*vergeBlend;
     if(weights)h+=(sum/weights-h)*blend;
     for(const b of buildings){const d=edgeDistance(x,z,b.points);if(d<5)h+=(b.level-h)*(1-smooth(d/5))*(1-roadInterior*smooth(d/.7));}
     if(bedWeight&&weights)h+=(sum/weights-h)*bedWeight;
+    const forecourt=config.landscape.turfForecourt;
+    if(forecourt){const d=edgeDistance(x,z,forecourt.points);if(d<1)h+=(forecourt.level-h)*(1-smooth(d));}
     if(hostelFlight){
       const r=hostelFlight;
       if(Math.abs(x-r.a[0])<12&&Math.abs(z-r.a[1])<16){

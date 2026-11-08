@@ -21,6 +21,7 @@ jobs:
       - run: node scripts/check-v6.mjs
       - run: node scripts/check-transit.mjs
       - run: node scripts/check-pitch.mjs
+      - run: node scripts/check-campus-levels.mjs
       - run: node scripts/check-campus-routes.mjs
       - run: node scripts/check-campus-life.mjs
       - run: node --experimental-vm-modules scripts/check-controls.mjs
