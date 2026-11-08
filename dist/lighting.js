@@ -1,5 +1,5 @@
 import * as T from './vendor/three.module.js';
-import {edgeDistance} from './geometry.js?v=6';
+import {edgeDistance,distSegment} from './geometry.js?v=6';
 export function planStreetlights(world){
  const lamps=[];
  for(const r of world.terrainModel?.routes||[]){
@@ -10,7 +10,7 @@ export function planStreetlights(world){
    if(lamps.some(l=>Math.hypot(l.x-c[0],l.z-c[1])<13))continue;
    for(const side of [1,-1]){
     const offset=r.width/2+1.1,x=c[0]-r.dz/r.length*offset*side,z=c[1]+r.dx/r.length*offset*side;
-    if(world.blocked(x,z)||world.buildings.some(b=>edgeDistance(x,z,b.points)<1.5)||world.entrances.some(e=>Math.hypot(x-e.end[0],z-e.end[1])<4))continue;
+    if(world.terrainModel.routes.some(q=>distSegment(x,z,q.a,q.b)<q.width/2+.6)||world.blocked(x,z)||world.buildings.some(b=>edgeDistance(x,z,b.points)<1.5)||world.entrances.some(e=>Math.hypot(x-e.end[0],z-e.end[1])<4))continue;
     lamps.push({x,z,y:world.terrainSurface.heightAt(x,z),cx:c[0],cz:c[1],height:r.width>4?6.5:4.4});break;
    }
   }

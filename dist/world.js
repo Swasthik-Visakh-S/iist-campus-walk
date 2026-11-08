@@ -78,9 +78,9 @@ export function buildWorld(scene,data,config){
    if(medical.cameraBlocked(x,y,z)||y<clinic.level+4.3&&medical.posts.some(p=>Math.hypot(x-p[0],z-p[1])<.5))return true;
    if(basketball?.cameraBlocked(x,y,z))return true;
    if(!inside(x,z,boundary)&&!exteriorRoad(x,z))return true;
-   if(entrances.some(e=>{if(e===clinic||e===cafeEntry)return false;if(academicIds.has(e.buildingId))return academicCanopyBlocked(x,y,z,e);const dx=x-e.door[0],dz=z-e.door[1],u=dx*e.right[0]+dz*e.right[1],v=dx*e.n[0]+dz*e.n[1];return Math.abs(u)<3.6&&v>-.8&&v<4.3&&y>e.level+3.4&&y<e.level+4.3;}))return true;
+   if(entrances.some(e=>{if(e===clinic||e===cafeEntry||e.buildingId==='crystal-hostel')return false;if(academicIds.has(e.buildingId))return academicCanopyBlocked(x,y,z,e);const dx=x-e.door[0],dz=z-e.door[1],u=dx*e.right[0]+dz*e.right[1],v=dx*e.n[0]+dz*e.n[1];return Math.abs(u)<3.6&&v>-.8&&v<4.3&&y>e.level+3.4&&y<e.level+4.3;}))return true;
    if(terrainModel.routes.some(r=>r.covered&&distSegment(x,z,r.a,r.b)<r.width/2+.6&&Math.abs(y-r.y0-3.85)<.4))return true;
-   if(entrances.some(e=>e!==clinic&&e!==cafeEntry&&y<e.level+4.3&&e.pillars.some(p=>Math.hypot(x-p[0],z-p[1])<.9)))return true;
+   if(entrances.some(e=>e.buildingId!=='crystal-hostel'&&e!==clinic&&e!==cafeEntry&&y<e.level+4.3&&e.pillars.some(p=>Math.hypot(x-p[0],z-p[1])<.9)))return true;
    if(gates.some(g=>g.obstacles.some(o=>y<g.level+4.7&&Math.hypot(x-o.p[0],z-o.p[1])<o.r)))return true;
    if(walls.some(w=>distSegment(x,z,w.a,w.b)<.6&&y<groundAt(x,z)+config.landscape.boundaryWall.height+.2))return true;
    return buildings.some(b=>{
@@ -149,7 +149,7 @@ export function buildWorld(scene,data,config){
  const name=t.amenity==='library'?'Library':t.name;
  if(name){
    const entrance=entrances.find(e=>e.buildingId===b.id);
-   const destination=academicIds.has(b.id)?entrance.end:entrance===cafeEntry?cafe.spawn:entrance===clinic?safePoint(medical.spawn):entrance?.stepCount?entrance.end:entrance?.porch||safePoint(b.center);
+   const destination=b.id==='crystal-hostel'?entrance.end:academicIds.has(b.id)?entrance.end:entrance===cafeEntry?cafe.spawn:entrance===clinic?safePoint(medical.spawn):entrance?.stepCount?entrance.end:entrance?.porch||safePoint(b.center);
    landmarks.push({name,p:destination,door:entrance?.door,viewToward:academicIds.has(b.id)?entrance.door:entrance===cafeEntry?cafe.aim:entrance===clinic?medical.aim:undefined,viewPitch:entrance===clinic?.16:undefined,label:b.center,height:y+h});
  }
 

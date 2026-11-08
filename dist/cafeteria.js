@@ -19,11 +19,11 @@ export function planCafeteria(entry){
   function blocked(x,z){return rails.some(([a,b])=>distSegment(x,z,a,b)<.18);}
   function cameraBlocked(x,y,z){
     const [u,v]=local(x,z);
-    return Math.abs(u)<6.5&&v>-.15&&v<4&&y>level+3.25&&y<level+3.7 || y<level+1.6&&blocked(x,z);
+    return Math.abs(u)<7.5&&v>-2.5&&v<5.1&&Math.abs(y-level-4.65-Math.sin(.1)*(v-1.3))<.2 || Math.abs(u)<6.5&&v>-.15&&v<4&&y>level+3.25&&y<level+3.7 || y<level+1.6&&blocked(x,z);
   }
   return {entry,at,local,level,posts,rails,heightAt,blocked,cameraBlocked,
     noPlants:(x,z,margin=0)=>{const [u,v]=local(x,z);return Math.abs(u)<8.8+margin&&v>-.1-margin&&v<11+margin;},
-    spawn:at(0,9),aim:at(0,1)};
+    spawn:at(0,14),aim:at(0,1)};
 }
 
 export function addCafeteria({scene,cafe,box,m,mesh,polygon}){
