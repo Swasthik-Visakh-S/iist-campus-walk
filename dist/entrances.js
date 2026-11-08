@@ -59,6 +59,11 @@ export function planEntrances(data,buildings,ponds,terrain,config){
   for(const [index,mark] of marks.entries()){
   if(mark){
     const entry=markedEntrance(b,mark,index,buildings,ponds,routes,terrain,boundary);
+    const portico=config.layout.entrancePorticos?.[b.id];
+    if(portico){
+      entry.span=portico.span;entry.postDepth=portico.depth;
+      entry.pillars=[-1,1].map(side=>[entry.door[0]+entry.n[0]*entry.postDepth+entry.right[0]*entry.span*side,entry.door[1]+entry.n[1]*entry.postDepth+entry.right[1]*entry.span*side]);
+    }
     if(!config.layout.markedDoors?.[b.id])delete entry.mark;
     entry.stepCount=config.layout.entranceStairs?.[b.id]||0;
     entries.push(entry);continue;

@@ -23,6 +23,7 @@ export function addAcademicEntrances(scene,entries,buildings,m){
     group.rotation.y=Math.atan2(e.n[0],e.n[1]);scene.add(group);
     const span=e.span||2.55,depth=e.postDepth||2.4;
     const halfWidth=span+1.05,roofDepth=depth+2.7,roofCentre=depth/2+.25,slope=.12;
+    if(depth>=3)part(group,m.path,0,.07,depth/2,halfWidth*2,.14,depth+1.7);
     // Red piers stand clear of the doorway, supporting the deep cream lintel.
     for(const side of [-1,1]){
       part(group,m.brick,side*span,1.82,depth,.84,3.64,.90);
