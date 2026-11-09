@@ -22,8 +22,8 @@ export function planCafeteria(entry,umbrellas=[]){
     return u>3.8&&u<8.3&&v>4.8&&v<12.6&&Math.abs(y-level-3.15)<.2 || Math.abs(u)<7.5&&v>-2.5&&v<5.1&&Math.abs(y-level-4.65-Math.sin(.1)*(v-1.3))<.2 || Math.abs(u)<6.5&&v>-.15&&v<4&&y>level+3.25&&y<level+3.7 || y<level+1.6&&blocked(x,z);
   }
   return {entry,at,local,level,posts,rails,heightAt,blocked,cameraBlocked,
-    noPlants:(x,z,margin=0)=>{const [u,v]=local(x,z);return u>-21.8-margin&&u<8.8+margin&&v>-.1-margin&&v<13.8+margin;},
-    spawn:at(0,21),aim:at(-5,3)};
+    noPlants:(x,z,margin=0)=>{const [u,v]=local(x,z);return Math.hypot(x-at(0,18)[0],z-at(0,18)[1])<2+margin || u>-21.8-margin&&u<8.8+margin&&v>-.1-margin&&v<13.8+margin;},
+    spawn:at(0,18),aim:at(-5,3)};
 }
 
 export function addCafeteria({scene,cafe,box,m,mesh,polygon}){

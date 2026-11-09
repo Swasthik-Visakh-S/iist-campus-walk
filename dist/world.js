@@ -46,7 +46,7 @@ export function buildWorld(scene,data,config){
  const columns=entrances.flatMap(e=>e===clinic?medical.posts:e===cafeEntry?cafe.posts:e.buildingId==='crystal-hostel'?[-1,1].map(side=>[e.door[0]+e.right[0]*side*2.35+e.n[0]*.3,e.door[1]+e.right[1]*side*2.35+e.n[1]*.3]):e.pillars);
  const sports=data.features.filter(f=>f.tags.sport);
  const courts=sports.filter(f=>f.tags.sport!=='soccer');
- const fieldEdges=[...sports,forecourt].flatMap(f=>f.points.slice(1).map((b,i)=>({a:f.points[i],b,width:1})));
+ const fieldEdges=[...sports,forecourt,{points:config.layout.cafeSeating.points}].flatMap(f=>f.points.slice(1).map((b,i)=>({a:f.points[i],b,width:1})));
  const terrainSurface=createTerrainSurface(groundAt,[...terrainModel.routes,...fieldEdges]);
  const gardenLevel=lib.level+.02;
  const gates=planGates(config,groundAt);

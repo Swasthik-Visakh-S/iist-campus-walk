@@ -88,7 +88,7 @@ export function makeTerrain(data, config, buildings, ponds) {
     const forecourt=config.landscape.turfForecourt;
     if(forecourt){const d=edgeDistance(x,z,forecourt.points);if(d<1)h+=(forecourt.level-h)*(1-smooth(d));}
     const seating=config.layout.cafeSeating;
-    if(seating){const d=edgeDistance(x,z,seating.points);if(d<1)h+=(seating.level-h)*(1-smooth(d));}
+    if(seating){const d=edgeDistance(x,z,seating.points);if(d<2.5)h+=(seating.level-h)*(1-smooth((d-1.25)/1.25));}
     if(hostelFlight){
       const r=hostelFlight;
       if(Math.abs(x-r.a[0])<12&&Math.abs(z-r.a[1])<16){

@@ -38,6 +38,7 @@ function walk(points){const player={};resetMotion(player,...points[0],w);for(con
  assert(Math.hypot(player.x-q[0],player.z-q[1])<.1,'Cafe path obstructed');
 }}
 const c=w.cafe;
+for(let u=-21;u<8;u+=.5)for(let v=.5;v<13;v+=.5){if(u<-8.3&&v>8.5)continue;assert(w.terrainSurface.heightAt(...c.at(u,v))<c.level+.12,'Terrain must stay below cafe paving');}
 const umbrellas=w.cafeUmbrellas.map(p=>c.local(...p));
 assert.equal(umbrellas.length,8);assert(umbrellas.every(p=>p[0]<-3.5));assert.equal(umbrellas.filter(p=>p[0]<-7).length,5);
 for(const p of w.cafeUmbrellas){assert(w.blocked(...p));assert(Math.abs(w.walkHeight(...p)-c.level-.14)<.001);}
