@@ -1,6 +1,6 @@
 import * as T from './vendor/three.module.js';
 import {inside,distSegment,edgeDistance,center} from './geometry.js?v=6';
-import {stepCount,stepTop} from './terrain.js?v=13';
+import {stepCount,stepTop} from './terrain.js?v=14';
 export function wallSegments(boundary,routes,spec){
   const walls=[];
   for(let i=1;i<boundary.length;i++){

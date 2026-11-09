@@ -38,6 +38,14 @@ function walk(points){const player={};resetMotion(player,...points[0],w);for(con
  assert(Math.hypot(player.x-q[0],player.z-q[1])<.1,'Cafe path obstructed');
 }}
 const c=w.cafe;
+for(let u=-21;u<8;u+=.5)for(let v=.5;v<13;v+=.5){if(u<-8.3&&v>8.5)continue;assert(w.terrainSurface.heightAt(...c.at(u,v))<c.level+.12,'Terrain must stay below cafe paving');}
+const umbrellas=w.cafeUmbrellas.map(p=>c.local(...p));
+assert.equal(umbrellas.length,8);assert(umbrellas.every(p=>p[0]<-3.5));assert.equal(umbrellas.filter(p=>p[0]<-7).length,5);
+for(const p of w.cafeUmbrellas){assert(w.blocked(...p));assert(Math.abs(w.walkHeight(...p)-c.level-.14)<.001);}
+const upper=routes('365911690').slice(1),crystal=routes('365910893').slice(1,3);
+assert(upper.every(r=>r.y1<r.y0&&Math.abs(r.y1-r.y0)/r.length<.06));
+assert(crystal.every(r=>Math.abs(r.y1-r.y0)/r.length>.2&&Math.abs(r.y1-r.y0)/r.length<.51));
+assert(c.cameraBlocked(...(()=>{const p=c.at(6,8);return [p[0],c.level+3.15,p[1]]})()),'Solid right-hand shed ceiling');
 walk([[0,12],[0,9],[0,3],[0,1]].map(p=>c.at(...p)));
 walk([[0,12],[0,9],[-2.3,8],[-2.3,2],[-2.3,1]].map(p=>c.at(...p)));
 assert(c.entry.n[0]<-.8,'Cafe faces the Dhruva road');

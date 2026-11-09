@@ -3,7 +3,7 @@ import {edgeDistance, distSegment, inside} from './geometry.js?v=6';
 
 export function addAvenueShrubs({scene, config, routes, buildings, boundary, surface, noPlants}){
   const avenue=config.landscape.hostelAvenue;
-  const shrubs=[],along=routes.filter(r=>avenue.roadIds.includes(r.id)&&r.y0===avenue.level&&r.y1===avenue.level);
+  const shrubs=[],along=routes.filter(r=>avenue.roadIds.includes(r.id)&&Math.abs(r.y1-r.y0)/r.length<.12);
   let distance=0,station=0;
   for(const r of along){
     for(;station<distance+r.length;station+=avenue.shrubSpacing){
