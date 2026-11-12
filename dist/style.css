@@ -16,3 +16,14 @@ footer #soundButton{min-width:66px}
 .timeControl{display:flex;align-items:center;font-size:10px;background:var(--panel);border-radius:8px;padding-left:9px}.timeControl select{border:0;background:none;padding:10px;max-width:105px}.night header,.night #intro,.night footer>span{color:#e4edf2}.night #intro p,.night .hint,.night footer a{color:#c4d8df}@media(max-width:1150px){.timeControl{position:absolute;right:0;top:98px}}@media(max-width:760px),(pointer:coarse){.timeControl{position:fixed;top:18px;right:16px;font-size:0;padding:0}.timeControl select{font-size:11px;width:92px;padding:8px}}
 
 #teaStatus:not(:empty){max-width:260px;border-radius:7px;padding:7px 10px;background:var(--panel);font-size:11px}#teaButton{background:#254d42;color:white}nav{flex-wrap:wrap}#travelTools{flex-wrap:wrap;max-width:calc(100vw - 40px)}
+
+@media(min-width:761px) and (max-width:1150px){.weatherControl{top:146px}}
+@media(max-width:760px),(pointer:coarse){
+ nav{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:5px;top:76px}
+ nav>button{grid-column:span 3;padding:8px 4px;min-width:0}
+ nav>.qualityControl,nav>.timeControl{grid-column:span 4;position:static;width:auto;min-width:0;font-size:0;padding:0}
+ nav label select{width:100%;max-width:100%;font-size:11px;padding:8px 5px}
+ #walking{top:178px;max-width:calc(100vw - 32px)}#travelTools{top:220px}
+ #mapCard,.walk #mapCard{top:220px;max-height:calc(100dvh - 380px)}
+}
+@media(max-height:500px) and (orientation:landscape){nav{display:flex;top:12px;left:270px}.timeControl,.weatherControl,.qualityControl{position:static!important}nav label select{width:80px}#walking{top:80px}#travelTools{top:122px}}
