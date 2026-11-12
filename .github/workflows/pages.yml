@@ -22,6 +22,7 @@ jobs:
       - run: node scripts/check-transit.mjs
       - run: node scripts/check-pitch.mjs
       - run: node scripts/check-lighting.mjs
+      - run: node scripts/check-weather-tea.mjs
       - run: node scripts/check-campus-levels.mjs
       - run: node scripts/check-campus-routes.mjs
       - run: node scripts/check-campus-life.mjs

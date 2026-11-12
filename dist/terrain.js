@@ -1,4 +1,4 @@
-import {roadWidth} from './road-width.js?v=14';
+import {roadWidth} from './road-width.js?v=15';
 import {inside, edgeDistance} from './geometry.js?v=6';
 const clamp=t=>Math.max(0,Math.min(1,t));
 const smooth=t=>{t=clamp(t);return t*t*(3-2*t);};

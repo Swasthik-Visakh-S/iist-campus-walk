@@ -27,7 +27,7 @@ for(const [dx,dz] of [[1.15,1.1],[-3,-12],[3,-15]]){
  const hit=ray.intersectObjects(scene.children)[0];
  assert(hit&&Math.abs(hit.point.y-y)<.03,'Visible solid OAT surface agrees with walking height');
 }
-assert(w.blocked(w.amph.x,w.amph.z+5.75),'Solid stage backdrop stops the player');
+assert(w.blocked(...w.theatre.stageBack),'MPH wall closes the rear of the stage');
 for(const g of w.gates){assert(!w.blocked(...w.safePoint(g.point(0,6))));for(const t of w.trees)assert(Math.hypot(t[0]-g.center[0],t[1]-g.center[1])>g.width/2+18,'Gate approach clear of trees');}
 assert.equal(chooseQuality('auto',{coarse:true,width:390,cores:8}),'low');assert.equal(chooseQuality('auto',{width:1400,cores:8}),'balanced');assert.equal(chooseQuality('high',{coarse:true}),'high');assert.equal(qualitySettings('low').shadows,false);
 const renderer={shadowMap:{},setPixelRatio(n){this.ratio=n}},sun={shadow:{}};applyQuality(renderer,sun,w,'low',3);assert.equal(renderer.ratio,1);assert.equal(renderer.shadowMap.autoUpdate,false);assert(w.foliage.every(g=>g.crowns.count===g.trunks.count*3));applyQuality(renderer,sun,w,'high',2);assert(w.foliage.every(g=>g.trunks.count===g.count));

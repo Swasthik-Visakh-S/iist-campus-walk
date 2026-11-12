@@ -14,3 +14,5 @@
 footer #soundButton{min-width:66px}
 
 .timeControl{display:flex;align-items:center;font-size:10px;background:var(--panel);border-radius:8px;padding-left:9px}.timeControl select{border:0;background:none;padding:10px;max-width:105px}.night header,.night #intro,.night footer>span{color:#e4edf2}.night #intro p,.night .hint,.night footer a{color:#c4d8df}@media(max-width:1150px){.timeControl{position:absolute;right:0;top:98px}}@media(max-width:760px),(pointer:coarse){.timeControl{position:fixed;top:18px;right:16px;font-size:0;padding:0}.timeControl select{font-size:11px;width:92px;padding:8px}}
+
+#teaStatus:not(:empty){max-width:260px;border-radius:7px;padding:7px 10px;background:var(--panel);font-size:11px}#teaButton{background:#254d42;color:white}nav{flex-wrap:wrap}#travelTools{flex-wrap:wrap;max-width:calc(100vw - 40px)}

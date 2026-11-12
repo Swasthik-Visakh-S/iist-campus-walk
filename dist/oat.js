@@ -3,17 +3,27 @@ import {distSegment,inside} from './geometry.js?v=6';
 
 // The photo shows a fan of pale tiled benches facing a low, clipped-corner
 // stage. Each sector below is a closed prism, including the faces at the aisles.
-export function createOat(amph,level,aisles){
+export function createOat(amph,level,aisles,mph){
   const {x:cx,z:cz,r:outer,inner,steps,rise}=amph;
   const floor=level+.17,half=Math.PI*.54,sectors=96,stepAngle=2*half/sectors;
   const facet=stepAngle*12,rows=[],obstacles=[],railPanels=[];
   const apron=inner+1.35,tread=(outer-apron)/steps;
+  // Stage shares the north-west wall of MPH. Its back edge is exactly on
+  // that wall, and its front projects into the auditorium.
+  const wall=mph ? [mph.groundPoints[1],mph.groundPoints[2]] : [[cx+11,cz+16],[cx+21,cz+6]];
+  const back=wall[0].map((v,i)=>(v+wall[1][i])/2),length=Math.hypot(wall[1][0]-wall[0][0],wall[1][1]-wall[0][1]);
+  const right=[(wall[1][0]-wall[0][0])/length,(wall[1][1]-wall[0][1])/length];
+  let front=[-right[1],right[0]];
+  if((cx-back[0])*front[0]+(cz-back[1])*front[1]<0)front=front.map(v=>-v);
+  const at=(u,v)=>[back[0]+right[0]*u+front[0]*v,back[1]+right[1]*u+front[1]*v];
+  const local=(x,z)=>[(x-back[0])*right[0]+(z-back[1])*right[1],(x-back[0])*front[0]+(z-back[1])*front[1]];
+  const rotation=Math.atan2(-front[0],-front[1]);
   const angleAt=i=>-half+i*stepAngle;
   function radiusFactor(a){
     const mid=-half+(Math.floor((a+half)/facet)+.5)*facet;
     return Math.cos(facet*.5)/Math.cos(a-mid);
   }
-  function point(r,a){const d=r*radiusFactor(a);return [cx+d*Math.sin(a),cz-d*Math.cos(a)];}
+  function point(r,a){const d=r*radiusFactor(a);return [cx+d*Math.sin(a-rotation),cz-d*Math.cos(a-rotation)];}
   const inWalk=(x,z)=>aisles.some(r=>distSegment(x,z,r.a,r.b)<r.width*.5+.75);
   for(let i=0;i<steps;i++){
     const row=[];
@@ -24,14 +34,16 @@ export function createOat(amph,level,aisles){
     }
     rows.push(row);
   }
-  const stage=[[-3.35,-.85],[3.35,-.85],[4.2,.05],[4.2,3.55],[3.55,4.15],[-3.55,4.15],[-4.2,3.55],[-4.2,.05]];
-  const stageOutline=stage.map(([x,z])=>[cx+x,cz+z]);
-  const stageTop=floor+.42;
+  const stage=[[-5.2,0],[5.2,0],[5.2,5.2],[4.5,6],[-4.5,6],[-5.2,5.2]];
+  const stageOutline=stage.map(([u,v])=>at(u,v));
+  const stageTop=floor+.90;
   function heightAt(x,z){
     const dx=x-cx,dz=z-cz,d=Math.hypot(dx,dz);
-    if(d>outer+.3)return null;
     if(inside(x,z,stageOutline))return stageTop;
-    const a=Math.atan2(dx,-dz);
+    const [u,v]=local(x,z);
+    if(Math.abs(u)<1.9&&v>=6&&v<7.8)return floor+.15*(6-Math.floor((v-6)/.30));
+    if(d>outer+.3)return null;
+    const raw=Math.atan2(dx,-dz)+rotation,a=Math.atan2(Math.sin(raw),Math.cos(raw));
     if(Math.abs(a)>=half)return floor;
     const radius=d/radiusFactor(a),row=Math.floor((radius-apron)/tread);
     if(row<0||row>=steps)return floor;
@@ -43,8 +55,6 @@ export function createOat(amph,level,aisles){
   function block(x,z,w,d,height){
     obstacles.push({x:cx+x,z:cz+z,w,d,height});
   }
-  block(0,5.75,6.55,.55,5.75);
-  for(const x of [-10.4,-7.6,9.6])block(x,6.7,.54,.6,4.2);
   const nearSolid=(x,z,margin,y)=>obstacles.some(b=>Math.abs(x-b.x)<b.w/2+margin&&Math.abs(z-b.z)<b.d/2+margin&&y<floor+b.height+.1);
   const view=point(apron+tread*(steps-4.5),-.16);
   function draw({mesh,polygon,box,m,outline}){
@@ -82,26 +92,18 @@ export function createOat(amph,level,aisles){
       geometry.setAttribute('position',new T.Float32BufferAttribute(positions,3));
       geometry.computeVertexNormals();mesh(geometry,mat);
     }
-    const loop=(s)=>stage.map(([x,z])=>[cx+x*s,cz+1.65+(z-1.65)*s]);
-    polygon(loop(1.025),.16,dark,floor-.02);
-    polygon(stageOutline,.21,m.brick,floor+.14);
-    polygon(stageOutline,.07,stone,floor+.35);
-    for(const side of [-1,1]){
-      box(dark,cx+side*3.63,stageTop+.007,cz+1.65,.18,.014,2.75);
-      box(dark,cx,stageTop+.007,cz+1.65+side*1.89,6.75,.014,.18);
+    // A solid raised platform abuts MPH, with six low access treads.
+    polygon(stageOutline,.83,m.brick,floor);
+    polygon(stageOutline,.07,stone,floor+.83);
+    for(let i=0;i<6;i++){
+      const p=at(0,6+(i+.5)*.3),h=.15*(6-i);
+      box(stone,p[0],floor+h/2,p[1],3.8,h,.301,Math.atan2(front[0],front[1]));
     }
-    for(const x of [-2.4,-1.6,0,1.6,2.4]){
-      const pattern=x===0?[0]:Math.abs(x)>2?[0]:[-.8,.8];
-      for(const z of pattern)box(dark,cx+x,stageTop+.008,cz+1.65+z,.78,.016,.78);
+    const slab=[at(-5.6,0),at(5.6,0),at(5.6,8.4),at(-5.6,8.4)];
+    polygon(slab,.15,stone,floor-.15);
+    for(const u of [-3,-1.5,0,1.5,3]){
+      const p=at(u,3);box(dark,p[0],stageTop+.008,p[1],.7,.016,.7,Math.atan2(front[0],front[1]));
     }
-    for(const o of obstacles)box(m.white,o.x,floor+o.height/2,o.z,o.w,o.height,o.d);
-    // Concrete lintels and open side bays frame the tall wall behind the stage.
-    for(const sign of [-1,1]){
-      box(m.white,cx+sign*6.98,floor+4.32,cz+6.6,7.4,.40,2.25);
-      for(const x of [4,6.5,9.5])box(steel,cx+sign*x,floor+4.89,cz+5.57,.055,.74,.055);
-      for(const h of [4.84,5.21])box(steel,cx+sign*6.98,floor+h,cz+5.57,7.4,.045,.045);
-    }
-    box(m.white,cx,floor+5.8,cz+5.9,6.85,.18,1.15);
     // Solid rear parapet follows the faceted top row. Gaps align with aisles.
     for(let j=0;j<sectors;j++){
       if(!rows[steps-1][j])continue;
@@ -120,8 +122,8 @@ export function createOat(amph,level,aisles){
   function cameraBlocked(x,y,z){
     if(Math.abs(x-cx)>outer+1||Math.abs(z-cz)>outer+1)return false;
     if(nearSolid(x,z,.12,y)||y<(heightAt(x,z)??-Infinity)+.05)return true;
-    if(Math.abs(x-cx)>3.25&&Math.abs(x-cx)<10.8&&Math.abs(z-cz-6.6)<1.22&&Math.abs(y-floor-4.32)<.28)return true;
+
     return y<floor+steps*rise+.8&&railPanels.some(([a,b])=>distSegment(x,z,a,b)<.25);
   }
-  return {draw,heightAt,blocked,cameraBlocked,view,aim:[cx,cz+2]};
+  return {draw,heightAt,blocked,cameraBlocked,view,aim:at(0,3),stageOutline,stageTop,stageBack:back,stageAt:at,wall};
 }

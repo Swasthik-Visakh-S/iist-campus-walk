@@ -1,7 +1,7 @@
 import * as T from './vendor/three.module.js';
 import {distSegment,inside} from './geometry.js?v=6';
 
-export const academicIds=new Set(['618490371','618501273','618501279']);
+export const academicIds=new Set(['618490369','618490370','618490371','618501273','618501279','618501282']);
 
 // The photograph shows cream-edged red soffits and a black frame under the
 // projecting canopy. Its support piers use the same coordinates as collisions.
@@ -23,21 +23,21 @@ export function addAcademicEntrances(scene,entries,buildings,m){
     group.rotation.y=Math.atan2(e.n[0],e.n[1]);scene.add(group);
     const span=e.span||2.55,depth=e.postDepth||2.4;
     const halfWidth=span+1.05,roofDepth=depth+2.7,roofCentre=depth/2+.25,slope=.12;
-    if(depth>=3)part(group,m.path,0,.07,depth/2,halfWidth*2,.14,depth+1.7);
+
     // Red piers stand clear of the doorway, supporting the deep cream lintel.
     for(const side of [-1,1]){
-      part(group,m.brick,side*span,1.82,depth,.84,3.64,.90);
-      part(group,m.white,side*span,3.57,depth,1.02,.20,1.04);
+      part(group,m.brick,side*span,2.25,depth,1.05,4.5,1.10);
+      part(group,m.white,side*span,4.43,depth,1.02,.20,1.04);
       part(group,yellow,side*span,.70,depth+.472,.24,.61,.035);
       for(const y of [.51,.72,.93]){
         const stripe=part(group,steel,side*span,y,depth+.496,.26,.075,.025);
         stripe.rotation.z=-.5;
       }
     }
-    part(group,m.white,0,3.79,depth/2,span*2+.88,.37,depth+1.3);
+    part(group,m.white,0,4.65,depth/2,span*2+.88,.37,depth+1.3);
     // Sloped soffit rises towards the street. Red inset panels remain visible
     // between cream cross-members when the student looks up under the porch.
-    const roofY=4.39;
+    const roofY=5.25;
     part(group,m.white,0,roofY,roofCentre,halfWidth*2,.17,roofDepth,-slope);
     const panelWidth=(halfWidth*2-.36)/4;
     for(let col=0;col<4;col++){
@@ -115,8 +115,8 @@ export function academicCanopyBlocked(x,y,z,entry){
   const dx=x-entry.door[0],dz=z-entry.door[1];
   const u=dx*entry.right[0]+dz*entry.right[1],v=dx*entry.n[0]+dz*entry.n[1];
   const span=entry.span||2.55,depth=entry.postDepth||2.4,roofCentre=depth/2+.25;
-  const roof=entry.level+4.39+Math.sin(.12)*(v-roofCentre);
+  const roof=entry.level+5.25+Math.sin(.12)*(v-roofCentre);
   if(Math.abs(u)>span+1.15)return false;
   return v>roofCentre-(depth+2.7)/2-.1&&v<roofCentre+(depth+2.7)/2+.1&&Math.abs(y-roof)<.27 ||
-    Math.abs(u)<span+.55&&v>-.7&&v<depth+1&&y>entry.level+3.55&&y<entry.level+4.05;
+    Math.abs(u)<span+.55&&v>-.7&&v<depth+1&&y>entry.level+4.41&&y<entry.level+4.91;
 }

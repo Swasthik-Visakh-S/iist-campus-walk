@@ -50,8 +50,8 @@ function makeStudent(rig, style, add){
   return (phase,stride)=>{
     body.position.y=.018*Math.abs(Math.sin(phase))*stride;
     for(const {leg,arm,sign} of limbs){
-      leg.rotation.x=sign*Math.sin(phase)*.41*stride;
-      arm.rotation.x=-leg.rotation.x*.85;
+      leg.rotation.x=style.seated?-1.05:sign*Math.sin(phase)*.41*stride;
+      arm.rotation.x=style.seated?-.55:-leg.rotation.x*.85;
     }
   };
 }
@@ -162,6 +162,20 @@ export function createResidents(scene,world){
     const speed=style.kind==='student'?1.2:style.kind==='cat'?.59:.98;
     actors.push({kind:style.kind,rig,animate,path,distance,direction,speed,phase:i,pause:0});
   });
+  // Cafe patrons share the same two GPU batches as the walking residents.
+  if(world.cafe){
+  const cafe=world.cafe,frontAngle=Math.atan2(cafe.entry.n[0],cafe.entry.n[1]);
+  const spots=world.cafeUmbrellas.map((p,i)=>({p:[p[0]+cafe.entry.right[0]*1.18,p[1]+cafe.entry.right[1]*1.18],angle:frontAngle-Math.PI/2,seated:true}));
+  spots.push({p:cafe.at(5,8.4),angle:frontAngle,seated:false},{p:cafe.at(-7.2,11),angle:frontAngle+.7,seated:false});
+  spots.push({p:cafe.at(3.6,1.1),angle:frontAngle,seated:false,vendor:true});
+  spots.forEach((spot,i)=>{
+    const style={shirt:spot.vendor?'#eee8d3':['#af7364','#6f9b93','#8b8ab4'][i%3],bag:spot.vendor?'#eee8d3':'#806950',skin:'#ab7758',trousers:'#35434b',bun:i%3===0,seated:spot.seated};
+    const rig=new T.Group(),animate=makeStudent(rig,style,add);
+    rig.position.set(spot.p[0],cafe.level+(spot.vendor?.68:.14)-(spot.seated?.20:0),spot.p[1]);rig.rotation.y=spot.angle;
+    if(spot.vendor){add('oval',rig,0,1.79,0,.28,.065,.25,'#eee8d3');add('oval',rig,0,.95,.15,.18,.29,.025,'#fcf5e1');}
+    actors.push({kind:spot.vendor?'tea vendor':'cafe student',rig,animate,fixed:true,phase:i,pause:0});
+  });
+  }
   const geometries={oval:new T.SphereGeometry(1,8,6),ear:new T.ConeGeometry(1,2,4)};
   const material=new T.MeshStandardMaterial({roughness:.92});
   const batches=Object.entries(parts).map(([key,list])=>{
@@ -176,6 +190,7 @@ export function createResidents(scene,world){
   function pose(dt){
     for(const actor of actors){
       const {rig,path,direction}=actor;
+      if(actor.fixed){actor.phase+=dt;actor.animate(actor.phase,0);rig.updateMatrixWorld(true);continue;}
       const walking=actor.pause<=0;
       if(walking){
         actor.distance+=dt*actor.speed*direction;
