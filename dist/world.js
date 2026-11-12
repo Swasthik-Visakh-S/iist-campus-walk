@@ -149,8 +149,8 @@ export function buildWorld(scene,data,config){
  const name=t.amenity==='library'?'Library':t.name;
  if(name){
    const entrance=entrances.find(e=>e.buildingId===b.id);
-   const destination=b.id==='crystal-hostel'?entrance.end:academicIds.has(b.id)?entrance.end:entrance===cafeEntry?cafe.spawn:entrance===clinic?safePoint(medical.spawn):entrance?.stepCount?entrance.end:entrance?.porch||safePoint(b.center);
-   landmarks.push({name,p:destination,door:entrance?.door,viewToward:academicIds.has(b.id)?entrance.door:entrance===cafeEntry?cafe.aim:entrance===clinic?medical.aim:undefined,viewPitch:entrance===clinic?.16:undefined,label:b.center,height:y+h});
+   const destination=t.amenity==='library'?safePoint(entrance.door.map((v,i)=>v+entrance.n[i]*15)):b.id==='crystal-hostel'?entrance.end:academicIds.has(b.id)?entrance.end:entrance===cafeEntry?cafe.spawn:entrance===clinic?safePoint(medical.spawn):entrance?.stepCount?entrance.end:entrance?.porch||safePoint(b.center);
+   landmarks.push({name,p:destination,door:entrance?.door,viewToward:academicIds.has(b.id)?entrance.door:entrance===cafeEntry?cafe.aim:entrance===clinic?medical.aim:undefined,viewPitch:t.amenity==='library'?-.12:entrance===clinic?.16:undefined,label:b.center,height:y+h});
  }
 
  }

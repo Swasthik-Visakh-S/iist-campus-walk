@@ -16,7 +16,7 @@ Then open http://localhost:8000 in Chrome or Firefox. No Blender, npm install, A
 
 ## November 12 update
 
-The OAT platform is raised by about 0.9 m and its rear edge shares the MPH wall. Six small front steps reach the platform. The library frontage has twin glazed towers, cream frames and a central louvred strip; academic entrances have larger red piers and projecting canopies with 4.8 m asphalt approaches. Building footprints remain unchanged. Dimensions are illustrative.
+The OAT platform is raised by about 0.9 m and its rear edge shares the MPH wall. Six small front steps reach the platform. The library frontage has twin glazed towers, cream frames and a central louvred strip; academic entrances have larger red piers and projecting canopies with 4.8 m asphalt approaches. The library entrance faces the adjoining road and garden instead of the narrow notch used previously. Building footprints remain unchanged. Dimensions are illustrative.
 
 Ten extra students sit or stand around the cafeteria, and a tea seller serves from the covered counter. Choose **Tea counter** in the map menu, then press **E** or tap **Buy tea**. Each cup costs 5 pretend campus coins from a starting balance of 50; Reset restores the balance. No real payment or account is involved.
 

@@ -2638,47 +2638,47 @@
         "buildingId": "618490369",
         "name": "Library",
         "mark": [
-          64.27,
-          29.98
+          58.6,
+          30.6
         ],
         "door": [
-          64.27,
-          29.979999999999997
+          58.58935712239165,
+          30.598477745990564
         ],
         "n": [
-          0.738028812002274,
-          -0.6747691995449348
+          -0.9899254812145557,
+          -0.14158934155553637
         ],
         "right": [
-          -0.6747691995449348,
-          -0.738028812002274
+          -0.14158934155553637,
+          0.9899254812145557
         ],
         "porch": [
-          66.33648067360636,
-          28.09064624127418
+          55.81756577499089,
+          30.202027589635062
         ],
         "end": [
-          64.93142871894082,
-          28.791036881289823
+          55.000329773300464,
+          30.53172394231703
         ],
         "bend": null,
         "pillars": [
           [
-            67.65860657396472,
-            31.75970376379977
+            55.931317212105,
+            26.581660120640446
           ],
           [
-            62.800268337241185,
-            26.445896317383394
+            54.91187395290514,
+            33.70912358538525
           ]
         ],
         "span": 3.6,
-        "postDepth": 1.3,
+        "postDepth": 3.2,
         "width": 4.8,
         "level": 20,
-        "endLevel": 20,
-        "stepCount": 0,
-        "vehiclePorch": true
+        "endLevel": 20.000000000000004,
+        "vehiclePorch": true,
+        "stepCount": 0
       },
       {
         "id": "618490370-0",
@@ -2724,8 +2724,8 @@
         "width": 4.8,
         "level": 15,
         "endLevel": 15,
-        "stepCount": 0,
-        "vehiclePorch": true
+        "vehiclePorch": true,
+        "stepCount": 0
       },
       {
         "id": "618490371-0",
@@ -2771,8 +2771,8 @@
         "width": 4.8,
         "level": 7,
         "endLevel": 7,
-        "stepCount": 0,
-        "vehiclePorch": true
+        "vehiclePorch": true,
+        "stepCount": 0
       },
       {
         "id": "618501273-0",
@@ -2818,8 +2818,8 @@
         "width": 4.8,
         "level": 7,
         "endLevel": 7.02567679227181,
-        "stepCount": 0,
-        "vehiclePorch": true
+        "vehiclePorch": true,
+        "stepCount": 0
       },
       {
         "id": "618501279-0",
@@ -2865,8 +2865,8 @@
         "width": 4.8,
         "level": 5,
         "endLevel": 5.270954059754776,
-        "stepCount": 0,
-        "vehiclePorch": true
+        "vehiclePorch": true,
+        "stepCount": 0
       },
       {
         "id": "618501282-0",
@@ -2912,8 +2912,8 @@
         "width": 4.8,
         "level": 20,
         "endLevel": 20,
-        "stepCount": 0,
-        "vehiclePorch": true
+        "vehiclePorch": true,
+        "stepCount": 0
       },
       {
         "id": "618501282-1",
@@ -2959,8 +2959,8 @@
         "width": 4.8,
         "level": 20,
         "endLevel": 20,
-        "stepCount": 0,
-        "vehiclePorch": true
+        "vehiclePorch": true,
+        "stepCount": 0
       },
       {
         "id": "618501282-2",
@@ -3006,8 +3006,8 @@
         "width": 4.8,
         "level": 20,
         "endLevel": 20,
-        "stepCount": 0,
-        "vehiclePorch": true
+        "vehiclePorch": true,
+        "stepCount": 0
       },
       {
         "id": "1301681322-0",
@@ -5824,8 +5824,8 @@
       ],
       "618490369": [
         [
-          64.27,
-          29.98
+          58.6,
+          30.6
         ]
       ],
       "618490370": [
@@ -6002,15 +6002,9 @@
       "accuracy": "Approximate: landmark registration agrees with the scale bar within about 5%; preserve surveyed footprints and road centrelines. Heights and facade details are visual estimates."
     },
     "entrancePorticos": {
-      "618501279": {
-        "span": 3.2,
-        "depth": 3,
-        "width": 4.8,
-        "vehiclePorch": true
-      },
       "618490369": {
         "span": 3.6,
-        "depth": 1.3,
+        "depth": 3.2,
         "width": 4.8,
         "vehiclePorch": true
       },
@@ -6029,6 +6023,12 @@
       "618501273": {
         "span": 3.2,
         "depth": 1.3,
+        "width": 4.8,
+        "vehiclePorch": true
+      },
+      "618501279": {
+        "span": 3.2,
+        "depth": 3,
         "width": 4.8,
         "vehiclePorch": true
       },
