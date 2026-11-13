@@ -70,7 +70,7 @@ def check(session, site):
     assert js("return document.querySelector('#boardButton').getAttribute('aria-pressed') === 'true'")
     for place, file in [('Crystal Jubilee Hostel','crystal-front'),('Rohini','rohini-road'),
                         ('Football turf entrance','turf-entrance'),('Interdisciplinary Block','d1-entrance'),
-                        ('Avionics Block','d3-entrance'),('Cafeteria','cafeteria-frontage'),('Front gate','front-checkpoint')]:
+                        ('Avionics Block','d3-entrance'),('Cafeteria','cafeteria-frontage'),('Library','library-front'),('Open Air Theatre','oat-stage'),('Tea counter','tea-counter'),('Front gate','front-checkpoint')]:
         js("""const menu=document.querySelector('#destination');
             menu.value=[...menu.options].find(o=>o.textContent===%s).value;
             menu.dispatchEvent(new Event('change'));""" % json.dumps(place))
@@ -82,6 +82,17 @@ def check(session, site):
         js("const m=document.querySelector('#destination');m.value=[...m.options].find(o=>o.textContent===%s).value;m.dispatchEvent(new Event('change'));" % json.dumps(place))
         time.sleep(.8)
         capture(file)
+    js("const m=document.querySelector('#destination');m.value=[...m.options].find(o=>o.textContent==='Tea counter').value;m.dispatchEvent(new Event('change'));")
+    time.sleep(.5)
+    assert js("return !document.querySelector('#teaButton').hidden")
+    js("document.querySelector('#teaButton').click()")
+    assert js("return document.querySelector('#teaStatus').textContent.includes('Tea served!')")
+    capture('tea-served')
+    js("const m=document.querySelector('#timeOfDay');m.value='auto';m.dispatchEvent(new Event('change'));const w=document.querySelector('#weather');w.value='rain';w.dispatchEvent(new Event('change'));")
+    js("const m=document.querySelector('#destination');m.value=[...m.options].find(o=>o.textContent==='Library ground').value;m.dispatchEvent(new Event('change'));")
+    time.sleep(.8)
+    capture('forest-rain')
+    js("const m=document.querySelector('#destination');m.value=[...m.options].find(o=>o.textContent==='Front gate').value;m.dispatchEvent(new Event('change'));")
     request(session + '/window/rect', {'width': 430, 'height': 850})
     assert js("return getComputedStyle(document.querySelector('#touch')).display!=='none'")
     capture('phone-controls')

@@ -1,11 +1,13 @@
-import {createLighting} from './lighting.js?v=14';
-import {createCampusAudio} from './audio.js?v=14';
-import {createResidents} from './residents.js?v=14';
-import {createCheckpoint,nearbyGate,transitSpeed} from './transit.js?v=14';
+import {createEnvironment,createForestSnakes} from './environment.js?v=15';
+import {createTeaCounter} from './tea.js?v=15';
+import {createLighting} from './lighting.js?v=15';
+import {createCampusAudio} from './audio.js?v=15';
+import {createResidents} from './residents.js?v=15';
+import {createCheckpoint,nearbyGate,transitSpeed} from './transit.js?v=15';
 import {chooseQuality,applyQuality} from './quality.js?v=6';
-import {createCharacter} from './character.js?v=14';
-import {resetMotion,stepMotion,followCamera} from './movement.js?v=14';
-import {buildWorld,inside} from './world.js?v=14';
+import {createCharacter} from './character.js?v=15';
+import {resetMotion,stepMotion,followCamera} from './movement.js?v=15';
+import {buildWorld,inside} from './world.js?v=15';
 import * as T from './vendor/three.module.js';
 const $=id=>document.getElementById(id);
 const canvas=$('world'), keys=new Set();
@@ -19,7 +21,7 @@ const player=Object.assign(new T.Vector3(),{vy:0,grounded:true}),target=new T.Ve
 const scene=new T.Scene();scene.background=new T.Color('#b8c5c6');scene.fog=new T.Fog('#b8c5c6',850,1900);
 const camera=new T.PerspectiveCamera(52,innerWidth/innerHeight,8,2500);
 let renderer;
-try{renderer=new T.WebGLRenderer({canvas,antialias:!coarse&&quality!=='low',powerPreference:quality==='low'?'low-power':'high-performance'});}catch(e){import('./fallback.js?v=14');throw e;}
+try{renderer=new T.WebGLRenderer({canvas,antialias:!coarse&&quality!=='low',powerPreference:quality==='low'?'low-power':'high-performance'});}catch(e){import('./fallback.js?v=15');throw e;}
 const sound=createCampusAudio($('soundButton'));
 renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,quality==='low'?1:1.25));renderer.shadowMap.enabled=quality!=='low';renderer.shadowMap.autoUpdate=false;renderer.shadowMap.type=T.PCFSoftShadowMap;renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
 const sky=new T.HemisphereLight(0xe5f5ff,0x59614b,1.8);scene.add(sky);
@@ -28,7 +30,7 @@ let jumpQueued=false,followDistance=5.8,contextLost=false;
 const avatar=createCharacter();avatar.root.traverse(o=>{if(o.isMesh)o.castShadow=false});scene.add(avatar.root);
 const shadowGeometry=new T.CircleGeometry(.5,24);shadowGeometry.rotateX(-Math.PI/2);
 const contactShadow=new T.Mesh(shadowGeometry,new T.MeshBasicMaterial({color:'#172820',transparent:true,opacity:.22,depthWrite:false}));contactShadow.userData.dynamic=true;scene.add(contactShadow);
-let lighting;
+let lighting,environment,snakes,tea;let teaUntil=0,teaMessageUntil=0;
 let buildings=[],roads=[],places=[],labels=[],ponds=[],boundary,spawn,world,residents;
 function label(text,p,height){
  const c=document.createElement('canvas');c.width=384;c.height=80;
@@ -39,12 +41,13 @@ function label(text,p,height){
 
 const blocked=(x,z)=>world.blocked(x,z);
 try{
-const [data,config,heights]=await Promise.all(['campus.json','model-config.json','heights.json'].map(async path=>{const r=await fetch(path+'?v=14');if(!r.ok)throw Error(path+' unavailable');return r.json()}));
-config.heights={...config.heights,...heights};world=buildWorld(scene,data,config);residents=createResidents(scene,world);lighting=createLighting(scene,renderer,sun,sky,world);applyQuality(renderer,sun,world,quality,devicePixelRatio);({buildings,roads,places,ponds,boundary,spawn}=world);
+const [data,config,heights]=await Promise.all(['campus.json','model-config.json','heights.json'].map(async path=>{const r=await fetch(path+'?v=15');if(!r.ok)throw Error(path+' unavailable');return r.json()}));
+config.heights={...config.heights,...heights};world=buildWorld(scene,data,config);residents=createResidents(scene,world);lighting=createLighting(scene,renderer,sun,sky,world);environment=createEnvironment(scene,world,lighting);snakes=createForestSnakes(scene,world);tea=createTeaCounter(world.cafe);applyQuality(renderer,sun,world,quality,devicePixelRatio);({buildings,roads,places,ponds,boundary,spawn}=world);
 for(const p of places)label(p.shortName||p.name,p.label,p.height);
 for(let i=0;i<places.length;i++){let o=document.createElement('option');o.value=i;o.textContent=places[i].name;$('destination').append(o);}
 resetMotion(player,...spawn,world);avatar.root.visible=false;contactShadow.visible=false;$('loading').remove();addSigns();requestAnimationFrame(frame);
 }catch(e){$('loading').textContent='Unable to load the campus. '+e.message;console.error(e);}
+const cup=new T.Mesh(new T.CylinderGeometry(.085,.06,.16,8),new T.MeshStandardMaterial({color:'#f5e8d0'}));cup.position.set(.35,1.05,.20);cup.visible=false;avatar.root.add(cup);
 const checkpoint=createCheckpoint();
 let skating=false,dead=false,deathAt=0;
 const shotGeometry=new T.BufferGeometry();
@@ -69,7 +72,7 @@ function showID(){
  checkpoint.show(nearbyGate(world.gates,player));document.activeElement?.blur();updateCheckpoint();
 }
 function restartWalk(){
- dead=false;sound.setDead(false);document.body.classList.remove('dying');shot.visible=false;avatar.root.rotation.z=0;
+ dead=false;tea?.reset();teaUntil=0;sound.setDead(false);document.body.classList.remove('dying');shot.visible=false;avatar.root.rotation.z=0;
  resetMotion(player,...spawn,world);checkpoint.reset();updateCheckpoint();
 }
 function fireAtPlayer(gate){
@@ -81,6 +84,13 @@ function fireAtPlayer(gate){
 }
 $('death').addEventListener('cancel',e=>e.preventDefault());
 $('respawn').onclick=()=>{if(!$('death').open)return;$('death').close();restartWalk();setMode('walk');};
+function buyTea(){
+ if(mode!=='walk'||dead||$('info').open)return;
+ const result=tea.buy(player,performance.now());$('teaStatus').textContent=result.message;teaMessageUntil=performance.now()+5000;
+ if(result.ok)teaUntil=performance.now()+4000;
+ document.activeElement?.blur();
+}
+$('teaButton').onclick=buyTea;
 $('boardButton').onclick=toggleBoard;$('idButton').onclick=showID;
 function setMode(m){if(dead)return;
  // The overview looks across hundreds of metres. A larger near plane keeps
@@ -111,7 +121,7 @@ $('destination').onchange=e=>{
  pitch=place.viewPitch??.32;
  e.target.value='';
 };
-window.addEventListener('keydown',e=>{if(['SELECT','INPUT','BUTTON'].includes(e.target.tagName)||$('info').open||dead)return;if(e.code==='KeyB'&&!e.repeat)toggleBoard();if(e.code==='KeyI'&&!e.repeat)showID();if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();keys.add(e.code);if(e.code==='Space'&&!e.repeat&&mode==='walk')jumpQueued=true;if(e.code==='KeyV'&&!e.repeat)setMode(mode==='walk'?'aerial':'walk');if(e.code==='Enter'){setMode('walk');capture()}});window.addEventListener('keyup',e=>keys.delete(e.code));window.addEventListener('blur',()=>{drag=null;keys.clear();jumpQueued=false;resetTouch();});document.addEventListener('visibilitychange',()=>{keys.clear();jumpQueued=false;resetTouch();});
+window.addEventListener('keydown',e=>{if(['SELECT','INPUT','BUTTON'].includes(e.target.tagName)||$('info').open||dead)return;if(e.code==='KeyE'&&!e.repeat)buyTea();if(e.code==='KeyB'&&!e.repeat)toggleBoard();if(e.code==='KeyI'&&!e.repeat)showID();if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();keys.add(e.code);if(e.code==='Space'&&!e.repeat&&mode==='walk')jumpQueued=true;if(e.code==='KeyV'&&!e.repeat)setMode(mode==='walk'?'aerial':'walk');if(e.code==='Enter'){setMode('walk');capture()}});window.addEventListener('keyup',e=>keys.delete(e.code));window.addEventListener('blur',()=>{drag=null;keys.clear();jumpQueued=false;resetTouch();});document.addEventListener('visibilitychange',()=>{keys.clear();jumpQueued=false;resetTouch();});
 canvas.addEventListener('pointerdown',e=>{drag=[e.clientX,e.clientY,e.pointerId];canvas.setPointerCapture(e.pointerId);if(mode==='walk'&&e.pointerType==='mouse')capture()});canvas.addEventListener('pointerup',e=>{if(drag?.[2]===e.pointerId)drag=null});canvas.addEventListener('pointercancel',()=>drag=null);canvas.addEventListener('lostpointercapture',()=>drag=null);
 function look(dx,dy){yaw-=dx*.003;pitch=Math.max(-80*Math.PI/180,Math.min(1.0,pitch+dy*.003));}
 window.addEventListener('pointermove',e=>{if(document.pointerLockElement===canvas&&mode==='walk')look(e.movementX,e.movementY);else if(drag&&drag[2]===e.pointerId){const dx=e.clientX-drag[0],dy=e.clientY-drag[1];drag=[e.clientX,e.clientY,e.pointerId];if(mode==='walk')look(dx,dy);else{orbit-=dx*.005;tilt=Math.max(.25,Math.min(1.48,tilt+dy*.004))}}});
@@ -123,8 +133,9 @@ joy.onpointerdown=e=>{e.preventDefault();joyPointer=e.pointerId;joy.setPointerCa
 $('jumpButton').onpointerdown=e=>{e.preventDefault();if(mode==='walk')jumpQueued=true;};$('jumpButton').onclick=e=>{if(e.detail===0&&mode==='walk')jumpQueued=true;};
 $('runButton').onclick=()=>{touchRun=!touchRun;$('runButton').setAttribute('aria-pressed',String(touchRun));};
 $('mapToggle').onclick=()=>{document.activeElement?.blur();const open=document.body.classList.toggle('map-open');$('mapToggle').setAttribute('aria-expanded',String(open));};
-$('timeOfDay').onchange=e=>{lighting?.setMode(e.target.value);document.body.classList.toggle('night',e.target.value==='night');e.target.blur?.();try{localStorage.setItem('iist-time',e.target.value)}catch{}};
-try{const saved=localStorage.getItem('iist-time');if(saved==='night'){$('timeOfDay').value=saved;$('timeOfDay').onchange({target:$('timeOfDay')});}}catch{}
+$('timeOfDay').onchange=e=>{environment?.setTime(e.target.value);lighting?.setMode(e.target.value==='night'?'night':'morning');document.body.classList.toggle('night',e.target.value==='night');e.target.blur?.();try{localStorage.setItem('iist-time',e.target.value)}catch{}};
+try{const saved=localStorage.getItem('iist-time');if(['auto','morning','night'].includes(saved)){$('timeOfDay').value=saved;$('timeOfDay').onchange({target:$('timeOfDay')});}}catch{}
+$('weather').onchange=e=>{environment?.setWeather(e.target.value);e.target.blur();};
 $('quality').value=qualityPreference;$('quality').onchange=e=>{qualityPreference=e.target.value;e.target.blur?.();quality=chooseQuality(qualityPreference,{coarse,width:innerWidth,cores:navigator.hardwareConcurrency});applyQuality(renderer,sun,world,quality,devicePixelRatio);try{localStorage.setItem('iist-quality',qualityPreference)}catch{}};
 canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();contextLost=true;keys.clear();resetTouch();$('renderMessage').hidden=false;});
 canvas.addEventListener('webglcontextrestored',()=>{contextLost=false;renderer.shadowMap.needsUpdate=true;$('renderMessage').hidden=true;});
@@ -144,7 +155,7 @@ function frame(time){
  const elapsed=(time-last)/1000||.016,dt=Math.min(elapsed,.05);last=time;if(document.hidden||contextLost){requestAnimationFrame(frame);return;}
  if(qualityPreference==='auto'&&quality!=='low'&&time>6000){frameBudget+=elapsed;frameSamples++;if(frameSamples>=120){if(frameBudget/frameSamples>.032){quality='low';applyQuality(renderer,sun,world,quality,devicePixelRatio);}frameBudget=0;frameSamples=0;}}
  const travelling=mode==='walk'&&!$('info').open&&!dead;
- residents.update(dt);
+ residents.update(dt);snakes.update(dt);
  if(!travelling){world.pitch?.update(dt,null);}
  if(travelling){
   const f=touchVector.y+(keys.has('KeyW')||keys.has('ArrowUp')?1:0)-(keys.has('KeyS')||keys.has('ArrowDown')?1:0);
@@ -176,5 +187,10 @@ function frame(time){
   if(elapsed>=3&&!$('death').open)$('death').showModal();
  }
  labels.forEach(l=>{l.visible=mode==='aerial'||l.position.distanceTo(player)<110});
+ const env=environment.update(camera,time,dt);document.body.classList.toggle('night',env.night);
+ $('teaButton').hidden=mode!=='walk'||dead||!tea.nearby(player);
+ $('teaButton').textContent=`Buy tea · 5 coins · E`;
+ if(time>teaMessageUntil)$('teaStatus').textContent=!$('teaButton').hidden?`${tea.balance} campus coins · pretend purchase`:'';
+ cup.visible=time<teaUntil&&!dead&&mode==='walk';
  if(time-lastMap>125){lastMap=time;if(!coarse||document.body.classList.contains('map-open'))map();}lighting?.update(camera);renderer.render(scene,camera);requestAnimationFrame(frame);
 }

@@ -40,5 +40,5 @@ const residents=createResidents(scene,w);
 for(const [kind,n] of [['student',6],['cat',3],['husky',1],['street dog',4]])assert.equal(residents.actors.filter(a=>a.kind===kind).length,n);
 const start=residents.actors.map(a=>a.rig.position.clone());
 for(let i=0;i<90;i++)residents.update(1/24);
-residents.actors.forEach((a,i)=>{const p=a.rig.position;assert(!w.blocked(p.x,p.z));assert(start[i].distanceTo(p)>.1);});
+residents.actors.filter(a=>!a.fixed).forEach((a,i)=>{const p=a.rig.position;assert(!w.blocked(p.x,p.z));assert(start[i].distanceTo(p)>.1);});
 console.log('Verified hostel stairs on foot, level road access, clear shrubs, wooded descent, low court and pond, and all 14 moving residents.');

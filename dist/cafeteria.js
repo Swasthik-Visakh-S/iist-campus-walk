@@ -16,7 +16,7 @@ export function planCafeteria(entry,umbrellas=[]){
     if((u>=-21.3&&u<=-8.25&&v>=0&&v<=9)||(Math.abs(u)<=8.3&&v>=0&&v<=13.3))return level+.14;
     return null;
   }
-  function blocked(x,z){return umbrellas.some(p=>Math.hypot(x-p[0],z-p[1])<.9)||rails.some(([a,b])=>distSegment(x,z,a,b)<.18);}
+  function blocked(x,z){const [u,v]=local(x,z);if(Math.abs(u-3.6)<.9&&Math.abs(v-2)<.45)return true;return umbrellas.some(p=>Math.hypot(x-p[0],z-p[1])<.9)||rails.some(([a,b])=>distSegment(x,z,a,b)<.18);}
   function cameraBlocked(x,y,z){
     const [u,v]=local(x,z);
     return u>3.8&&u<8.3&&v>4.8&&v<12.6&&Math.abs(y-level-3.15)<.2 || Math.abs(u)<7.5&&v>-2.5&&v<5.1&&Math.abs(y-level-4.65-Math.sin(.1)*(v-1.3))<.2 || Math.abs(u)<6.5&&v>-.15&&v<4&&y>level+3.25&&y<level+3.7 || y<level+1.6&&blocked(x,z);
@@ -64,6 +64,11 @@ export function addCafeteria({scene,cafe,box,m,mesh,polygon}){
   }
   // Thin vertical bars complete the front fence while keeping its opening clear.
   for(const side of [-1,1])for(let u=2.65;u<8.2;u+=.42)part(dark,u*side,.68,13.3,.025,1.04,.025);
+  // The tea seller stands inside the covered serving bay, behind this counter.
+  part(timber,3.6,.62,2,1.6,1.24,.65);part(dark,3.6,1.28,2,1.8,.08,.78);
+  part(cream,3.6,.35,1.1,1.6,.70,1.1);
+  const kettle=at(3.3,2);mesh(new T.CylinderGeometry(.15,.18,.32,10),rails,kettle[0],level+1.48,kettle[1]);
+  for(const u of [3.6,3.85,4.1]){const p=at(u,2.1);mesh(new T.CylinderGeometry(.055,.04,.13,8),cream,p[0],level+1.38,p[1]);}
   // Bamboo facing and a broad counter opening follow the supplied entrance photo.
   part(timber,0,.76,.09,13.8,1.52,.12);
   for(let u=-6.8;u<6.9;u+=.19)part(red,u,.76,.16,.035,1.48,.025);

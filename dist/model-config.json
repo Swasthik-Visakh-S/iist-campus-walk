@@ -1,5 +1,5 @@
 {
-  "version": 14,
+  "version": 15,
   "note": "Footprints, entrances and additions traced approximately from the two November 5 annotated campus views. Local heights remain illustrative.",
   "terrain": {
     "note": "Relative order is user supplied; metre values are illustrative and editable. Heights are relative to an arbitrary local zero.",
@@ -2638,45 +2638,46 @@
         "buildingId": "618490369",
         "name": "Library",
         "mark": [
-          64.27,
-          29.98
+          58.6,
+          30.6
         ],
         "door": [
-          64.27,
-          29.979999999999997
+          58.58935712239165,
+          30.598477745990564
         ],
         "n": [
-          0.738028812002274,
-          -0.6747691995449348
+          -0.9899254812145557,
+          -0.14158934155553637
         ],
         "right": [
-          -0.6747691995449348,
-          -0.738028812002274
+          -0.14158934155553637,
+          0.9899254812145557
         ],
         "porch": [
-          66.33648067360636,
-          28.09064624127418
+          55.81756577499089,
+          30.202027589635062
         ],
         "end": [
-          64.93142871894082,
-          28.791036881289823
+          55.000329773300464,
+          30.53172394231703
         ],
         "bend": null,
         "pillars": [
           [
-            66.37654509482934,
-            30.357449020995446
+            56.3277673684605,
+            23.80986877323969
           ],
           [
-            64.08232981637656,
-            27.848151060187718
+            54.51542379654964,
+            36.48091493278601
           ]
         ],
-        "span": 1.7,
-        "postDepth": 1.3,
-        "width": 2.7,
+        "span": 6.4,
+        "postDepth": 3.2,
+        "width": 4.8,
         "level": 20,
-        "endLevel": 20,
+        "endLevel": 20.000000000000004,
+        "vehiclePorch": true,
         "stepCount": 0
       },
       {
@@ -2710,19 +2711,20 @@
         "bend": null,
         "pillars": [
           [
-            49.50893535856225,
-            131.1348670762341
+            50.676329926585076,
+            132.07677467390533
           ],
           [
-            46.86284100437717,
-            128.99987652151262
+            45.69544643635434,
+            128.05796892384137
           ]
         ],
-        "span": 1.7,
+        "span": 3.2,
         "postDepth": 1.3,
-        "width": 2.7,
+        "width": 4.8,
         "level": 15,
         "endLevel": 15,
+        "vehiclePorch": true,
         "stepCount": 0
       },
       {
@@ -2756,19 +2758,20 @@
         "bend": null,
         "pillars": [
           [
-            -162.10899085926138,
-            103.94939539146672
+            -160.67825891700735,
+            103.4988333986022
           ],
           [
-            -165.35198326170382,
-            104.97066924195964
+            -166.78271520395785,
+            105.42123123482416
           ]
         ],
-        "span": 1.7,
+        "span": 3.2,
         "postDepth": 1.3,
-        "width": 2.7,
+        "width": 4.8,
         "level": 7,
         "endLevel": 7,
+        "vehiclePorch": true,
         "stepCount": 0
       },
       {
@@ -2802,19 +2805,20 @@
         "bend": null,
         "pillars": [
           [
-            -143.24589653279702,
-            227.8042156992405
+            -144.0663194088126,
+            229.05996499926434
           ],
           [
-            -141.3862713471617,
-            224.9578506191865
+            -140.56584847114613,
+            223.70210131916267
           ]
         ],
-        "span": 1.7,
+        "span": 3.2,
         "postDepth": 1.3,
-        "width": 2.7,
+        "width": 4.8,
         "level": 7,
         "endLevel": 7.02567679227181,
+        "vehiclePorch": true,
         "stepCount": 0
       },
       {
@@ -2858,9 +2862,10 @@
         ],
         "span": 3.2,
         "postDepth": 3,
-        "width": 2.7,
+        "width": 4.8,
         "level": 5,
         "endLevel": 5.270954059754776,
+        "vehiclePorch": true,
         "stepCount": 0
       },
       {
@@ -2894,19 +2899,20 @@
         "bend": null,
         "pillars": [
           [
-            -24.088364773867983,
-            -4.717349787824684
+            -23.243604530877853,
+            -3.4778417677363658
           ],
           [
-            -26.003154657978936,
-            -7.5269013000248695
+            -26.847914900969066,
+            -8.766409320113187
           ]
         ],
-        "span": 1.7,
+        "span": 3.2,
         "postDepth": 1.3,
-        "width": 2.7,
+        "width": 4.8,
         "level": 20,
         "endLevel": 20,
+        "vehiclePorch": true,
         "stepCount": 0
       },
       {
@@ -2940,19 +2946,20 @@
         "bend": null,
         "pillars": [
           [
-            14.50440606122271,
-            28.185919100227522
+            15.626391478400492,
+            29.181483625328937
           ],
           [
-            11.96123911561974,
-            25.929306176664326
+            10.839253698441958,
+            24.93374165156291
           ]
         ],
-        "span": 1.7,
+        "span": 3.2,
         "postDepth": 1.3,
-        "width": 2.7,
+        "width": 4.8,
         "level": 20,
         "endLevel": 20,
+        "vehiclePorch": true,
         "stepCount": 0
       },
       {
@@ -2986,19 +2993,20 @@
         "bend": null,
         "pillars": [
           [
-            48.0676105721846,
-            59.56469903889624
+            47.387314465901426,
+            60.90155999194108
           ],
           [
-            49.609615079759784,
-            56.53448087866127
+            50.28991118604296,
+            55.19761992561643
           ]
         ],
-        "span": 1.7,
+        "span": 3.2,
         "postDepth": 1.3,
-        "width": 2.7,
+        "width": 4.8,
         "level": 20,
         "endLevel": 20,
+        "vehiclePorch": true,
         "stepCount": 0
       },
       {
@@ -5816,8 +5824,8 @@
       ],
       "618490369": [
         [
-          64.27,
-          29.98
+          58.6,
+          30.6
         ]
       ],
       "618490370": [
@@ -5994,9 +6002,41 @@
       "accuracy": "Approximate: landmark registration agrees with the scale bar within about 5%; preserve surveyed footprints and road centrelines. Heights and facade details are visual estimates."
     },
     "entrancePorticos": {
+      "618490369": {
+        "span": 6.4,
+        "depth": 3.2,
+        "width": 4.8,
+        "vehiclePorch": true
+      },
+      "618490370": {
+        "span": 3.2,
+        "depth": 1.3,
+        "width": 4.8,
+        "vehiclePorch": true
+      },
+      "618490371": {
+        "span": 3.2,
+        "depth": 1.3,
+        "width": 4.8,
+        "vehiclePorch": true
+      },
+      "618501273": {
+        "span": 3.2,
+        "depth": 1.3,
+        "width": 4.8,
+        "vehiclePorch": true
+      },
       "618501279": {
         "span": 3.2,
-        "depth": 3
+        "depth": 3,
+        "width": 4.8,
+        "vehiclePorch": true
+      },
+      "618501282": {
+        "span": 3.2,
+        "depth": 1.3,
+        "width": 4.8,
+        "vehiclePorch": true
       }
     },
     "cafeSeating": {

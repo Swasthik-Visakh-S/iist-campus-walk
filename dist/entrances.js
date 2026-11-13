@@ -61,7 +61,7 @@ export function planEntrances(data,buildings,ponds,terrain,config){
     const entry=markedEntrance(b,mark,index,buildings,ponds,routes,terrain,boundary);
     const portico=config.layout.entrancePorticos?.[b.id];
     if(portico){
-      entry.span=portico.span;entry.postDepth=portico.depth;
+      entry.span=portico.span;entry.postDepth=portico.depth;entry.width=portico.width||entry.width;entry.vehiclePorch=!!portico.vehiclePorch;
       entry.pillars=[-1,1].map(side=>[entry.door[0]+entry.n[0]*entry.postDepth+entry.right[0]*entry.span*side,entry.door[1]+entry.n[1]*entry.postDepth+entry.right[1]*entry.span*side]);
     }
     if(!config.layout.markedDoors?.[b.id])delete entry.mark;
@@ -103,11 +103,11 @@ export function entrancePaths(entries){
  return entries.map(e=>{
    const points=[[e.door[0]+e.n[0]*.7,e.door[1]+e.n[1]*.7],e.porch,...(e.bend?[e.bend]:[]),e.end];
    const levels=[e.level,e.level,...(e.bend?[(e.level+e.endLevel)/2]:[]),e.endLevel];
-   return {id:'entrance-'+(e.id||e.buildingId),tags:{highway:'footway',name:e.name+' entrance'},width:e.width,points,levels};
+   return {id:'entrance-'+(e.id||e.buildingId),tags:{highway:e.vehiclePorch?'service':'footway',surface:e.vehiclePorch?'asphalt':undefined,name:e.name+' entrance'},width:e.width,points,levels};
  });
 }
 export function clearOfEntrances(x,z,entries,margin=0){
- return entries.every(e=>distSegment(x,z,e.door,e.porch)>3.7+margin
+ return entries.every(e=>distSegment(x,z,e.door,e.porch)>Math.max(3.7,(e.span||2.55)+1.2)+margin
    &&distSegment(x,z,e.porch,e.bend||e.end)>e.width/2+margin
    &&(!e.bend||distSegment(x,z,e.bend,e.end)>e.width/2+margin));
 }

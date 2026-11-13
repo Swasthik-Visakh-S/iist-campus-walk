@@ -1,4 +1,4 @@
-# IIST Campus Walk — Version 14
+# IIST Campus Walk — Version 15
 
 A browser walkthrough generated from the supplied OpenStreetMap campus export.
 
@@ -14,6 +14,14 @@ Open a terminal in this extracted folder and run:
 
 Then open http://localhost:8000 in Chrome or Firefox. No Blender, npm install, API key or internet connection is required. Stop the server with Ctrl+C. Do not open index.html directly: browsers restrict fetching local data that way.
 
+## November 12 update
+
+The OAT platform is raised by about 0.9 m and its rear edge shares the MPH wall. Six small front steps reach the platform. The library frontage has twin glazed towers, cream frames and a central louvred strip; academic entrances have larger red piers and projecting canopies with 4.8 m asphalt approaches. The library entrance faces the adjoining road and garden instead of the narrow notch used previously. Building footprints remain unchanged. Dimensions are illustrative.
+
+Ten extra students sit or stand around the cafeteria, and a tea seller serves from the covered counter. Choose **Tea counter** in the map menu, then press **E** or tap **Buy tea**. Each cup costs 5 pretend campus coins from a starting balance of 50; Reset restores the balance. No real payment or account is involved.
+
+**Time → Auto** runs a complete 24-hour campus day in **60 real minutes**, starting at 08:00 when the scene loads. Morning and Night remain available. **Weather → Auto** brings occasional showers; Clear and Rain override it. Forest haze is subtle, and five small snakes move only within the wooded area. Weather uses one local rain batch, low-opacity mist sprites and the existing six-light budget.
+
 ## Cafe seating and hostel road
 
 Facing the cafe from the road, all eight umbrellas are on the left: three beside the entrance and five in the extension beyond the building. LED strips run under each umbrella rim. The right side has a roofed seating shed with ceiling lights. Lights follow the Morning/Night setting.
@@ -22,7 +30,7 @@ The strongest climb remains beside Crystal Jubilee; a gentler climb continues al
 
 ## Morning and night
 
-Use **Time → Morning / Night** in the top controls. The selection is remembered. LED fixtures follow the roads and open walking paths. At night all lamp heads glow, with ground light pools and a fixed pool of six nearby lights; cafe and hostel entrance lights also turn on. No extra shadow maps are rendered for streetlights. The cafeteria canopy and Crystal Jubilee entrance now follow the supplied November 8 photographs; dimensions remain approximate.
+Use **Time → Morning / Night / Auto** in the top controls. The selection is remembered. LED fixtures follow the roads and open walking paths. At night all lamp heads glow, with ground light pools and a fixed pool of six nearby lights; cafe and hostel entrance lights also turn on. No extra shadow maps are rendered for streetlights. The cafeteria canopy and Crystal Jubilee entrance now follow the supplied November 8 photographs; dimensions remain approximate.
 
 ## Controls
 

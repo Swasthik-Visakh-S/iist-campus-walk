@@ -1,5 +1,5 @@
 import * as T from './vendor/three.module.js';
-import {addAmbulance} from './ambulance.js?v=14';
+import {addAmbulance} from './ambulance.js?v=15';
 
 export function planMedical(entry,routes){
   const {door,right,n,level}=entry;

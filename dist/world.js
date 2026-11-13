@@ -1,24 +1,24 @@
-import {addCrystalFacade} from './crystal.js?v=14';
-import {planForecourt,addForecourt} from './turf-forecourt.js?v=14';
-import {planCafeteria,addCafeteria} from './cafeteria.js?v=14';
-import {academicIds,addAcademicEntrances,academicCanopyBlocked} from './academic.js?v=14';
-import {planMedical,addMedical} from './medical.js?v=14';
-import {createOat} from './oat.js?v=14';
-import {addBasketballCourt} from './basketball.js?v=14';
-import {addAvenueShrubs,addBanyan} from './planting.js?v=14';
-import {perimeterRails,addSurveyDetails,addTurf} from './site-details.js?v=14';
-import {applyReferenceLayout,libraryGarden} from './layout.js?v=14';
-import {addLibraryFacade,addLibraryGarden} from './library.js?v=6';
+import {addCrystalFacade} from './crystal.js?v=15';
+import {planForecourt,addForecourt} from './turf-forecourt.js?v=15';
+import {planCafeteria,addCafeteria} from './cafeteria.js?v=15';
+import {academicIds,addAcademicEntrances,academicCanopyBlocked} from './academic.js?v=15';
+import {planMedical,addMedical} from './medical.js?v=15';
+import {createOat} from './oat.js?v=15';
+import {addBasketballCourt} from './basketball.js?v=15';
+import {addAvenueShrubs,addBanyan} from './planting.js?v=15';
+import {perimeterRails,addSurveyDetails,addTurf} from './site-details.js?v=15';
+import {applyReferenceLayout,libraryGarden} from './layout.js?v=15';
+import {addLibraryFacade,addLibraryGarden} from './library.js?v=15';
 import * as T from './vendor/three.module.js';
 import {inside,distSegment,center,edgeDistance} from './geometry.js?v=6';
 export {inside,distSegment,center} from './geometry.js?v=6';
-import {addRoads} from './roads.js?v=14';
-import {createTerrainSurface} from './terrain-mesh.js?v=14';
-import {planEntrances,entrancePaths,clearOfEntrances,addEntrances,hostelStepHeight,riser} from './entrances.js?v=14';
-import {planGates,addGates} from './gates.js?v=14';
-import {foliageChunks,mergeStaticMeshes} from './render-utils.js?v=14';
-import {makeTerrain} from './terrain.js?v=14';
-import {addCampusDetails,wallSegments} from './campus-details.js?v=14';
+import {addRoads} from './roads.js?v=15';
+import {createTerrainSurface} from './terrain-mesh.js?v=15';
+import {planEntrances,entrancePaths,clearOfEntrances,addEntrances,hostelStepHeight,riser} from './entrances.js?v=15';
+import {planGates,addGates} from './gates.js?v=15';
+import {foliageChunks,mergeStaticMeshes} from './render-utils.js?v=15';
+import {makeTerrain} from './terrain.js?v=15';
+import {addCampusDetails,wallSegments} from './campus-details.js?v=15';
 export function buildWorld(scene,data,config){
  data=applyReferenceLayout(data,config);
  const material=(color,extra={})=>new T.MeshStandardMaterial({color,roughness:.9,...extra});
@@ -55,7 +55,7 @@ export function buildWorld(scene,data,config){
  const towerPillars=tower.points.slice(0,4).map(p=>[tower.center[0]+(p[0]-tower.center[0])*.67,tower.center[1]+(p[1]-tower.center[1])*.67]);
  const walls=wallSegments(boundary,terrainModel.routes,config.landscape.boundaryWall);
  const aisleRoutes=terrainModel.routes.filter(r=>oat.aisleRoutes.includes(r.id));
- const theatre=createOat(amph,sac.level,aisleRoutes);
+ const theatre=createOat(amph,sac.level,aisleRoutes,buildings.find(b=>b.id==='user-mph'));
  const routeCells=new Map();for(const r of terrainModel.routes){const m=r.width/2+2;for(let x=Math.floor((Math.min(r.a[0],r.b[0])-m)/32);x<=Math.floor((Math.max(r.a[0],r.b[0])+m)/32);x++)for(let z=Math.floor((Math.min(r.a[1],r.b[1])-m)/32);z<=Math.floor((Math.max(r.a[1],r.b[1])+m)/32);z++){const k=x+','+z;if(!routeCells.has(k))routeCells.set(k,[]);routeCells.get(k).push(r);}}
  function walkHeight(x,z){
   if(forecourt.contains(x,z))return forecourt.level+.16;
@@ -145,12 +145,12 @@ export function buildWorld(scene,data,config){
  // Solar panels follow mapped roof polygons and leave an edge margin.
  const xs=b.points.map(p=>p[0]),zs=b.points.map(p=>p[1]);for(let x=Math.min(...xs)+4;x<Math.max(...xs)-3;x+=5)for(let z=Math.min(...zs)+4;z<Math.max(...zs)-3;z+=6){if([[x-1.6,z-2],[x+1.6,z+2],[x-1.6,z+2],[x+1.6,z-2]].every(p=>inside(...p,b.points)))box(m.panel,x,y+h+.9,z,3.2,.16,4.2);}
  }
- if(t.amenity==='library')addLibraryFacade(scene,b,garden,m);
+ if(t.amenity==='library')addLibraryFacade(scene,b,garden,m,entrances.find(e=>e.buildingId===b.id));
  const name=t.amenity==='library'?'Library':t.name;
  if(name){
    const entrance=entrances.find(e=>e.buildingId===b.id);
-   const destination=b.id==='crystal-hostel'?entrance.end:academicIds.has(b.id)?entrance.end:entrance===cafeEntry?cafe.spawn:entrance===clinic?safePoint(medical.spawn):entrance?.stepCount?entrance.end:entrance?.porch||safePoint(b.center);
-   landmarks.push({name,p:destination,door:entrance?.door,viewToward:academicIds.has(b.id)?entrance.door:entrance===cafeEntry?cafe.aim:entrance===clinic?medical.aim:undefined,viewPitch:entrance===clinic?.16:undefined,label:b.center,height:y+h});
+   const destination=t.amenity==='library'?safePoint(entrance.door.map((v,i)=>v+entrance.n[i]*15)):b.id==='crystal-hostel'?entrance.end:academicIds.has(b.id)?entrance.end:entrance===cafeEntry?cafe.spawn:entrance===clinic?safePoint(medical.spawn):entrance?.stepCount?entrance.end:entrance?.porch||safePoint(b.center);
+   landmarks.push({name,p:destination,door:entrance?.door,viewToward:academicIds.has(b.id)?entrance.door:entrance===cafeEntry?cafe.aim:entrance===clinic?medical.aim:undefined,viewPitch:t.amenity==='library'?-.12:entrance===clinic?.16:undefined,label:b.center,height:y+h});
  }
 
  }
@@ -178,6 +178,7 @@ export function buildWorld(scene,data,config){
    landmarks.push({name,p:safePoint(approach),viewToward:p,label:p,height:walkHeight(...p)+1});
  }
  addCrystalFacade(entrances.find(e=>e.buildingId==='crystal-hostel'),buildings.find(b=>b.id==='crystal-hostel'),box,m);
+ landmarks.push({name:'Tea counter',p:cafe.at(3.6,3.5),viewToward:cafe.at(3.6,1.1),viewPitch:.05,label:cafe.at(3.6,1.1),height:cafe.level+1.8});
  addCafeteria({scene,cafe,box,m,mesh,polygon});
  addForecourt(forecourt,box,polygon,m);
  addMedical(scene,medical,terrainSurface,box,m);
@@ -212,5 +213,5 @@ export function buildWorld(scene,data,config){
  for(const [mat,list] of batches){const inst=new T.InstancedMesh(new T.BoxGeometry(1,1,1),mat,list.length);list.forEach((b,i)=>{dummy.position.set(b.x,b.y,b.z);dummy.rotation.set(0,b.angle,0);dummy.scale.set(b.sx,b.sy,b.sz);dummy.updateMatrix();inst.setMatrixAt(i,dummy.matrix)});inst.castShadow=true;inst.receiveShadow=true;scene.add(inst);}
  const mergedDrawCalls=mergeStaticMeshes(scene);
  for(const g of gates)landmarks.push({name:g.name,p:safePoint(g.point(0,6)),label:g.point(0,0),height:g.level+5});
- return {cafeUmbrellas:sites.umbrellaCentres,forecourt,cafe,medical,landscape:config.landscape,pitch,basketball,avenueShrubs,rails,exteriorRoad,exteriorGate,entrances,gates,gateDetails,foliage,mergedDrawCalls,noPlants,buildings,boundary,ponds,roads,places:landmarks,spawn,groundAt,walkHeight,blocked,safePoint,amph,garden,treeCount:trees.length,trees,walls,details,terrainModel,data,cameraBlocked,roadDetails,terrainSurface,tower:{building:tower,pillars:towerPillars,...towerSpec}};
+ return {theatre,cafeUmbrellas:sites.umbrellaCentres,forecourt,cafe,medical,landscape:config.landscape,pitch,basketball,avenueShrubs,rails,exteriorRoad,exteriorGate,entrances,gates,gateDetails,foliage,mergedDrawCalls,noPlants,buildings,boundary,ponds,roads,places:landmarks,spawn,groundAt,walkHeight,blocked,safePoint,amph,garden,treeCount:trees.length,trees,walls,details,terrainModel,data,cameraBlocked,roadDetails,terrainSurface,tower:{building:tower,pillars:towerPillars,...towerSpec}};
 }

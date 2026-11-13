@@ -1,21 +1,11 @@
 import * as T from './vendor/three.module.js';
 // Simplified architecture derived from the supplied front-elevation photograph.
-export function addLibraryFacade(scene, library, garden, materials) {
-  const n=garden.front, right=garden.right, c=library.center, h=library.height, y=library.level;
-  const frontDepth=Math.max(...library.points.map(p=>(p[0]-c[0])*n[0]+(p[1]-c[1])*n[1]))*.45;
-  // Choose a frontage that stays within the traced footprint.
-  const hits=[];
-  for(let i=1;i<library.points.length;i++){
-    const a=library.points[i-1], b=library.points[i];
-    const za=(a[0]-c[0])*n[0]+(a[1]-c[1])*n[1],zb=(b[0]-c[0])*n[0]+(b[1]-c[1])*n[1];
-    if((za>frontDepth)!=(zb>frontDepth)){
-      const t=(frontDepth-za)/(zb-za), x=a[0]+t*(b[0]-a[0]),z=a[1]+t*(b[1]-a[1]);
-      hits.push((x-c[0])*right[0]+(z-c[1])*right[1]);
-    }
-  }
-  hits.sort((a,b)=>a-b);let left=hits[0]??-16,rightEdge=hits.at(-1)??16;
-  const width=Math.min(34,(rightEdge-left)*.92),mid=(left+rightEdge)/2;
-  const group=new T.Group();group.position.set(c[0]+n[0]*frontDepth+right[0]*mid,y,c[1]+n[1]*frontDepth+right[1]*mid);group.rotation.y=Math.atan2(n[0],n[1]);scene.add(group);
+export function addLibraryFacade(scene, library, garden, materials, entry) {
+  const n=entry.n, right=entry.right, h=library.height, y=library.level;
+  const width=21;
+  const group=new T.Group();group.name='Library twin glazed towers';
+  group.position.set(entry.door[0]+n[0]*.28,y,entry.door[1]+n[1]*.28);
+  group.rotation.y=Math.atan2(n[0],n[1]);scene.add(group);
   function block(mat,x,yy,z,w,hh,d){const mesh=new T.Mesh(new T.BoxGeometry(w,hh,d),mat);mesh.position.set(x,yy,z);mesh.castShadow=true;mesh.receiveShadow=true;group.add(mesh);return mesh;}
   const glassWidth=width*.33,wingWidth=(width-glassWidth)/2;
   for(const sign of [-1,1]){
@@ -29,9 +19,10 @@ export function addLibraryFacade(scene, library, garden, materials) {
   block(materials.white,0,h*.57,.7,1.1,h*1.14,.4);
   for(let yy=4.5;yy<h*1.08;yy+=1.7)block(materials.white,0,yy,.75,glassWidth,.09,.1);
   for(const sign of [-1,1])block(materials.white,sign*glassWidth*.26,h*.57,.65,.12,h*1.08,.1);
-  block(materials.glass,0,1.9,1.2,5.5,3.8,1.3);
-  block(materials.white,0,4.2,2.8,width*.84,.5,5);
-  for(const sign of [-1,1])block(materials.white,sign*width*.32,2,4,.35,4,.35);
+  // Narrow cream louvres separate two glazed towers; roofs flare outwards.
+  for(let yy=4.8;yy<h*1.13;yy+=.38)block(materials.white,0,yy,.99,1.25,.14,.34);
+  for(const side of [-1,1])for(const yy of [h*.55,h*.76])for(let k=0;k<5;k++)
+    block(materials.glass,side*(glassWidth/2+1.25+k*1.15),yy,.47,.55,.65,.12);
   return group;
 }
 export function addLibraryGarden(scene, garden, level, materials, groundAt, noPlants=()=>false) {
